@@ -15,7 +15,9 @@
     "next": "15.0.1",
     "react": "19.0.0-rc-69d4b800-20241021",
     "react-dom": "19.0.0-rc-69d4b800-20241021",
-    "react-select": "^5.8.2"
+    "react-select": "^5.8.2",
+    "socket.io-client": "^4.8.1",
+    "uuid": "^11.0.2"
   },
   "devDependencies": {
     "@types/node": "^20",
