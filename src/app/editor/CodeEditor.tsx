@@ -66,8 +66,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   return (
     <div className="code-editor-container">
       <Editor
-        height="100%"
-        width="100%"
+        height="90vh"
+        width="100vh"
         language={language}
         value={code}
         theme={theme}
