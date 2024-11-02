@@ -66,7 +66,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   return (
     <div className="code-editor-container">
       <Editor
-        height="100%"
+        height="80vh" // Use vh for height
         width="100%"
         language={language}
         value={code}
@@ -82,6 +82,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       <style jsx global>{`
         .remote-cursor {
           border-left: 2px solid red;
+        }
+        .code-editor-container {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
         }
       `}</style>
     </div>

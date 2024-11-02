@@ -138,51 +138,50 @@ const Landing: React.FC<LandingProps> = (props) => {
   };
 
   return (
-    <div className="bg-gray-600">
-      <div className="flex justify-center p-4 space-x-4">
+    <div className="bg-gray-600 min-h-screen">
+      <div className="flex flex-col md:flex-row justify-center p-4 space-y-4 md:space-y-0 md:space-x-4">
         <input
           type="text"
           placeholder="Enter Room ID"
           value={roomId}
           onChange={(e) => setRoomId(e.target.value)}
-          className="border text-black rounded-md p-2"
+          className="border text-black rounded-md p-2 w-full md:w-auto"
         />
         <button
           onClick={createRoom}
-          className="bg-green-600 text-black rounded-md px-4 py-2 hover:bg-green-700"
+          className="bg-green-600 text-black rounded-md px-4 py-2 hover:bg-green-700 w-full md:w-auto"
         >
           Create Room
         </button>
         <button
           onClick={joinRoom}
-          className="bg-blue-600 text-black rounded-md px-4 py-2 hover:bg-blue-700"
+          className="bg-blue-600 text-black rounded-md px-4 py-2 hover:bg-blue-700 w-full md:w-auto"
         >
           Join Room
         </button>
       </div>
 
-      <div className="flex flex-row w-full justify-between bg-gray-600 md:justify-start">
-        <div className="md:px-4 py-2 px-2 w-5/12 md:w-auto">
+      <div className="flex flex-col md:flex-row w-full justify-between bg-gray-600 md:justify-start p-4 space-y-4 md:space-y-0">
+        <div className="md:px-4 py-2 px-2 w-full md:w-auto">
           <LanguageDropdown onSelectChange={handleLanguageChange} />
         </div>
-        <div className="md:px-4 py-2 px-2 w-5/12 md:w-auto">
+        <div className="md:px-4 py-2 px-2 w-full md:w-auto">
           <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
         </div>
-        <div className="flex justify-end mt-2">
-          <div className="flex flex-row items-center border-2 border-black rounded bg-white shadow-md">
+        <div className="flex justify-end mt-2 w-full md:w-auto">
+          <div className="flex flex-row items-center border-2 border-black rounded bg-white shadow-md w-full md:w-auto">
             <label className="font-thin ml-2 mr-2">Font:</label>
             <input
               type="number"
               value={fontSize}
               onChange={(e) => setFontSize(Number(e.target.value))}
-              className="border border-black mr-1 rounded px-2 custom-input"
+              className="border border-black mr-1 rounded px-2 custom-input w-full md:w-auto"
               min="10"
               max="40"
               style={{
                 color: "#000",
                 fontSize: "0.8rem",
                 lineHeight: "1.75rem",
-                width: "100%",
                 background: "#fff",
               }}
             />
@@ -190,7 +189,7 @@ const Landing: React.FC<LandingProps> = (props) => {
         </div>
       </div>
 
-      <div className="flex bg-gray-600 flex-col md:flex-row w-full justify-start px-4 mt-4">
+      <div className="flex flex-col md:flex-row w-full justify-start px-4 mt-4 space-y-4 md:space-y-0">
         <div className="md:flex flex-col w-full md:w-3/4 md:h-full h-96 justify-start items-end">
           <CodeEditor
             onCodeChange={onCodeChange}
@@ -202,10 +201,10 @@ const Landing: React.FC<LandingProps> = (props) => {
             remoteCursorPosition={remoteCursorPosition}
           />
         </div>
-        <div className="w-full md:w-4/12 p-4 ml-auto">
+        <div className="w-full md:w-1/4 p-4 ml-auto">
           <div className="flex w-full justify-between">
             <button
-              className={`mb-4 bg-black text-white border-2 border-black z-10 rounded-md px-4 py-2 hover:bg-white hover:text-black transition duration-200 ease-in-out transform hover:scale-105 shadow-md`}
+              className={`mb-4 bg-black text-white border-2 border-black z-10 rounded-md px-4 py-2 hover:bg-white hover:text-black transition duration-200 ease-in-out transform hover:scale-105 shadow-md w-full`}
               disabled={!code || isLoading}
               onClick={executeCode}
             >
