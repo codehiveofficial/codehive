@@ -43,7 +43,6 @@ interface CollaborativeIDEProps {
 }
 
 const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
-  // Code Editor States
   const [code, setCode] = useState(
     defaultCodeTemplates[languageOptions[0].value]
   );
@@ -60,8 +59,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     lineNumber: number;
     column: number;
   } | null>(null);
-
-  // Video Call States
   const [roomId, setRoomId] = useState("");
   const [peers, setPeers] = useState<{ [key: string]: PeerConnection }>({});
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -69,7 +66,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   const [isJoined, setIsJoined] = useState(false);
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
 
-  // Refs
   const socketRef = useRef<Socket>();
   const userVideoRef = useRef<HTMLVideoElement>(null);
   const peersRef = useRef<{ [key: string]: PeerConnection }>({});
@@ -85,14 +81,12 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       upgrade: false,
     });
 
-    // Handle receiving returned signal
     socketRef.current.on("receiving_returned_signal", ({ signal, id }) => {
       if (peersRef.current[id]) {
         peersRef.current[id].peer.signal(signal);
       }
     });
 
-    // Handle user joined with signal
     socketRef.current.on(
       "user_joined_with_signal",
       ({ signal, callerID, userName: peerUserName }) => {
@@ -107,7 +101,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       }
     );
 
-    // Handle user left
     socketRef.current.on("user_left", ({ userId, users }) => {
       if (peersRef.current[userId]) {
         peersRef.current[userId].peer.destroy();
@@ -133,34 +126,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     }
   }, [myStream]);
 
-  // Initialize user's media stream
-  //   const initializeUserMedia = async () => {
-  //     try {
-  //       const stream = await navigator.mediaDevices.getUserMedia({
-  //         video: {
-  //           width: { ideal: 640 },
-  //           height: { ideal: 480 },
-  //           frameRate: { ideal: 20, max: 24 },
-  //         },
-  //         audio: {
-  //           echoCancellation: true,
-  //           noiseSuppression: true,
-  //         },
-  //       });
-
-  //       streamRef.current = stream;
-  //       setMyStream(stream);
-
-  //       if (userVideoRef.current) {
-  //         userVideoRef.current.srcObject = stream;
-  //       }
-
-  //       return stream;
-  //     } catch (err) {
-  //       console.error("Error accessing media devices:", err);
-  //       return null;
-  //     }
-  //   };
   const initializeUserMedia = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -190,25 +155,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     }
   };
 
-  //   const createRoom = async () => {
-  //     try {
-  //       const stream = await initializeUserMedia();
-  //       if (stream) {
-  //         socketRef.current?.emit("create_room", async (newRoomId: string) => {
-  //           setRoomId(newRoomId);
-  //           setIsJoined(true);
-
-  //           // Initialize room creator's video
-  //           if (userVideoRef.current) {
-  //             userVideoRef.current.srcObject = stream;
-  //           }
-  //         });
-  //       }
-  //     } catch (err) {
-  //       console.error("Error creating room:", err);
-  //     }
-  //   };
-
   const createRoom = async () => {
     const stream = await initializeUserMedia();
     if (stream) {
@@ -218,51 +164,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       });
     }
   };
-
-  //   const joinRoom = async (roomIdToJoin: string, stream?: MediaStream) => {
-  //     try {
-  //       const mediaStream = stream || (await initializeUserMedia());
-  //       if (!mediaStream) return;
-
-  //       socketRef.current?.emit("join_room", {
-  //         roomId: roomIdToJoin,
-  //         userName,
-  //       });
-
-  //       // Setup peer connections
-  //       socketRef.current?.on("room_users", (users: { [key: string]: User }) => {
-  //         const peers: { [key: string]: PeerConnection } = {};
-
-  //         Object.entries(users).forEach(([userId, userData]) => {
-  //           if (userId !== socketRef.current?.id && mediaStream) {
-  //             const peer = createPeer(
-  //               userId,
-  //               socketRef.current?.id || "",
-  //               mediaStream
-  //             );
-  //             peers[userId] = { peer, userName: userData.userName };
-  //           }
-  //         });
-
-  //         peersRef.current = peers;
-  //         setPeers(peers);
-  //       });
-
-  //       // Listen for code changes
-  //       socketRef.current?.on(
-  //         "receive_code_change",
-  //         ({ code, cursorPosition }) => {
-  //           setCode(code);
-  //           setRemoteCursorPosition(cursorPosition);
-  //         }
-  //       );
-
-  //       setIsJoined(true);
-  //       setRoomId(roomIdToJoin);
-  //     } catch (err) {
-  //       console.error("Error joining room:", err);
-  //     }
-  //   };
 
   const joinRoom = async (roomIdToJoin: string, stream?: MediaStream) => {
     try {
@@ -309,64 +210,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     }
   };
 
-  //   const joinRoom = async (roomIdToJoin: string, stream?: MediaStream) => {
-  //     try {
-  //       const mediaStream = stream || (await initializeUserMedia());
-  //       if (!mediaStream) return;
-
-  //       // Set local video stream immediately
-  //       if (userVideoRef.current) {
-  //         userVideoRef.current.srcObject = mediaStream;
-  //       }
-
-  //       socketRef.current?.emit("join_room", {
-  //         roomId: roomIdToJoin,
-  //         userName,
-  //       });
-
-  //       // Handle existing users in the room
-  //       socketRef.current?.on(
-  //         "user_joined",
-  //         ({ userId, userName: peerUserName, users }) => {
-  //           if (userId !== socketRef.current?.id && mediaStream) {
-  //             const peer = createPeer(
-  //               userId,
-  //               socketRef.current?.id || "",
-  //               mediaStream
-  //             );
-  //             peersRef.current[userId] = { peer, userName: peerUserName };
-  //             setPeers((prevPeers) => ({
-  //               ...prevPeers,
-  //               [userId]: { peer, userName: peerUserName },
-  //             }));
-  //           }
-  //         }
-  //       );
-
-  //       // Handle receiving returned signal with retry mechanism
-  //       socketRef.current?.on("receiving_returned_signal", ({ signal, id }) => {
-  //         const retrySignal = async (attempts = 0) => {
-  //           if (attempts >= 3) return; // Max 3 retry attempts
-
-  //           if (peersRef.current[id]) {
-  //             try {
-  //               peersRef.current[id].peer.signal(signal);
-  //             } catch (err) {
-  //               console.error("Error signaling peer, retrying...", err);
-  //               setTimeout(() => retrySignal(attempts + 1), 1000);
-  //             }
-  //           }
-  //         };
-  //         retrySignal();
-  //       });
-
-  //       setIsJoined(true);
-  //       setRoomId(roomIdToJoin);
-  //     } catch (err) {
-  //       console.error("Error joining room:", err);
-  //     }
-  //   };
-
   const createPeer = (
     userToSignal: string,
     callerID: string,
@@ -394,63 +237,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
 
     return peer;
   };
-
-  //   const createPeer = (
-  //     userToSignal: string,
-  //     callerID: string,
-  //     stream: MediaStream
-  //   ) => {
-  //     const peer = new Peer({
-  //       initiator: true,
-  //       trickle: false,
-  //       stream,
-  //       config: {
-  //         iceServers: [
-  //           { urls: "stun:stun.l.google.com:19302" },
-  //           { urls: "stun:stun1.l.google.com:19302" },
-  //           { urls: "stun:stun2.l.google.com:19302" },
-  //           { urls: "stun:stun3.l.google.com:19302" },
-  //         ],
-  //       },
-  //     });
-
-  //     peer.on("signal", (signal) => {
-  //       socketRef.current?.emit("sending_signal", {
-  //         userToSignal,
-  //         callerID,
-  //         signal,
-  //         roomId,
-  //       });
-  //     });
-
-  //     // Monitor connection state
-  //     peer.on("connect", () => {
-  //       console.log("Peer connected successfully");
-  //     });
-
-  //     peer.on("error", (err) => {
-  //       console.error("Peer connection error:", err);
-  //       // Attempt to reconnect
-  //       setTimeout(() => {
-  //         if (peer.destroyed) {
-  //           const newPeer = createPeer(userToSignal, callerID, stream);
-  //           peersRef.current[userToSignal] = {
-  //             ...peersRef.current[userToSignal],
-  //             peer: newPeer,
-  //           };
-  //           setPeers((prevPeers) => ({
-  //             ...prevPeers,
-  //             [userToSignal]: {
-  //               ...prevPeers[userToSignal],
-  //               peer: newPeer,
-  //             },
-  //           }));
-  //         }
-  //       }, 2000);
-  //     });
-
-  //     return peer;
-  //   };
 
   const addPeer = (
     incomingSignal: Peer.SignalData,
@@ -730,32 +516,6 @@ interface PeerVideoProps {
   peer: Peer.Instance;
   userName: string;
 }
-
-// const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
-//   const ref = useRef<HTMLVideoElement>(null);
-
-//   useEffect(() => {
-//     peer.on("stream", (stream) => {
-//       if (ref.current) {
-//         ref.current.srcObject = stream;
-//       }
-//     });
-//   }, [peer]);
-
-//   return (
-//     <div className="relative w-full aspect-video bg-gray-800 rounded-lg overflow-hidden">
-//       <video
-//         ref={ref}
-//         autoPlay
-//         playsInline
-//         className="w-full h-full object-cover"
-//       />
-//       <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-white">
-//         {userName}
-//       </div>
-//     </div>
-//   );
-// };
 
 const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
   const ref = useRef<HTMLVideoElement>(null);
