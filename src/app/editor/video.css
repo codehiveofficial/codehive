@@ -1,0 +1,12 @@
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  
