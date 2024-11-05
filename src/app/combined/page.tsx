@@ -65,17 +65,186 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isJoined, setIsJoined] = useState(false);
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [mediaError, setMediaError] = useState<string>("");
+  const [streamReady, setStreamReady] = useState(false);
 
   const socketRef = useRef<Socket>();
   const userVideoRef = useRef<HTMLVideoElement>(null);
   const peersRef = useRef<{ [key: string]: PeerConnection }>({});
   const streamRef = useRef<MediaStream>();
 
+  const setupVideoStream = async (
+    stream: MediaStream,
+    videoElement: HTMLVideoElement | null
+  ) => {
+    try {
+      if (!videoElement) {
+        throw new Error("Video element not found");
+      }
+
+      // Clear any existing stream
+      if (videoElement.srcObject) {
+        const oldStream = videoElement.srcObject as MediaStream;
+        oldStream.getTracks().forEach((track) => track.stop());
+      }
+
+      videoElement.srcObject = null;
+      videoElement.srcObject = stream;
+
+      // Ensure video tracks are enabled
+      stream.getVideoTracks().forEach((track) => {
+        track.enabled = isVideoEnabled;
+      });
+
+      // Ensure audio tracks are enabled
+      stream.getAudioTracks().forEach((track) => {
+        track.enabled = isAudioEnabled;
+      });
+
+      await videoElement.play().catch((playError) => {
+        console.error("Error playing video:", playError);
+        throw new Error("Failed to play video stream");
+      });
+
+      setStreamReady(true);
+      console.log("Video stream setup successfully");
+    } catch (err) {
+      console.error("Error in setupVideoStream:", err);
+      setMediaError(
+        "Failed to setup video stream. Please refresh and try again."
+      );
+      setStreamReady(false);
+    }
+  };
+
+  // Function to initialize media stream
+  const initializeMediaStream = async () => {
+    try {
+      setIsInitializing(true);
+      setMediaError("");
+
+      console.log("Requesting media permissions...");
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 320 },
+          height: { ideal: 240 },
+          frameRate: { ideal: 15, max: 20 },
+        },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+
+      console.log("Media stream obtained:", stream);
+      console.log("Video tracks:", stream.getVideoTracks());
+      console.log("Audio tracks:", stream.getAudioTracks());
+
+      // Verify we have both audio and video tracks
+      if (stream.getVideoTracks().length === 0) {
+        throw new Error("No video track available");
+      }
+
+      if (stream.getAudioTracks().length === 0) {
+        throw new Error("No audio track available");
+      }
+
+      streamRef.current = stream;
+      setMyStream(stream);
+      await setupVideoStream(stream, userVideoRef.current);
+    } catch (err) {
+      console.error("Error in initializeMediaStream:", err);
+      setMediaError(
+        err instanceof Error
+          ? `Media access error: ${err.message}`
+          : "Failed to access camera and microphone. Please ensure you have granted the necessary permissions."
+      );
+      setStreamReady(false);
+    } finally {
+      setIsInitializing(false);
+    }
+  };
+
+  // Initialize media on component mount
   useEffect(() => {
+    initializeMediaStream();
+
+    // Initialize theme
     defineTheme("oceanic-next").then(() => {
       setTheme({ value: "oceanic-next", label: "Oceanic Next" });
     });
 
+    // Cleanup function
+    return () => {
+      if (streamRef.current) {
+        console.log("Stopping all tracks...");
+        streamRef.current.getTracks().forEach((track) => {
+          track.stop();
+          console.log(`Stopped track: ${track.kind}`);
+        });
+      }
+    };
+  }, []);
+
+  // Monitor video element and stream changes
+  useEffect(() => {
+    if (myStream && userVideoRef.current) {
+      console.log("Updating video element with new stream");
+      setupVideoStream(myStream, userVideoRef.current);
+    }
+  }, [myStream]);
+
+  // Initialize media stream on component mount
+  useEffect(() => {
+    const initializeMedia = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 320 },
+            height: { ideal: 240 },
+            frameRate: { ideal: 15, max: 20 },
+          },
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
+        });
+
+        streamRef.current = stream;
+        setMyStream(stream);
+
+        if (userVideoRef.current) {
+          userVideoRef.current.srcObject = stream;
+        }
+      } catch (err) {
+        console.error("Error accessing media devices:", err);
+        setMediaError(
+          "Failed to access camera and microphone. Please ensure you have granted the necessary permissions."
+        );
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    initializeMedia();
+
+    // Initialize theme
+    defineTheme("oceanic-next").then(() => {
+      setTheme({ value: "oceanic-next", label: "Oceanic Next" });
+    });
+
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, []);
+
+  // Socket initialization moved to room creation/joining
+  const initializeSocket = () => {
     socketRef.current = io("http://localhost:5000", {
       transports: ["websocket"],
       upgrade: false,
@@ -101,7 +270,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       }
     );
 
-    socketRef.current.on("user_left", ({ userId, users }) => {
+    socketRef.current.on("user_left", ({ userId }) => {
       if (peersRef.current[userId]) {
         peersRef.current[userId].peer.destroy();
         const newPeers = { ...peersRef.current };
@@ -110,80 +279,60 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
         setPeers(newPeers);
       }
     });
-
-    return () => {
-      socketRef.current?.disconnect();
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
-      }
-      Object.values(peersRef.current).forEach(({ peer }) => peer.destroy());
-    };
-  }, []);
-
-  useEffect(() => {
-    if (myStream && userVideoRef.current) {
-      userVideoRef.current.srcObject = myStream;
-    }
-  }, [myStream]);
-
-  const initializeUserMedia = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 320 },
-          height: { ideal: 240 },
-          frameRate: { ideal: 15, max: 20 },
-        },
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-        },
-      });
-
-      streamRef.current = stream;
-      setMyStream(stream);
-
-      if (userVideoRef.current) {
-        userVideoRef.current.srcObject = stream;
-      }
-
-      return stream;
-    } catch (err) {
-      console.error("Error accessing media devices:", err);
-      return null;
-    }
   };
 
   const createRoom = async () => {
-    const stream = await initializeUserMedia();
-    if (stream) {
+    if (!streamRef.current) {
+      setMediaError(
+        "Please ensure camera and microphone access is granted before creating a room."
+      );
+      return;
+    }
+
+    try {
+      initializeSocket();
+
+      // Ensure video stream is properly set up before creating room
+      await setupVideoStream(streamRef.current, userVideoRef.current);
+
       socketRef.current?.emit("create_room", async (newRoomId: string) => {
         setRoomId(newRoomId);
-        await joinRoom(newRoomId, stream);
+        await joinRoom(newRoomId);
       });
+    } catch (err) {
+      console.error("Error creating room:", err);
+      setMediaError("Failed to create room. Please try again.");
     }
   };
 
-  const joinRoom = async (roomIdToJoin: string, stream?: MediaStream) => {
+  const joinRoom = async (roomIdToJoin: string) => {
+    if (!streamRef.current) {
+      setMediaError(
+        "Please ensure camera and microphone access is granted before joining a room."
+      );
+      return;
+    }
+
     try {
-      const mediaStream = stream || (await initializeUserMedia());
-      if (!mediaStream) return;
+      if (!socketRef.current) {
+        initializeSocket();
+      }
+
+      await setupVideoStream(streamRef.current, userVideoRef.current);
 
       socketRef.current?.emit("join_room", {
         roomId: roomIdToJoin,
         userName,
       });
 
-      // Setup peer connections
       socketRef.current?.on(
         "user_joined",
-        ({ userId, userName: peerUserName, users }) => {
-          if (userId !== socketRef.current?.id && mediaStream) {
+        ({ userId, userName: peerUserName }) => {
+          if (streamRef.current) {
             const peer = createPeer(
               userId,
               socketRef.current?.id || "",
-              mediaStream
+              streamRef.current
             );
             peersRef.current[userId] = { peer, userName: peerUserName };
             setPeers((currentPeers) => ({
@@ -194,7 +343,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
         }
       );
 
-      // Listen for code changes
       socketRef.current?.on(
         "receive_code_change",
         ({ code, cursorPosition }) => {
@@ -207,6 +355,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       setRoomId(roomIdToJoin);
     } catch (err) {
       console.error("Error joining room:", err);
+      setMediaError("Failed to join room. Please try again.");
     }
   };
 
@@ -371,30 +520,73 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     setMyStream(null);
   };
 
+  // ... rest of the component code remains the same (createPeer, addPeer, handleThemeChange, etc.)
+
   return (
     <div className="min-h-screen bg-gray-900">
-      {!isJoined ? (
+      {isInitializing ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-white">
+            Initializing camera and microphone...
+          </div>
+        </div>
+      ) : !isJoined ? (
         <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-4">
-          <button
-            onClick={createRoom}
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
-          >
-            Create New Room
-          </button>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
-              placeholder="Enter Room ID"
-              className="border p-2 rounded-lg"
+          {mediaError && (
+            <div className="bg-red-500 text-white p-4 rounded-lg mb-4">
+              {mediaError}
+              <button
+                onClick={initializeMediaStream}
+                className="ml-4 bg-white text-red-500 px-3 py-1 rounded hover:bg-gray-100"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          <div className="relative w-64 aspect-video bg-gray-800 rounded-lg overflow-hidden mb-4">
+            <video
+              ref={userVideoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover"
             />
+            <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-white">
+              Preview
+            </div>
+            {!streamReady && !mediaError && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="text-white text-center">Loading video...</div>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
             <button
-              onClick={() => joinRoom(roomId)}
-              className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600"
+              onClick={createRoom}
+              disabled={!streamReady}
+              className="w-full bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Join Room
+              Create New Room
             </button>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={roomId}
+                onChange={(e) => setRoomId(e.target.value)}
+                placeholder="Enter Room ID"
+                className="border p-2 rounded-lg"
+              />
+              <button
+                onClick={() => joinRoom(roomId)}
+                disabled={!streamReady}
+                className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Join Room
+              </button>
+            </div>
           </div>
         </div>
       ) : (
@@ -517,6 +709,7 @@ interface PeerVideoProps {
   userName: string;
 }
 
+// PeerVideo component remains the same
 const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
   const ref = useRef<HTMLVideoElement>(null);
 
@@ -531,8 +724,7 @@ const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
 
     peer.on("stream", handleStream);
 
-    // Handle peer errors
-    peer.on("error", (err) => {
+    peer.on("error", (err: string) => {
       console.error("Peer connection error:", err);
     });
 
