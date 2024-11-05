@@ -384,6 +384,12 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       });
     });
 
+    // Listen for stream events to add video of other peers
+    peer.on("stream", (remoteStream) => {
+      // Function to attach the remote stream to a video element
+      addVideoStream(remoteStream, userToSignal);
+    });
+
     return peer;
   };
 
@@ -408,9 +414,28 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       socketRef.current?.emit("returning_signal", { signal, callerID });
     });
 
+    peer.on("stream", (remoteStream) => {
+      addVideoStream(remoteStream, callerID);
+    });
+
     peer.signal(incomingSignal);
 
     return peer;
+  };
+  const addVideoStream = (stream, userId) => {
+    const videoElement = document.createElement("video");
+    videoElement.srcObject = stream;
+    videoElement.autoplay = true;
+    videoElement.playsInline = true;
+    videoElement.classList.add("peer-video");
+
+    const videoContainer = document.getElementById("video-container"); // Assume an HTML container with this ID exists
+    if (videoContainer) {
+      videoContainer.appendChild(videoElement);
+    }
+
+    // Store the reference if needed for cleanup later
+    peersRef.current[userId].videoElement = videoElement;
   };
 
   // Code Editor Functions
@@ -617,6 +642,23 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 Leave Room
               </button>
             </div>
+          </div>
+          <div id="video-container" className="flex">
+            <video
+              ref={userVideoRef}
+              autoPlay
+              playsInline
+              muted
+              className="peer-video"
+            />
+            {Object.entries(peers).map(([peerId, { userName }]) => (
+              <div key={peerId} id={`video-${peerId}`} className="peer-video">
+                <span className="text-white text-lg">
+                  {userName}
+                  {peerId}
+                </span>
+              </div>
+            ))}
           </div>
 
           <div className="grid grid-cols-4 gap-4">
