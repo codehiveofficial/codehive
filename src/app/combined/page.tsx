@@ -10,6 +10,7 @@ import CustomInput from "@/app/editor/CustomInput";
 import axios from "axios";
 import Peer from "simple-peer";
 import { Socket, io } from "socket.io-client";
+import "@/app/combined/combined.css";
 
 interface Theme {
   value: string;
@@ -422,7 +423,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
 
     return peer;
   };
-  const addVideoStream = (stream, userId) => {
+  const addVideoStream = (stream: any, userId: any) => {
     const videoElement = document.createElement("video");
     videoElement.srcObject = stream;
     videoElement.autoplay = true;
@@ -545,8 +546,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     setMyStream(null);
   };
 
-  // ... rest of the component code remains the same (createPeer, addPeer, handleThemeChange, etc.)
-
   return (
     <div className="min-h-screen bg-gray-900">
       {isInitializing ? (
@@ -615,7 +614,131 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
           </div>
         </div>
       ) : (
+        // <div className="container mx-auto p-4">
+        //   <div className="mb-4 flex justify-between items-center">
+        //     <div className="text-white">Room ID: {roomId}</div>
+        //     <div className="flex gap-2">
+        //       <button
+        //         onClick={toggleVideo}
+        //         className={`px-4 py-2 rounded-lg ${
+        //           isVideoEnabled ? "bg-blue-500" : "bg-red-500"
+        //         } text-white`}
+        //       >
+        //         {isVideoEnabled ? "Turn Off Video" : "Turn On Video"}
+        //       </button>
+        //       <button
+        //         onClick={toggleAudio}
+        //         className={`px-4 py-2 rounded-lg ${
+        //           isAudioEnabled ? "bg-blue-500" : "bg-red-500"
+        //         } text-white`}
+        //       >
+        //         {isAudioEnabled ? "Turn Off Audio" : "Turn On Audio"}
+        //       </button>
+        //       <button
+        //         onClick={leaveRoom}
+        //         className="px-4 py-2 rounded-lg bg-red-500 text-white"
+        //       >
+        //         Leave Room
+        //       </button>
+        //     </div>
+        //   </div>
+        //   <div id="video-container" className="m-1 inline-block gap-4">
+        //     <video
+        //       ref={userVideoRef}
+        //       autoPlay
+        //       playsInline
+        //       muted
+        //       className="peer-video object-cover"
+        //     />
+        //     {Object.entries(peers).map(([peerId, { userName }]) => (
+        //       <div key={peerId} id={`video-${peerId}`} className="peer-video">
+        //         {/* <span className="text-white text-lg">
+        //           {userName}
+        //           {peerId}
+        //         </span> */}
+        //       </div>
+        //     ))}
+        //   </div>
+        //   <div className="relative inline-block m-1">
+        //     <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden">
+        //       <video
+        //         ref={userVideoRef}
+        //         autoPlay
+        //         muted
+        //         playsInline
+        //         className="w-full h-full object-cover"
+        //       />
+        //       <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-white">
+        //         You
+        //       </div>
+        //     </div>
+        //     {/* {Object.entries(peers).map(
+        //         ([peerId, { peer, userName: peerUserName }]) => (
+        //           <PeerVideo key={peerId} peer={peer} userName={peerUserName} />
+        //         )
+        //       )} */}
+        //   </div>
+        //   <div className="grid grid-cols-4 gap-4">
+        //     {/* Video Grid */}
+
+        //     {/* Code Editor Section */}
+        //     <div className="col-span-3 space-y-4">
+        //       <div className="flex justify-between items-center">
+        //         <div className="flex gap-4">
+        //           <LanguageDropdown onSelectChange={handleLanguageChange} />
+        //           <ThemeDropdown
+        //             handleThemeChange={handleThemeChange}
+        //             theme={theme}
+        //           />
+        //         </div>
+        //         <div className="flex items-center gap-2">
+        //           <label className="text-white">Font Size:</label>
+        //           <input
+        //             type="number"
+        //             value={fontSize}
+        //             onChange={(e) => setFontSize(Number(e.target.value))}
+        //             className="w-16 px-2 py-1 rounded"
+        //             min="10"
+        //             max="40"
+        //           />
+        //         </div>
+        //       </div>
+
+        //       <div className="grid grid-cols-3 gap-4">
+        //         <div className="col-span-2">
+        //           <CodeEditor
+        //             onCodeChange={onCodeChange}
+        //             fontSize={fontSize}
+        //             language={language.value}
+        //             theme={theme.value}
+        //             code={code}
+        //             remoteCursorPosition={remoteCursorPosition}
+        //             onCursorPositionChange={function (position: {
+        //               lineNumber: number;
+        //               column: number;
+        //             }): void {
+        //               throw new Error("Function not implemented.");
+        //             }}
+        //           />
+        //         </div>
+        //         <div className="col-span-1 space-y-4">
+        //           <button
+        //             className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+        //             disabled={!code || isLoading}
+        //             onClick={executeCode}
+        //           >
+        //             {isLoading ? "Running..." : "Run Code"}
+        //           </button>
+        //           <OutputWindow outputDetails={outputDetails} />
+        //           <CustomInput
+        //             customInput={customInput}
+        //             setCustomInput={setCustomInput}
+        //           />
+        //         </div>
+        //       </div>
+        //     </div>
         <div className="container mx-auto p-4">
+          {/* Top bar with room info and controls */}
           <div className="mb-4 flex justify-between items-center">
             <div className="text-white">Room ID: {roomId}</div>
             <div className="flex gap-2">
@@ -643,48 +766,41 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               </button>
             </div>
           </div>
-          <div id="video-container" className="flex">
-            <video
-              ref={userVideoRef}
-              autoPlay
-              playsInline
-              muted
-              className="peer-video"
-            />
-            {Object.entries(peers).map(([peerId, { userName }]) => (
-              <div key={peerId} id={`video-${peerId}`} className="peer-video">
-                <span className="text-white text-lg">
-                  {userName}
-                  {peerId}
-                </span>
-              </div>
-            ))}
-          </div>
 
-          <div className="grid grid-cols-4 gap-4">
-            {/* Video Grid */}
-            <div className="col-span-1 space-y-4">
-              <div className="relative w-full aspect-video bg-gray-800 rounded-lg overflow-hidden">
-                <video
-                  ref={userVideoRef}
-                  autoPlay
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-white">
-                  You ({userName})
+          {/* Main content area */}
+          <div className="flex gap-4">
+            {/* Left side - Videos */}
+            <div className="w-1/4 flex flex-col gap-2">
+              {/* Self video */}
+              <div className="relative w-full">
+                <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden scroll-container">
+                  <video
+                    ref={userVideoRef}
+                    autoPlay
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-white">
+                    You
+                  </div>
                 </div>
               </div>
-              {Object.entries(peers).map(
-                ([peerId, { peer, userName: peerUserName }]) => (
-                  <PeerVideo key={peerId} peer={peer} userName={peerUserName} />
-                )
-              )}
+
+              {/* Container for peer videos */}
+              <div id="video-container" className="flex flex-col gap-2 h-[80vh] overflow-y-scroll scroll-container">
+                {Object.entries(peers).map(
+                  ([peerId, { peer, userName: peerUserName }]) => (
+                    <div key={peerId} className="relative w-full">
+                      {/* <PeerVideo peer={peer} userName={peerUserName} /> */}
+                    </div>
+                  )
+                )}
+              </div>
             </div>
 
-            {/* Code Editor Section */}
-            <div className="col-span-3 space-y-4">
+            {/* Right side - Code Editor */}
+            <div className="w-3/4 space-y-4">
               <div className="flex justify-between items-center">
                 <div className="flex gap-4">
                   <LanguageDropdown onSelectChange={handleLanguageChange} />
