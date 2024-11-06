@@ -1,16 +1,16 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import CodeEditor from "@/app/editor/CodeEditor";
 import { languageOptions } from "@/constants/languageOptions";
-import { defineTheme } from "@/lib/defineTheme";
 import LanguageDropdown from "@/app/editor/LanguageDropdown";
+import React, { useEffect, useRef, useState } from "react";
 import ThemeDropdown from "@/app/editor/ThemeDropdown";
 import OutputWindow from "@/app/editor/OutputWindow";
 import CustomInput from "@/app/editor/CustomInput";
-import axios from "axios";
-import Peer from "simple-peer";
+import CodeEditor from "@/app/editor/CodeEditor";
+import { defineTheme } from "@/lib/defineTheme";
 import { Socket, io } from "socket.io-client";
 import "@/app/combined/combined.css";
+import Peer from "simple-peer";
+import axios from "axios";
 
 interface Theme {
   value: string;
@@ -69,7 +69,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [mediaError, setMediaError] = useState<string>("");
   const [streamReady, setStreamReady] = useState(false);
-
   const socketRef = useRef<Socket>();
   const userVideoRef = useRef<HTMLVideoElement>(null);
   const peersRef = useRef<{ [key: string]: PeerConnection }>({});
@@ -83,31 +82,25 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       if (!videoElement) {
         throw new Error("Video element not found");
       }
-
       // Clear any existing stream
       if (videoElement.srcObject) {
         const oldStream = videoElement.srcObject as MediaStream;
         oldStream.getTracks().forEach((track) => track.stop());
       }
-
       videoElement.srcObject = null;
       videoElement.srcObject = stream;
-
       // Ensure video tracks are enabled
       stream.getVideoTracks().forEach((track) => {
         track.enabled = isVideoEnabled;
       });
-
       // Ensure audio tracks are enabled
       stream.getAudioTracks().forEach((track) => {
         track.enabled = isAudioEnabled;
       });
-
       await videoElement.play().catch((playError) => {
         console.error("Error playing video:", playError);
         throw new Error("Failed to play video stream");
       });
-
       setStreamReady(true);
       console.log("Video stream setup successfully");
     } catch (err) {
@@ -119,12 +112,10 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     }
   };
 
-  // Function to initialize media stream
   const initializeMediaStream = async () => {
     try {
       setIsInitializing(true);
       setMediaError("");
-
       console.log("Requesting media permissions...");
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -138,20 +129,16 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
           autoGainControl: true,
         },
       });
-
       console.log("Media stream obtained:", stream);
       console.log("Video tracks:", stream.getVideoTracks());
       console.log("Audio tracks:", stream.getAudioTracks());
-
       // Verify we have both audio and video tracks
       if (stream.getVideoTracks().length === 0) {
         throw new Error("No video track available");
       }
-
       if (stream.getAudioTracks().length === 0) {
         throw new Error("No audio track available");
       }
-
       streamRef.current = stream;
       setMyStream(stream);
       await setupVideoStream(stream, userVideoRef.current);
@@ -171,12 +158,10 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   // Initialize media on component mount
   useEffect(() => {
     initializeMediaStream();
-
     // Initialize theme
     defineTheme("oceanic-next").then(() => {
       setTheme({ value: "oceanic-next", label: "Oceanic Next" });
     });
-
     // Cleanup function
     return () => {
       if (streamRef.current) {
@@ -213,10 +198,8 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
             autoGainControl: true,
           },
         });
-
         streamRef.current = stream;
         setMyStream(stream);
-
         if (userVideoRef.current) {
           userVideoRef.current.srcObject = stream;
         }
@@ -229,14 +212,11 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
         setIsInitializing(false);
       }
     };
-
     initializeMedia();
-
     // Initialize theme
     defineTheme("oceanic-next").then(() => {
       setTheme({ value: "oceanic-next", label: "Oceanic Next" });
     });
-
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
@@ -250,13 +230,11 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       transports: ["websocket"],
       upgrade: false,
     });
-
     socketRef.current.on("receiving_returned_signal", ({ signal, id }) => {
       if (peersRef.current[id]) {
         peersRef.current[id].peer.signal(signal);
       }
     });
-
     socketRef.current.on(
       "user_joined_with_signal",
       ({ signal, callerID, userName: peerUserName }) => {
@@ -270,7 +248,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
         }
       }
     );
-
     socketRef.current.on("user_left", ({ userId }) => {
       if (peersRef.current[userId]) {
         peersRef.current[userId].peer.destroy();
@@ -289,13 +266,10 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       );
       return;
     }
-
     try {
       initializeSocket();
-
       // Ensure video stream is properly set up before creating room
       await setupVideoStream(streamRef.current, userVideoRef.current);
-
       socketRef.current?.emit("create_room", async (newRoomId: string) => {
         setRoomId(newRoomId);
         await joinRoom(newRoomId);
@@ -313,19 +287,15 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       );
       return;
     }
-
     try {
       if (!socketRef.current) {
         initializeSocket();
       }
-
       await setupVideoStream(streamRef.current, userVideoRef.current);
-
       socketRef.current?.emit("join_room", {
         roomId: roomIdToJoin,
         userName,
       });
-
       socketRef.current?.on(
         "user_joined",
         ({ userId, userName: peerUserName }) => {
@@ -343,7 +313,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
           }
         }
       );
-
       socketRef.current?.on(
         "receive_code_change",
         ({ code, cursorPosition }) => {
@@ -351,7 +320,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
           setRemoteCursorPosition(cursorPosition);
         }
       );
-
       setIsJoined(true);
       setRoomId(roomIdToJoin);
     } catch (err) {
@@ -376,7 +344,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
         ],
       },
     });
-
     peer.on("signal", (signal) => {
       socketRef.current?.emit("sending_signal", {
         userToSignal,
@@ -384,13 +351,11 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
         signal,
       });
     });
-
     // Listen for stream events to add video of other peers
     peer.on("stream", (remoteStream) => {
       // Function to attach the remote stream to a video element
       addVideoStream(remoteStream, userToSignal);
     });
-
     return peer;
   };
 
@@ -410,31 +375,26 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
         ],
       },
     });
-
     peer.on("signal", (signal) => {
       socketRef.current?.emit("returning_signal", { signal, callerID });
     });
-
     peer.on("stream", (remoteStream) => {
       addVideoStream(remoteStream, callerID);
     });
-
     peer.signal(incomingSignal);
-
     return peer;
   };
+
   const addVideoStream = (stream: any, userId: any) => {
     const videoElement = document.createElement("video");
     videoElement.srcObject = stream;
     videoElement.autoplay = true;
     videoElement.playsInline = true;
     videoElement.classList.add("peer-video");
-
-    const videoContainer = document.getElementById("video-container"); // Assume an HTML container with this ID exists
+    const videoContainer = document.getElementById("video-container");
     if (videoContainer) {
       videoContainer.appendChild(videoElement);
     }
-
     // Store the reference if needed for cleanup later
     peersRef.current[userId].videoElement = videoElement;
   };
@@ -470,7 +430,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   const executeCode = async () => {
     setIsLoading(true);
     const startTime = Date.now();
-
     try {
       const response = await axios.post(
         "https://emkc.org/api/v2/piston/execute",
@@ -481,10 +440,8 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
           stdin: customInput,
         }
       );
-
       const endTime = Date.now();
       const compilationTime = ((endTime - startTime) / 1000).toFixed(2);
-
       const runData = response.data.run;
       const outputData = {
         stdout: runData.stdout,
@@ -493,7 +450,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
         time: compilationTime,
         memory: "N/A",
       };
-
       setOutputDetails(outputData);
     } catch (error) {
       console.error("Error executing code:", error);
@@ -567,7 +523,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               </button>
             </div>
           )}
-
           <div className="relative w-64 aspect-video bg-gray-800 rounded-lg overflow-hidden mb-4">
             <video
               ref={userVideoRef}
@@ -585,7 +540,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               </div>
             )}
           </div>
-
           <div className="space-y-4">
             <button
               onClick={createRoom}
@@ -594,7 +548,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
             >
               Create New Room
             </button>
-
             <div className="flex gap-2">
               <input
                 type="text"
@@ -614,129 +567,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
           </div>
         </div>
       ) : (
-        // <div className="container mx-auto p-4">
-        //   <div className="mb-4 flex justify-between items-center">
-        //     <div className="text-white">Room ID: {roomId}</div>
-        //     <div className="flex gap-2">
-        //       <button
-        //         onClick={toggleVideo}
-        //         className={`px-4 py-2 rounded-lg ${
-        //           isVideoEnabled ? "bg-blue-500" : "bg-red-500"
-        //         } text-white`}
-        //       >
-        //         {isVideoEnabled ? "Turn Off Video" : "Turn On Video"}
-        //       </button>
-        //       <button
-        //         onClick={toggleAudio}
-        //         className={`px-4 py-2 rounded-lg ${
-        //           isAudioEnabled ? "bg-blue-500" : "bg-red-500"
-        //         } text-white`}
-        //       >
-        //         {isAudioEnabled ? "Turn Off Audio" : "Turn On Audio"}
-        //       </button>
-        //       <button
-        //         onClick={leaveRoom}
-        //         className="px-4 py-2 rounded-lg bg-red-500 text-white"
-        //       >
-        //         Leave Room
-        //       </button>
-        //     </div>
-        //   </div>
-        //   <div id="video-container" className="m-1 inline-block gap-4">
-        //     <video
-        //       ref={userVideoRef}
-        //       autoPlay
-        //       playsInline
-        //       muted
-        //       className="peer-video object-cover"
-        //     />
-        //     {Object.entries(peers).map(([peerId, { userName }]) => (
-        //       <div key={peerId} id={`video-${peerId}`} className="peer-video">
-        //         {/* <span className="text-white text-lg">
-        //           {userName}
-        //           {peerId}
-        //         </span> */}
-        //       </div>
-        //     ))}
-        //   </div>
-        //   <div className="relative inline-block m-1">
-        //     <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden">
-        //       <video
-        //         ref={userVideoRef}
-        //         autoPlay
-        //         muted
-        //         playsInline
-        //         className="w-full h-full object-cover"
-        //       />
-        //       <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-white">
-        //         You
-        //       </div>
-        //     </div>
-        //     {/* {Object.entries(peers).map(
-        //         ([peerId, { peer, userName: peerUserName }]) => (
-        //           <PeerVideo key={peerId} peer={peer} userName={peerUserName} />
-        //         )
-        //       )} */}
-        //   </div>
-        //   <div className="grid grid-cols-4 gap-4">
-        //     {/* Video Grid */}
-
-        //     {/* Code Editor Section */}
-        //     <div className="col-span-3 space-y-4">
-        //       <div className="flex justify-between items-center">
-        //         <div className="flex gap-4">
-        //           <LanguageDropdown onSelectChange={handleLanguageChange} />
-        //           <ThemeDropdown
-        //             handleThemeChange={handleThemeChange}
-        //             theme={theme}
-        //           />
-        //         </div>
-        //         <div className="flex items-center gap-2">
-        //           <label className="text-white">Font Size:</label>
-        //           <input
-        //             type="number"
-        //             value={fontSize}
-        //             onChange={(e) => setFontSize(Number(e.target.value))}
-        //             className="w-16 px-2 py-1 rounded"
-        //             min="10"
-        //             max="40"
-        //           />
-        //         </div>
-        //       </div>
-
-        //       <div className="grid grid-cols-3 gap-4">
-        //         <div className="col-span-2">
-        //           <CodeEditor
-        //             onCodeChange={onCodeChange}
-        //             fontSize={fontSize}
-        //             language={language.value}
-        //             theme={theme.value}
-        //             code={code}
-        //             remoteCursorPosition={remoteCursorPosition}
-        //             onCursorPositionChange={function (position: {
-        //               lineNumber: number;
-        //               column: number;
-        //             }): void {
-        //               throw new Error("Function not implemented.");
-        //             }}
-        //           />
-        //         </div>
-        //         <div className="col-span-1 space-y-4">
-        //           <button
-        //             className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
-        //             disabled={!code || isLoading}
-        //             onClick={executeCode}
-        //           >
-        //             {isLoading ? "Running..." : "Run Code"}
-        //           </button>
-        //           <OutputWindow outputDetails={outputDetails} />
-        //           <CustomInput
-        //             customInput={customInput}
-        //             setCustomInput={setCustomInput}
-        //           />
-        //         </div>
-        //       </div>
-        //     </div>
         <div className="container mx-auto p-4">
           {/* Top bar with room info and controls */}
           <div className="mb-4 flex justify-between items-center">
@@ -766,7 +596,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               </button>
             </div>
           </div>
-
           {/* Main content area */}
           <div className="flex gap-4">
             {/* Left side - Videos */}
@@ -786,9 +615,11 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                   </div>
                 </div>
               </div>
-
               {/* Container for peer videos */}
-              <div id="video-container" className="flex flex-col gap-2 h-[80vh] overflow-y-scroll scroll-container">
+              <div
+                id="video-container"
+                className="flex flex-col gap-2 h-[80vh] overflow-y-scroll scroll-container"
+              >
                 {Object.entries(peers).map(
                   ([peerId, { peer, userName: peerUserName }]) => (
                     <div key={peerId} className="relative w-full">
@@ -798,7 +629,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 )}
               </div>
             </div>
-
             {/* Right side - Code Editor */}
             <div className="w-3/4 space-y-4">
               <div className="flex justify-between items-center">
@@ -821,7 +651,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                   />
                 </div>
               </div>
-
               <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">
                   <CodeEditor
@@ -867,30 +696,23 @@ interface PeerVideoProps {
   userName: string;
 }
 
-// PeerVideo component remains the same
 const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
   const ref = useRef<HTMLVideoElement>(null);
-
   useEffect(() => {
     if (!peer) return;
-
     const handleStream = (stream: MediaStream) => {
       if (ref.current) {
         ref.current.srcObject = stream;
       }
     };
-
     peer.on("stream", handleStream);
-
     peer.on("error", (err: string) => {
       console.error("Peer connection error:", err);
     });
-
     return () => {
       peer.off("stream", handleStream);
     };
   }, [peer]);
-
   return (
     <div className="relative w-full aspect-video bg-gray-800 rounded-lg overflow-hidden">
       <video

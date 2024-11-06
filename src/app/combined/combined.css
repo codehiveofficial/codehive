@@ -1,24 +1,17 @@
-/* Container with scrollbar */
 .scroll-container {
-  /* Add scrolling */
   overflow-y: auto;
-
-  /* Optional: Set max height to enable scrolling */
   max-height: 400px;
 }
 
-/* Scrollbar track */
 .scroll-container::-webkit-scrollbar {
   width: 8px;
 }
 
-/* Scrollbar track background */
 .scroll-container::-webkit-scrollbar-track {
   background: #808080;
   border-radius: 4px;
 }
 
-/* Scrollbar handle */
 .scroll-container::-webkit-scrollbar-thumb {
   background: white;
   border-radius: 4px;
