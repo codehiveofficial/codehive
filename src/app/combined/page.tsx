@@ -142,6 +142,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       streamRef.current = stream;
       setMyStream(stream);
       await setupVideoStream(stream, userVideoRef.current);
+      setMediaError("");
     } catch (err) {
       console.error("Error in initializeMediaStream:", err);
       setMediaError(
@@ -182,47 +183,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     }
   }, [myStream]);
 
-  // Initialize media stream on component mount
-  useEffect(() => {
-    const initializeMedia = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            width: { ideal: 320 },
-            height: { ideal: 240 },
-            frameRate: { ideal: 15, max: 20 },
-          },
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-          },
-        });
-        streamRef.current = stream;
-        setMyStream(stream);
-        if (userVideoRef.current) {
-          userVideoRef.current.srcObject = stream;
-        }
-      } catch (err) {
-        console.error("Error accessing media devices:", err);
-        setMediaError(
-          "Failed to access camera and microphone. Please ensure you have granted the necessary permissions."
-        );
-      } finally {
-        setIsInitializing(false);
-      }
-    };
-    initializeMedia();
-    // Initialize theme
-    defineTheme("oceanic-next").then(() => {
-      setTheme({ value: "oceanic-next", label: "Oceanic Next" });
-    });
-    return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, []);
+
 
   // Socket initialization moved to room creation/joining
   const initializeSocket = () => {
@@ -269,11 +230,12 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     try {
       initializeSocket();
       // Ensure video stream is properly set up before creating room
-      await setupVideoStream(streamRef.current, userVideoRef.current);
+      
       socketRef.current?.emit("create_room", async (newRoomId: string) => {
         setRoomId(newRoomId);
         await joinRoom(newRoomId);
       });
+      await initializeMediaStream();
     } catch (err) {
       console.error("Error creating room:", err);
       setMediaError("Failed to create room. Please try again.");
@@ -291,7 +253,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       if (!socketRef.current) {
         initializeSocket();
       }
-      await setupVideoStream(streamRef.current, userVideoRef.current);
+      
       socketRef.current?.emit("join_room", {
         roomId: roomIdToJoin,
         userName,
@@ -322,6 +284,54 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       );
       setIsJoined(true);
       setRoomId(roomIdToJoin);
+    } catch (err) {
+      console.error("Error joining room:", err);
+      setMediaError("Failed to join room. Please try again.");
+    }
+  };
+  const joinRoomClicked = async (roomIdToJoin: string) => {
+    if (!streamRef.current) {
+      setMediaError(
+        "Please ensure camera and microphone access is granted before joining a room."
+      );
+      return;
+    }
+    try {
+      if (!socketRef.current) {
+        initializeSocket();
+      }
+      
+      socketRef.current?.emit("join_room", {
+        roomId: roomIdToJoin,
+        userName,
+      });
+      socketRef.current?.on(
+        "user_joined",
+        ({ userId, userName: peerUserName }) => {
+          if (streamRef.current) {
+            const peer = createPeer(
+              userId,
+              socketRef.current?.id || "",
+              streamRef.current
+            );
+            peersRef.current[userId] = { peer, userName: peerUserName };
+            setPeers((currentPeers) => ({
+              ...currentPeers,
+              [userId]: { peer, userName: peerUserName },
+            }));
+          }
+        }
+      );
+      socketRef.current?.on(
+        "receive_code_change",
+        ({ code, cursorPosition }) => {
+          setCode(code);
+          setRemoteCursorPosition(cursorPosition);
+        }
+      );
+      setIsJoined(true);
+      setRoomId(roomIdToJoin);
+      await initializeMediaStream();
     } catch (err) {
       console.error("Error joining room:", err);
       setMediaError("Failed to join room. Please try again.");
@@ -557,7 +567,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 className="border p-2 rounded-lg"
               />
               <button
-                onClick={() => joinRoom(roomId)}
+                onClick={() => joinRoomClicked(roomId)}
                 disabled={!streamReady}
                 className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
