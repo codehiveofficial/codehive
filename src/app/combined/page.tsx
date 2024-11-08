@@ -11,6 +11,7 @@ import { Socket, io } from "socket.io-client";
 import "@/app/combined/combined.css";
 import Peer from "simple-peer";
 import axios from "axios";
+import ChatModal from "./ChatModal";
 
 interface Theme {
   value: string;
@@ -691,10 +692,12 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     customInput={customInput}
                     setCustomInput={setCustomInput}
                   />
+                  
                 </div>
               </div>
             </div>
           </div>
+                    {socketRef.current && <ChatModal socket={socketRef.current} userName={userName} />}
         </div>
       )}
     </div>
