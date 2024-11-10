@@ -12,6 +12,7 @@ import "@/app/combined/combined.css";
 import Peer from "simple-peer";
 import axios from "axios";
 import ChatModal from "./ChatModal";
+import { downloadCodeAsImage, downloadCodeAsText } from "@/helpers/downloadCode";
 
 interface Theme {
   value: string;
@@ -602,6 +603,16 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 className="px-4 py-2 rounded-lg bg-red-500 text-white"
               >
                 Leave Room
+              </button>
+              <button
+              onClick={downloadCodeAsText.bind(null, code)}
+               className="px-4 py-2 rounded-lg bg-blue-500 text-white">
+                Download as TXT
+              </button>
+              <button
+              onClick={downloadCodeAsImage.bind(null, code, 'code.png')}
+               className="px-4 py-2 rounded-lg bg-blue-500 text-white">
+                Download as PNG
               </button>
             </div>
           </div>
