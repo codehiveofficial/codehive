@@ -184,8 +184,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     }
   }, [myStream]);
 
-
-
   // Socket initialization moved to room creation/joining
   const initializeSocket = () => {
     socketRef.current = io("http://localhost:5000", {
@@ -231,7 +229,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     try {
       initializeSocket();
       // Ensure video stream is properly set up before creating room
-      
+
       socketRef.current?.emit("create_room", async (newRoomId: string) => {
         setRoomId(newRoomId);
         await joinRoom(newRoomId);
@@ -254,7 +252,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       if (!socketRef.current) {
         initializeSocket();
       }
-      
+
       socketRef.current?.emit("join_room", {
         roomId: roomIdToJoin,
         userName,
@@ -301,7 +299,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       if (!socketRef.current) {
         initializeSocket();
       }
-      
+
       socketRef.current?.emit("join_room", {
         roomId: roomIdToJoin,
         userName,
@@ -692,12 +690,13 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     customInput={customInput}
                     setCustomInput={setCustomInput}
                   />
-                  
                 </div>
               </div>
             </div>
           </div>
-                    {socketRef.current && <ChatModal socket={socketRef.current} userName={userName} />}
+          {socketRef.current && (
+            <ChatModal socket={socketRef.current} userName={userName} />
+          )}
         </div>
       )}
     </div>
