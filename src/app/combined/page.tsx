@@ -12,7 +12,10 @@ import "@/app/combined/combined.css";
 import Peer from "simple-peer";
 import axios from "axios";
 import ChatModal from "./ChatModal";
-import { downloadCodeAsImage, downloadCodeAsText } from "@/helpers/downloadCode";
+import {
+  downloadCodeAsImage,
+  downloadCodeAsText,
+} from "@/helpers/downloadCode";
 
 interface Theme {
   value: string;
@@ -63,6 +66,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     column: number;
   } | null>(null);
   const [roomId, setRoomId] = useState("");
+  const [name, setName] = useState("");
   const [peers, setPeers] = useState<{ [key: string]: PeerConnection }>({});
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -227,6 +231,10 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       );
       return;
     }
+    if(!name) {
+      alert("Please enter your name");
+      return;
+    }
     try {
       initializeSocket();
       // Ensure video stream is properly set up before creating room
@@ -247,6 +255,10 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       setMediaError(
         "Please ensure camera and microphone access is granted before joining a room."
       );
+      return;
+    }
+    if(!name) {
+      alert("Please enter your name");
       return;
     }
     try {
@@ -294,6 +306,10 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       setMediaError(
         "Please ensure camera and microphone access is granted before joining a room."
       );
+      return;
+    }
+    if(!name) {
+      alert("Please enter your name");
       return;
     }
     try {
@@ -551,6 +567,13 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
             )}
           </div>
           <div className="space-y-4">
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              className="border w-full p-2 rounded-lg"
+            />
             <button
               onClick={createRoom}
               disabled={!streamReady}
@@ -569,7 +592,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               <button
                 onClick={() => joinRoomClicked(roomId)}
                 disabled={!streamReady}
-                className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-green-500 text-white w-full px-6 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Join Room
               </button>
@@ -605,15 +628,40 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 Leave Room
               </button>
               <button
-              onClick={downloadCodeAsText.bind(null, code)}
-               className="px-4 py-2 rounded-lg bg-blue-500 text-white">
+                onClick={downloadCodeAsText.bind(null, code)}
+                className="px-4 py-2 rounded-lg bg-blue-500 text-white"
+              >
                 Download as TXT
               </button>
               <button
-              onClick={downloadCodeAsImage.bind(null, code, 'code.png')}
-               className="px-4 py-2 rounded-lg bg-blue-500 text-white">
+                onClick={downloadCodeAsImage.bind(null, code, "code.png")}
+                className="px-4 py-2 rounded-lg bg-blue-500 text-white"
+              >
                 Download as PNG
               </button>
+
+              {/* You can open the modal using document.getElementById('ID').showModal() method */}
+              <button
+                className="btn px-4 py-2 rounded-lg bg-blue-500 text-white"
+                onClick={() =>
+                  document.getElementById("my_modal_3")?.showModal()
+                }
+              >
+                Chat
+              </button>
+              <dialog id="my_modal_3" className="modal">
+                <div className="modal-box">
+                  <form method="dialog">
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="btn btn-sm text-white btn-circle btn-ghost absolute right-2 top-2">
+                      ✕
+                    </button>
+                  </form>
+                  {socketRef.current && (
+                    <ChatModal socket={socketRef.current} userName={name} />
+                  )}
+                </div>
+              </dialog>
             </div>
           </div>
           {/* Main content area */}
@@ -705,9 +753,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               </div>
             </div>
           </div>
-          {socketRef.current && (
-            <ChatModal socket={socketRef.current} userName={userName} />
-          )}
         </div>
       )}
     </div>

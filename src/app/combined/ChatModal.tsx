@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
+import "@/app/combined/combined.css";
 
 interface ChatMessage {
   userId: string;
@@ -39,8 +40,8 @@ const ChatModal: React.FC<ChatModalProps> = ({ socket, userName }) => {
   };
 
   return (
-    <div className="fixed z-50 bottom-0 left-0 right-0 bg-gray-900 text-white p-4 shadow-lg">
-      <div className="h-48 overflow-y-scroll mb-2">
+    <div className="z-50 bg-gray-900 text-white p-4 shadow-lg">
+      <div className="h-[80vh] w-[70vw] overflow-y-scroll mb-2 scroll-container">
         {messages.map((message, index) => (
           <div key={index} className="mb-2">
             <span className="font-bold">{message.userName}:</span> {message.message}
