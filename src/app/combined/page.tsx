@@ -216,6 +216,10 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     socketRef.current.on("user_left", ({ userId }) => {
       if (peersRef.current[userId]) {
         peersRef.current[userId].peer.destroy();
+        const videoElement = peersRef.current[userId].videoElement;
+        if (videoElement && videoElement.parentNode) {
+          videoElement.parentNode.removeChild(videoElement);
+        }
         const newPeers = { ...peersRef.current };
         delete newPeers[userId];
         peersRef.current = newPeers;
@@ -517,7 +521,12 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   };
 
   const leaveRoom = () => {
-    Object.values(peersRef.current).forEach(({ peer }) => peer.destroy());
+    Object.values(peersRef.current).forEach(({ peer, videoElement }) => {
+      peer.destroy();
+      if (videoElement && videoElement.parentNode) {
+        videoElement.parentNode.removeChild(videoElement);
+      }
+    });
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
     }
