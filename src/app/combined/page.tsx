@@ -601,6 +601,9 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
         </div>
       ) : (
         <div className="container mx-auto p-4">
+          {socketRef.current && (
+            <ChatModal socket={socketRef.current} userName={name} />
+          )}
           {/* Top bar with room info and controls */}
           <div className="mb-4 flex justify-between items-center">
             <div className="text-white">Room ID: {roomId}</div>
@@ -641,18 +644,18 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               </button>
 
               {/* You can open the modal using document.getElementById('ID').showModal() method */}
-              <button
+              {/* <button
                 className="btn px-4 py-2 rounded-lg bg-blue-500 text-white"
                 onClick={() =>
                   document.getElementById("my_modal_3")?.showModal()
                 }
               >
                 Chat
-              </button>
-              <dialog id="my_modal_3" className="modal">
+              </button> */}
+              {/* <dialog id="my_modal_3" className="modal">
                 <div className="modal-box">
                   <form method="dialog">
-                    {/* if there is a button in form, it will close the modal */}
+                    {/* if there is a button in form, it will close the modal 
                     <button className="btn btn-sm text-white btn-circle btn-ghost absolute right-2 top-2">
                       ✕
                     </button>
@@ -661,7 +664,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     <ChatModal socket={socketRef.current} userName={name} />
                   )}
                 </div>
-              </dialog>
+              </dialog> */}
             </div>
           </div>
           {/* Main content area */}
