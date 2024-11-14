@@ -235,7 +235,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       );
       return;
     }
-    if(!name) {
+    if (!name) {
       alert("Please enter your name");
       return;
     }
@@ -261,7 +261,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       );
       return;
     }
-    if(!name) {
+    if (!name) {
       alert("Please enter your name");
       return;
     }
@@ -312,7 +312,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       );
       return;
     }
-    if(!name) {
+    if (!name) {
       alert("Please enter your name");
       return;
     }
@@ -651,7 +651,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               >
                 Download as PNG
               </button>
-
             </div>
           </div>
           {/* Main content area */}
