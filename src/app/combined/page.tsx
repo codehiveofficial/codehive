@@ -652,28 +652,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 Download as PNG
               </button>
 
-              {/* You can open the modal using document.getElementById('ID').showModal() method */}
-              {/* <button
-                className="btn px-4 py-2 rounded-lg bg-blue-500 text-white"
-                onClick={() =>
-                  document.getElementById("my_modal_3")?.showModal()
-                }
-              >
-                Chat
-              </button> */}
-              {/* <dialog id="my_modal_3" className="modal">
-                <div className="modal-box">
-                  <form method="dialog">
-                    {/* if there is a button in form, it will close the modal 
-                    <button className="btn btn-sm text-white btn-circle btn-ghost absolute right-2 top-2">
-                      ✕
-                    </button>
-                  </form>
-                  {socketRef.current && (
-                    <ChatModal socket={socketRef.current} userName={name} />
-                  )}
-                </div>
-              </dialog> */}
             </div>
           </div>
           {/* Main content area */}
