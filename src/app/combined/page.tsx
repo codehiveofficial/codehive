@@ -535,6 +535,8 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     setPeers({});
     setRoomId("");
     setMyStream(null);
+    setMediaError("");
+    window.location.reload();
   };
 
   return (
