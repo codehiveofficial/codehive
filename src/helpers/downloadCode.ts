@@ -1,11 +1,20 @@
 import html2canvas from 'html2canvas';
 
-export const downloadCodeAsText = (code:any) => {
+export const downloadCodeAsFile = (code:any, language: any) => {
+  const extensionDictionary: { [key: string]: string } = {
+    'javascript': 'js',
+    'c': 'c',
+    'cpp': 'cpp',
+    'java': 'java',
+    'python': 'py',
+    'typescript': 'ts',
+  }
+  console.log(language);
   const blob = new Blob([code], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'code.txt';
+  a.download = 'codehive.' + extensionDictionary[language];
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

@@ -13,8 +13,8 @@ import Peer from "simple-peer";
 import axios from "axios";
 import ChatModal from "./ChatModal";
 import {
-  downloadCodeAsImage,
   downloadCodeAsFile,
+  downloadCodeAsImage,
 } from "@/helpers/downloadCode";
 
 interface Theme {
@@ -643,13 +643,13 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 onClick={downloadCodeAsFile.bind(null, code, language.value)}
                 className="px-4 py-2 rounded-lg bg-blue-500 text-white"
               >
-                Download as TXT
+                Download File
               </button>
               <button
                 onClick={downloadCodeAsImage.bind(null, code, "codehive_snippet.png")}
                 className="px-4 py-2 rounded-lg bg-blue-500 text-white"
               >
-                Download as PNG
+                Download Snippet (PNG)
               </button>
             </div>
           </div>
