@@ -14,7 +14,7 @@ import axios from "axios";
 import ChatModal from "./ChatModal";
 import {
   downloadCodeAsImage,
-  downloadCodeAsText,
+  downloadCodeAsFile,
 } from "@/helpers/downloadCode";
 
 interface Theme {
@@ -640,13 +640,13 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 Leave Room
               </button>
               <button
-                onClick={downloadCodeAsText.bind(null, code)}
+                onClick={downloadCodeAsFile.bind(null, code, language.value)}
                 className="px-4 py-2 rounded-lg bg-blue-500 text-white"
               >
                 Download as TXT
               </button>
               <button
-                onClick={downloadCodeAsImage.bind(null, code, "code.png")}
+                onClick={downloadCodeAsImage.bind(null, code, "codehive_snippet.png")}
                 className="px-4 py-2 rounded-lg bg-blue-500 text-white"
               >
                 Download as PNG
