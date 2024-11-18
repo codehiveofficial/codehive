@@ -17,6 +17,8 @@ import {
   downloadCodeAsImage,
 } from "@/helpers/downloadCode";
 
+import { FaClipboard, FaCheck } from "react-icons/fa";
+
 interface Theme {
   value: string;
   label: string;
@@ -79,6 +81,8 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   const userVideoRef = useRef<HTMLVideoElement>(null);
   const peersRef = useRef<{ [key: string]: PeerConnection }>({});
   const streamRef = useRef<MediaStream>();
+
+  const [copied, setCopied] = useState(false);
 
   const setupVideoStream = async (
     stream: MediaStream,
@@ -539,6 +543,21 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     window.location.reload();
   };
 
+  const copyToClipboard = (
+    text: string,
+    setCopied: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500); 
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
+
   return (
     <div className="min-h-screen bg-gray-900">
       {isInitializing ? (
@@ -617,7 +636,24 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
           )}
           {/* Top bar with room info and controls */}
           <div className="mb-4 flex justify-between items-center">
-            <div className="text-white">Room ID: {roomId}</div>
+            <div className="flex items-center space-x-2 text-white bg-gray-800 px-4 py-2 rounded-lg shadow-lg">
+              <span className="font-medium">Room ID:</span>
+              <span className="text-blue-400 font-semibold">{roomId}</span>
+              <span
+                onClick={() => copyToClipboard(roomId, setCopied)}
+                className={`ml-2 p-2 rounded-full cursor-pointer transition ${
+                  copied ? "bg-green-500" : "bg-blue-500 hover:bg-blue-600"
+                }`}
+                title={copied ? "Copied!" : "Copy Room ID"}
+              >
+                {copied ? (
+                  <FaCheck className="text-white" />
+                ) : (
+                  <FaClipboard className="text-white" />
+                )}
+              </span>
+            </div>
+
             <div className="flex gap-2">
               <button
                 onClick={toggleVideo}
@@ -648,7 +684,11 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 Download File
               </button>
               <button
-                onClick={downloadCodeAsImage.bind(null, code, "codehive_snippet.png")}
+                onClick={downloadCodeAsImage.bind(
+                  null,
+                  code,
+                  "codehive_snippet.png"
+                )}
                 className="px-4 py-2 rounded-lg bg-blue-500 text-white"
               >
                 Download Snippet (PNG)
