@@ -424,7 +424,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     videoElement.srcObject = stream;
     videoElement.autoplay = true;
     videoElement.playsInline = true;
-    videoElement.classList.add("peer-video");
+    videoElement.classList.add("peer-video", "rounded-lg", "aspect-video", "bg-gray-800", "overflow-hidden", "scroll-container", "w-full", "object-cover");
     const videoContainer = document.getElementById("video-container");
     if (videoContainer) {
       videoContainer.appendChild(videoElement);
