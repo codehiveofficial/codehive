@@ -11,7 +11,8 @@ import { Socket, io } from "socket.io-client";
 import "@/app/combined/combined.css";
 import Peer from "simple-peer";
 import axios from "axios";
-import ChatModal from "./ChatModal";
+import ChatModal from "../ChatModal";
+import { useParams } from "next/navigation";
 import {
   downloadCodeAsFile,
   downloadCodeAsImage,
@@ -55,6 +56,11 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   const [code, setCode] = useState(
     defaultCodeTemplates[languageOptions[0].value]
   );
+  const params = useParams();
+  console.log("Khagesh sharma");
+  useEffect(() => {
+    console.log(params);
+  }, []);
   const [customInput, setCustomInput] = useState("");
   const [outputDetails, setOutputDetails] = useState<any>(null);
   const [theme, setTheme] = useState<Theme>({
@@ -68,7 +74,8 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     lineNumber: number;
     column: number;
   } | null>(null);
-  const [roomId, setRoomId] = useState("");
+  const meetId = params.meetId;
+  const [roomId, setRoomId] = useState(meetId || "");
   const [name, setName] = useState("");
   const [peers, setPeers] = useState<{ [key: string]: PeerConnection }>({});
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -426,7 +433,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     videoElement.srcObject = stream;
     videoElement.autoplay = true;
     videoElement.playsInline = true;
-    videoElement.classList.add("peer-video", "rounded-lg", "aspect-video", "bg-gray-800", "overflow-hidden", "scroll-container", "w-full", "object-cover");
+    videoElement.classList.add("peer-video");
     const videoContainer = document.getElementById("video-container");
     if (videoContainer) {
       videoContainer.appendChild(videoElement);
@@ -565,7 +572,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     setMeetLinkCopied: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     navigator.clipboard
-      .writeText("http://localhost:3000/combined/" + text)
+      .writeText("http://localhost:3000/combined?id=" + text)
       .then(() => {
         setMeetLinkCopied(true);
         setTimeout(() => setMeetLinkCopied(false), 2500);
