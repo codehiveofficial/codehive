@@ -19,6 +19,7 @@ import {
 
 import { FaClipboard, FaCheck } from "react-icons/fa";
 import { FaLink } from "react-icons/fa6";
+import GenieModal from "./GenieModal";
 
 interface Theme {
   value: string;
@@ -85,6 +86,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   const [meetlinkcopied, setMeetLinkCopied] = useState(false);
 
   const [copied, setCopied] = useState(false);
+  const [isGenieModalOpen, setIsGenieModalOpen] = useState(false);
 
   const setupVideoStream = async (
     stream: MediaStream,
@@ -575,6 +577,11 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       });
   };
 
+  const toggleGenieModal = () => {
+    setIsGenieModalOpen(!isGenieModalOpen);
+  }
+
+
   return (
     <div className="min-h-screen bg-gray-900">
       {isInitializing ? (
@@ -769,7 +776,14 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     handleThemeChange={handleThemeChange}
                     theme={theme}
                   />
+                  <button
+                    onClick={toggleGenieModal}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    Generate with Genie
+                  </button>
                 </div>
+                {isGenieModalOpen && <GenieModal onClose={toggleGenieModal} />}
                 <div className="flex items-center gap-2">
                   <label className="text-white">Font Size:</label>
                   <input
