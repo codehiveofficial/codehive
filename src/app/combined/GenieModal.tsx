@@ -14,7 +14,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
 
   const typewriterEffect = async (text: string) => {
     for (let i = 0; i < text.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 3)); 
+      await new Promise((resolve) => setTimeout(resolve, 3));
       setResponse((prev) => prev + text[i]);
     }
   };
@@ -25,8 +25,9 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
     setResponse("");
 
     try {
-      const AUTH_SECRET = process.env.AUTH_SECRET;
-      const CODEHIVE_GENIE_API_URL = process.env.CODEHIVE_GENIE_API_URL;
+      const AUTH_SECRET = process.env.NEXT_PUBLIC_AUTH_SECRET;
+      const CODEHIVE_GENIE_API_URL = process.env.NEXT_PUBLIC_CODEHIVE_GENIE_API_URL;
+      console.log(AUTH_SECRET, CODEHIVE_GENIE_API_URL);
       const response = await fetch(CODEHIVE_GENIE_API_URL!, {
         method: "POST",
         headers: {
@@ -45,7 +46,6 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder("utf-8");
-
 
       while (true) {
         const { value, done } = await reader!.read();
@@ -73,11 +73,11 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black opacity-70"></div>
 
-      
       <div className="relative bg-white rounded-lg shadow-xl p-8 w-[90%] max-w-4xl h-[80vh] overflow-hidden">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">CodeHive Genie</h2>
+        <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
+          CodeHive Genie
+        </h2>
 
-        
         <textarea
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -85,7 +85,6 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
           className="w-full h-28 p-4 border border-gray-300 rounded-lg mb-6 text-gray-700 text-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
         ></textarea>
 
-        
         <div className="flex justify-center mb-6">
           <button
             onClick={handleQuerySubmit}
@@ -100,17 +99,19 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
           </button>
         </div>
 
-        
-        {error && <p className="text-red-500 mb-6 text-center text-lg">{error}</p>}
+        {error && (
+          <p className="text-red-500 mb-6 text-center text-lg">{error}</p>
+        )}
 
-        
-        <div ref={responseRef} className="p-6 bg-gray-100 rounded-lg overflow-y-auto h-[50%] border border-gray-300">
+        <div
+          ref={responseRef}
+          className="p-6 bg-gray-100 rounded-lg overflow-y-auto h-[50%] border border-gray-300"
+        >
           <pre className="whitespace-pre-wrap text-gray-800 text-lg font-mono">
             {response || "Response will appear here..."}
           </pre>
         </div>
 
-        
         <div className="flex justify-center mt-6">
           <button
             onClick={onClose}
