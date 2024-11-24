@@ -138,9 +138,9 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" onClick={onClose} />
 
       
-      <div className="relative w-full max-w-5xl mx-4 h-[90vh] md:h-[85vh] bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800">
+      <div className="relative w-full max-w-5xl mx-4 h-[90vh] md:h-[85vh] bg-gradient-to-b from-white to-gray-50  rounded-2xl shadow-2xl overflow-hidden border border-gray-200 ">
         
-        <div className="absolute top-0 left-0 right-0 px-6 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+        <div className="absolute top-0 left-0 right-0 px-6 py-4 bg-white/80  backdrop-blur-md border-b border-gray-200 ">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="w-6 h-6 text-blue-500" />
@@ -150,7 +150,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 rounded-full hover:bg-gray-100  transition-colors"
               aria-label="Close modal"
             >
               <X className="w-5 h-5 text-gray-500" />
@@ -163,7 +163,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
           
           <div
             ref={responseRef}
-            className="min-h-[200px] max-h-[50vh] mb-6 p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-y-auto"
+            className="min-h-[200px] max-h-[50vh] mb-6 p-6 bg-white  rounded-xl border border-gray-200  shadow-sm overflow-y-auto"
           >
             {response ? (
               <ReactMarkdown
@@ -186,21 +186,21 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
 
           
           {error && (
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-              <p className="text-red-600 dark:text-red-400 text-center">{error}</p>
+            <div className="mb-6 p-4 bg-red-50  border border-red-200  rounded-xl">
+              <p className="text-red-600  text-center">{error}</p>
             </div>
           )}
         </div>
 
         {/* Input Area */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-800">
+        <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/80  backdrop-blur-md border-t border-gray-200 ">
           <div className="flex flex-col md:flex-row gap-4">
             <textarea
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ask me anything about coding..."
-              className="flex-1 p-4 h-24 md:h-16 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl 
-              text-gray-700 dark:text-gray-200 text-base md:text-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 
+              className="flex-1 p-4 h-24 md:h-16 bg-white  border border-gray-200  rounded-xl 
+              text-gray-700  text-base md:text-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 
               placeholder:text-gray-400 transition-all duration-200"
             />
             <button
