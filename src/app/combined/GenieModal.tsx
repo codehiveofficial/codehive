@@ -77,7 +77,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" onClick={onClose} />
 
-      {/* Modal Container */}
+      
       <div className="relative w-full max-w-5xl mx-4 h-[90vh] md:h-[85vh] bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800">
         {/* Header */}
         <div className="absolute top-0 left-0 right-0 px-6 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
@@ -98,9 +98,9 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
           </div>
         </div>
 
-        {/* Content Container */}
+        
         <div className="h-full pt-20 pb-24 px-6 overflow-y-auto">
-          {/* Response Area */}
+          
           <div
             ref={responseRef}
             className="min-h-[200px] max-h-[50vh] mb-6 p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-y-auto"
@@ -144,7 +144,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
           )}
         </div>
 
-        {/* Input Area */}
+        
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-800">
           <div className="flex flex-col md:flex-row gap-4">
             <textarea
