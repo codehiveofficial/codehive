@@ -1,6 +1,8 @@
-"use client";
 import React, { useState, useRef, useEffect } from "react";
-import { Loader2, Sparkles, Send, X, ChevronDown } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Loader2, Sparkles, Send, X } from "lucide-react";
 
 interface GenieModalProps {
   onClose: () => void;
@@ -14,9 +16,10 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
   const responseRef = useRef<HTMLDivElement>(null);
 
   const typewriterEffect = async (text: string) => {
-    for (let i = 0; i < text.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 2));
-      setResponse((prev) => prev + text[i]);
+    const chunkSize = 5; // Number of characters to append at once
+    for (let i = 0; i < text.length; i += chunkSize) {
+      await new Promise((resolve) => setTimeout(resolve, 1));
+      setResponse((prev) => prev + text.slice(i, i + chunkSize));
     }
   };
 
@@ -63,7 +66,6 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
     }
   };
 
-  // Ensure the response container scrolls to the bottom
   useEffect(() => {
     if (responseRef.current) {
       responseRef.current.scrollTop = responseRef.current.scrollHeight;
@@ -103,13 +105,35 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
             ref={responseRef}
             className="min-h-[200px] max-h-[50vh] mb-6 p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-y-auto"
           >
-            <pre className="whitespace-pre-wrap text-gray-800 dark:text-gray-200 text-sm md:text-base font-mono">
-              {response || (
-                <span className="text-gray-400 font-sans">
-                  Ask me anything about coding. I'm here to help! ✨
-                </span>
-              )}
-            </pre>
+            {response ? (
+              <ReactMarkdown
+                components={{
+                  code({ inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || "");
+                    return !inline && match ? (
+                      <SyntaxHighlighter
+                        style={materialDark}
+                        language={match[1]}
+                        PreTag="div"
+                        {...props}
+                      >
+                        {String(children).replace(/\n$/, "")}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    );
+                  },
+                }}
+              >
+                {response}
+              </ReactMarkdown>
+            ) : (
+              <span className="text-gray-400 font-sans">
+                Ask me anything about coding. I'm here to help! ✨
+              </span>
+            )}
           </div>
 
           {/* Error Message */}
