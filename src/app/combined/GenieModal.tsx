@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
+import { Loader2, Sparkles, Send, X, ChevronDown } from "lucide-react";
 
 interface GenieModalProps {
   onClose: () => void;
@@ -14,7 +15,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
 
   const typewriterEffect = async (text: string) => {
     for (let i = 0; i < text.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 3));
+      await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate typing delay
       setResponse((prev) => prev + text[i]);
     }
   };
@@ -27,7 +28,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
     try {
       const AUTH_SECRET = process.env.NEXT_PUBLIC_AUTH_SECRET;
       const CODEHIVE_GENIE_API_URL = process.env.NEXT_PUBLIC_CODEHIVE_GENIE_API_URL;
-      console.log(AUTH_SECRET, CODEHIVE_GENIE_API_URL);
+      
       const response = await fetch(CODEHIVE_GENIE_API_URL!, {
         method: "POST",
         headers: {
@@ -70,55 +71,90 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black opacity-70"></div>
+      {/* Backdrop with blur */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" onClick={onClose} />
 
-      <div className="relative bg-white rounded-lg shadow-xl p-8 w-[90%] max-w-4xl h-[80vh] overflow-hidden">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
-          CodeHive Genie
-        </h2>
-
-        <textarea
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter your coding query..."
-          className="w-full h-28 p-4 border border-gray-300 rounded-lg mb-6 text-gray-700 text-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-        ></textarea>
-
-        <div className="flex justify-center mb-6">
-          <button
-            onClick={handleQuerySubmit}
-            className={`px-6 py-3 text-lg font-semibold text-white rounded-lg ${
-              loading || !query.trim()
-                ? "bg-blue-300 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
-            disabled={loading || !query.trim()}
-          >
-            {loading ? "Processing..." : "Ask Genie"}
-          </button>
+      {/* Modal Container */}
+      <div className="relative w-full max-w-5xl mx-4 h-[90vh] md:h-[85vh] bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800">
+        {/* Header */}
+        <div className="absolute top-0 left-0 right-0 px-6 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-blue-500" />
+              <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                CodeHive Genie
+              </h2>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label="Close modal"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
+          </div>
         </div>
 
-        {error && (
-          <p className="text-red-500 mb-6 text-center text-lg">{error}</p>
-        )}
+        {/* Content Container */}
+        <div className="h-full pt-20 pb-24 px-6 overflow-y-auto">
+          {/* Response Area */}
+          <div
+            ref={responseRef}
+            className="min-h-[200px] mb-6 p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm"
+          >
+            <pre className="whitespace-pre-wrap text-gray-800 dark:text-gray-200 text-sm md:text-base font-mono">
+              {response || (
+                <span className="text-gray-400 font-sans">
+                  Ask me anything about coding. I'm here to help! ✨
+                </span>
+              )}
+            </pre>
+          </div>
 
-        <div
-          ref={responseRef}
-          className="p-6 bg-gray-100 rounded-lg overflow-y-auto h-[50%] border border-gray-300"
-        >
-          <pre className="whitespace-pre-wrap text-gray-800 text-lg font-mono">
-            {response || "Response will appear here..."}
-          </pre>
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+              <p className="text-red-600 dark:text-red-400 text-center">{error}</p>
+            </div>
+          )}
+
+          {/* Scroll Indicator */}
+          <div className="hidden md:flex items-center justify-center mb-6 text-gray-400">
+            <ChevronDown className="w-5 h-5 animate-bounce" />
+          </div>
         </div>
 
-        <div className="flex justify-center mt-6">
-          <button
-            onClick={onClose}
-            className="px-6 py-3 bg-red-500 text-white text-lg font-semibold rounded-lg hover:bg-red-600"
-          >
-            Close
-          </button>
+        {/* Input Area - Fixed at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-800">
+          <div className="flex flex-col md:flex-row gap-4">
+            <textarea
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Ask me anything about coding..."
+              className="flex-1 p-4 h-24 md:h-16 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl 
+              text-gray-700 dark:text-gray-200 text-base md:text-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 
+              placeholder:text-gray-400 transition-all duration-200"
+            />
+            <button
+              onClick={handleQuerySubmit}
+              disabled={loading || !query.trim()}
+              className="py-4 px-6 md:px-8 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl
+              hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+              flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span className="hidden md:inline">Processing...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-5 h-5" />
+                  <span className="hidden md:inline">Ask Genie</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
