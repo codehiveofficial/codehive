@@ -2,7 +2,67 @@ import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Loader2, Sparkles, Send, X } from "lucide-react";
+import { Loader2, Sparkles, Send, X, Copy, Check } from "lucide-react";
+
+
+const CodeBlock = ({
+  inline,
+  className,
+  children,
+  ...props
+}: {
+  inline?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}) => {
+  const [isCopied, setIsCopied] = useState(false);
+  const match = /language-(\w+)/.exec(className || "");
+  const language = match ? match[1] : "plaintext";
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(String(children));
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  return !inline && match ? (
+    
+    <div className="relative group">
+      
+      <div className="absolute top-2 z-10 right-2 bg-gray-800 text-gray-200 text-xs font-bold px-2 py-1 rounded-md">
+        {language.toUpperCase()}
+      </div>
+
+      
+      <button
+        onClick={copyToClipboard}
+        className="absolute top-2 mb-2 z-10 right-16 p-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-600 transition-all"
+        aria-label="Copy code"
+      >
+        {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+      </button>
+
+      
+      <SyntaxHighlighter
+        style={materialDark}
+        language={language}
+        PreTag="div"
+        {...props}
+      >
+        {String(children).replace(/\n$/, "")}
+      </SyntaxHighlighter>
+    </div>
+  ) : (
+    <code className={className} {...props}>
+      {children}
+    </code>
+  );
+};
+
 
 interface GenieModalProps {
   onClose: () => void;
@@ -79,7 +139,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
 
       
       <div className="relative w-full max-w-5xl mx-4 h-[90vh] md:h-[85vh] bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800">
-        {/* Header */}
+        
         <div className="absolute top-0 left-0 right-0 px-6 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -108,23 +168,11 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
             {response ? (
               <ReactMarkdown
                 components={{
-                  code({ inline, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || "");
-                    return !inline && match ? (
-                      <SyntaxHighlighter
-                        style={materialDark}
-                        language={match[1]}
-                        PreTag="div"
-                        {...props}
-                      >
-                        {String(children).replace(/\n$/, "")}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code className={className} {...props}>
-                        {children}
-                      </code>
-                    );
-                  },
+                  code: ({node, inline, className, children, ...props}) => (
+                    <CodeBlock inline={inline} className={className} {...props}>
+                      {children}
+                    </CodeBlock>
+                  ), 
                 }}
               >
                 {response}
@@ -136,7 +184,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
             )}
           </div>
 
-          {/* Error Message */}
+          
           {error && (
             <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
               <p className="text-red-600 dark:text-red-400 text-center">{error}</p>
@@ -144,7 +192,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
           )}
         </div>
 
-        
+        {/* Input Area */}
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-800">
           <div className="flex flex-col md:flex-row gap-4">
             <textarea
