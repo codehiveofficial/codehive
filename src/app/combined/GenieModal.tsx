@@ -15,7 +15,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
 
   const typewriterEffect = async (text: string) => {
     for (let i = 0; i < text.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate typing delay
+      await new Promise((resolve) => setTimeout(resolve, 2));
       setResponse((prev) => prev + text[i]);
     }
   };
@@ -28,7 +28,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
     try {
       const AUTH_SECRET = process.env.NEXT_PUBLIC_AUTH_SECRET;
       const CODEHIVE_GENIE_API_URL = process.env.NEXT_PUBLIC_CODEHIVE_GENIE_API_URL;
-      
+
       const response = await fetch(CODEHIVE_GENIE_API_URL!, {
         method: "POST",
         headers: {
@@ -63,6 +63,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
     }
   };
 
+  // Ensure the response container scrolls to the bottom
   useEffect(() => {
     if (responseRef.current) {
       responseRef.current.scrollTop = responseRef.current.scrollHeight;
@@ -71,7 +72,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      {/* Backdrop with blur */}
+      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300" onClick={onClose} />
 
       {/* Modal Container */}
@@ -100,7 +101,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
           {/* Response Area */}
           <div
             ref={responseRef}
-            className="min-h-[200px] mb-6 p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm"
+            className="min-h-[200px] max-h-[50vh] mb-6 p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-y-auto"
           >
             <pre className="whitespace-pre-wrap text-gray-800 dark:text-gray-200 text-sm md:text-base font-mono">
               {response || (
@@ -117,14 +118,9 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
               <p className="text-red-600 dark:text-red-400 text-center">{error}</p>
             </div>
           )}
-
-          {/* Scroll Indicator */}
-          <div className="hidden md:flex items-center justify-center mb-6 text-gray-400">
-            <ChevronDown className="w-5 h-5 animate-bounce" />
-          </div>
         </div>
 
-        {/* Input Area - Fixed at bottom */}
+        {/* Input Area */}
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-800">
           <div className="flex flex-col md:flex-row gap-4">
             <textarea
