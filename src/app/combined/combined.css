@@ -1,6 +1,6 @@
 .scroll-container {
-  overflow-y: auto;
   max-height: 400px;
+  max-width: 100%;
 }
 
 .scroll-container::-webkit-scrollbar {

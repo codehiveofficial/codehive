@@ -441,9 +441,9 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       // "aspect-video",
       "bg-gray-800",
       "overflow-hidden",
-      "scroll-container",
+      // "scroll-container",
       "w-full",
-      "object-cover"
+      // "object-cover"
     );
     const videoContainer = document.getElementById("video-container");
     if (videoContainer) {
@@ -823,11 +823,11 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               {/* Container for peer videos */}
               <div
                 id="video-container"
-                className="w-full lg:block lg:h-[80vh] overflow-y-scroll overflow-x-scroll lg:overflow-x-hidden scroll-container"
+                className="w-full overflow-x-scroll lg:block lg:h-[80vh] overflow-y-scroll scroll-container"
               >
                 {Object.entries(peers).map(
                   ([peerId, { peer, userName: peerUserName }]) => (
-                    <div key={peerId} className="lg:relative mt-4 lg:w-full">
+                    <div key={peerId} className="lg:relative w-32 mt-4 lg:w-full">
                       {/* <PeerVideo peer={peer} userName={peerUserName} /> */}
                     </div>
                   )
