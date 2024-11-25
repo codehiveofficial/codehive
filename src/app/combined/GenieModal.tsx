@@ -30,16 +30,24 @@ const CodeBlock = ({
 
   return !inline && match ? (
     <div className="relative group">
-      <div className="absolute top-2 z-10 right-2 bg-gray-900 text-gray-300 text-xs font-bold px-2 py-1 rounded-md">
-        {language.toUpperCase()}
+      {/* Floating Controls */}
+      <div className="absolute top-2 right-2 flex space-x-2 z-10">
+        {/* Language Tag */}
+        <div className="bg-gray-800 text-gray-200 text-xs font-bold px-2 py-1 rounded-md">
+          {language.toUpperCase()}
+        </div>
+
+        {/* Copy Button */}
+        <button
+          onClick={copyToClipboard}
+          className="p-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-600 transition-all"
+          aria-label="Copy code"
+        >
+          {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+        </button>
       </div>
-      <button
-        onClick={copyToClipboard}
-        className="absolute mr-1 top-1 z-10 right-16 p-2 text-gray-300 bg-gray-900 rounded-md hover:bg-gray-700 transition-all"
-        aria-label="Copy code"
-      >
-        {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-      </button>
+
+      {/* Syntax Highlighter */}
       <SyntaxHighlighter
         style={materialDark}
         language={language}
@@ -227,7 +235,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
               <button
                 onClick={handleQuerySubmit}
                 disabled={loading || !query.trim()}
-                className="py-4 px-6 md:px-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                className="py-4 px-6 w-ful md:px-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
               >
                 {loading ? (
                   <>
