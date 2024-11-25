@@ -11,13 +11,14 @@ const modifiedCustomStyles = {
   ...customStyles,
   control: (provided: any) => ({
     ...provided,
-    minWidth: '200px', // Set your desired minimum width here
+    // minWidth: '200px', // Set your desired minimum width here
   }),
 };
 
 const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ onSelectChange }) => {
   return (
     <Select
+      className="lg:w-[200px]"
       placeholder="Select language"
       options={languageOptions}
       defaultValue={languageOptions[0]}

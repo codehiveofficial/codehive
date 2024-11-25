@@ -64,10 +64,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   };
 
   return (
-    <div className="code-editor-container">
+    <div className="code-editor-container overflow-x-scroll lg:overflow-x-hidden">
       <Editor
+<<<<<<< HEAD
         height="80vh" // Use vh for height
         width="100%"
+=======
+        height="90vh"
+        width="100vh"
+>>>>>>> c2d188ca54710609ba01b7819d67298f1a50388b
         language={language}
         value={code}
         theme={theme}
