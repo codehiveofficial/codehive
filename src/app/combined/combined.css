@@ -5,6 +5,7 @@
 
 .scroll-container::-webkit-scrollbar {
   width: 8px;
+  height: 4px;
 }
 
 .scroll-container::-webkit-scrollbar-track {

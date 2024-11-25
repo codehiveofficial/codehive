@@ -679,41 +679,45 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
           {/* Top bar with room info and controls */}
           <div className="mb-4 lg:flex justify-between items-center">
             <div className="flex justify-between items-center space-x-2 text-white bg-gray-800 px-4 py-2 rounded-lg shadow-lg">
-              <span className="font-sm lg:font-medium">Room ID:</span>
-              <span className="text-blue-400 hidden lg:block font-semibold">
-                {roomId}
-              </span>
-              <span className="text-blue-400 block lg:hidden font-semibold">
-                {roomId.slice(0, 4)}...
-              </span>
-              <span
-                onClick={() => copyToClipboard(roomId, setCopied)}
-                className={`ml-2 p-2 rounded-full cursor-pointer transition ${
-                  copied ? "bg-green-500" : "bg-blue-500 hover:bg-blue-600"
-                }`}
-                title={copied ? "Copied!" : "Copy Room ID"}
-              >
-                {copied ? (
-                  <FaCheck className="text-white" />
-                ) : (
-                  <FaClipboard className="text-white" />
-                )}
-              </span>
-              <span
-                onClick={() => copyMeetLink(roomId, setMeetLinkCopied)}
-                className={`ml-2 p-2 rounded-full cursor-pointer transition ${
-                  meetlinkcopied
-                    ? "bg-green-500"
-                    : "bg-blue-500 hover:bg-blue-600"
-                }`}
-                title={meetlinkcopied ? "Copied!" : "Copy Meet Link"}
-              >
-                {meetlinkcopied ? (
-                  <FaCheck className="text-white" />
-                ) : (
-                  <FaLink className="text-white" />
-                )}
-              </span>
+              <div className="flex gap-2">
+                <span className="font-sm lg:font-medium">Room ID:</span>
+                <span className="text-blue-400 hidden lg:block font-semibold">
+                  {roomId}
+                </span>
+                <span className="text-blue-400 block lg:hidden font-semibold">
+                  {roomId.slice(0, 4)}...
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <span
+                  onClick={() => copyToClipboard(roomId, setCopied)}
+                  className={`ml-2 p-2 rounded-full cursor-pointer transition ${
+                    copied ? "bg-green-500" : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                  title={copied ? "Copied!" : "Copy Room ID"}
+                >
+                  {copied ? (
+                    <FaCheck className="text-white" />
+                  ) : (
+                    <FaClipboard className="text-white" />
+                  )}
+                </span>
+                <span
+                  onClick={() => copyMeetLink(roomId, setMeetLinkCopied)}
+                  className={`ml-2 p-2 rounded-full cursor-pointer transition ${
+                    meetlinkcopied
+                      ? "bg-green-500"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                  title={meetlinkcopied ? "Copied!" : "Copy Meet Link"}
+                >
+                  {meetlinkcopied ? (
+                    <FaCheck className="text-white" />
+                  ) : (
+                    <FaLink className="text-white" />
+                  )}
+                </span>
+              </div>
             </div>
 
             <div className="hidden lg:flex gap-2">
@@ -865,27 +869,30 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                       handleThemeChange={handleThemeChange}
                       theme={theme}
                     />
-                    <button
-                      onClick={toggleGenieModal}
-                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    >
-                      <RiRobot2Line />
-                    </button>
+                    <div className="flex items-center lg:hidden gap-2">
+                      {/* <label className="text-white">Font Size:</label> */}
+                      <input
+                        type="number"
+                        value={fontSize}
+                        onChange={(e) => setFontSize(Number(e.target.value))}
+                        className="w-12 px-2 py-1 rounded"
+                        min="10"
+                        max="40"
+                      />
+                    </div>
                   </div>
+                  <button
+                    onClick={toggleGenieModal}
+                    className="w-[90vw] px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    <div className="flex gap-4 items-center justify-center">
+                      Generate Code with Genie
+                      <RiRobot2Line />
+                    </div>
+                  </button>
                   {isGenieModalOpen && (
                     <GenieModal onClose={toggleGenieModal} />
                   )}
-                  <div className="flex items-center lg:hidden gap-2">
-                    <label className="text-white">Font Size:</label>
-                    <input
-                      type="number"
-                      value={fontSize}
-                      onChange={(e) => setFontSize(Number(e.target.value))}
-                      className="w-16 px-2 py-1 rounded"
-                      min="10"
-                      max="40"
-                    />
-                  </div>
                 </div>
               </div>
               <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4">
