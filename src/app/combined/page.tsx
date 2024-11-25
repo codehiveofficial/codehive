@@ -635,22 +635,25 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               </div>
             )}
           </div>
-          <div className="space-y-4">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              className="border w-full p-2 rounded-lg"
-            />
-            <button
-              onClick={createRoom}
-              disabled={!streamReady}
-              className="w-full bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Create New Room
-            </button>
-            <div className="flex gap-2">
+          <div className="space-y-4 w-[90vw] lg:w-fit md:w-fit">
+            <div className="flex flex-col gap-2">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                className="border w-full p-2 rounded-lg"
+              />
+              <button
+                onClick={createRoom}
+                disabled={!streamReady}
+                className="w-full bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Create New Room
+              </button>
+            </div>
+
+            <div className="flex flex-col lg:flex-row gap-2">
               <input
                 type="text"
                 value={roomId}
