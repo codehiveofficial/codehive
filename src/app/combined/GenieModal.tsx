@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -103,6 +105,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
     setLoading(true);
     setError("");
     setResponse("");
+    console.log("Code:", code);
     stopSignalRef.current = false;
 
     const formattedQuery =

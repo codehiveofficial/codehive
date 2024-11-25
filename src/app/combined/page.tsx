@@ -846,7 +846,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     Generate with Genie
                   </button>
                 </div>
-                {isGenieModalOpen && <GenieModal onClose={toggleGenieModal} />}
+                {isGenieModalOpen && <GenieModal onClose={toggleGenieModal} code={code} />}
                 <div className="hidden lg:flex items-center gap-2">
                   <label className="text-white">Font Size:</label>
                   <input
@@ -873,7 +873,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     </button>
                   </div>
                   {isGenieModalOpen && (
-                    <GenieModal onClose={toggleGenieModal} />
+                    <GenieModal onClose={toggleGenieModal} code={code} />
                   )}
                   <div className="flex items-center lg:hidden gap-2">
                     <label className="text-white">Font Size:</label>
