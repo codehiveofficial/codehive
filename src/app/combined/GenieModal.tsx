@@ -2,7 +2,15 @@ import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Loader2, Sparkles, Send, X, Copy, Check, PauseCircle } from "lucide-react";
+import {
+  Loader2,
+  Sparkles,
+  Send,
+  X,
+  Copy,
+  Check,
+  PauseCircle,
+} from "lucide-react";
 
 const CodeBlock = ({
   inline,
@@ -43,7 +51,11 @@ const CodeBlock = ({
           className="p-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-600 transition-all"
           aria-label="Copy code"
         >
-          {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          {isCopied ? (
+            <Check className="w-4 h-4" />
+          ) : (
+            <Copy className="w-4 h-4" />
+          )}
         </button>
       </div>
 
@@ -71,12 +83,12 @@ interface GenieModalProps {
 
 const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
   const [query, setQuery] = useState("");
-  const [includeCode, setIncludeCode] = useState(false); 
+  const [includeCode, setIncludeCode] = useState(false);
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const responseRef = useRef<HTMLDivElement>(null);
-  const stopSignalRef = useRef(false); 
+  const stopSignalRef = useRef(false);
 
   const typewriterEffect = async (text: string) => {
     const chunkSize = 10;
@@ -93,12 +105,13 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
     setResponse("");
     stopSignalRef.current = false;
 
-    
-    const formattedQuery = includeCode && code ? `Code: ${code}\nQuestion: ${query}` : query;
+    const formattedQuery =
+      includeCode && code ? `Code: ${code}\nQuestion: ${query}` : query;
 
     try {
       const AUTH_SECRET = process.env.NEXT_PUBLIC_AUTH_SECRET;
-      const CODEHIVE_GENIE_API_URL = process.env.NEXT_PUBLIC_CODEHIVE_GENIE_API_URL;
+      const CODEHIVE_GENIE_API_URL =
+        process.env.NEXT_PUBLIC_CODEHIVE_GENIE_API_URL;
 
       const response = await fetch(CODEHIVE_GENIE_API_URL!, {
         method: "POST",
@@ -153,13 +166,13 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
         className="absolute inset-0 bg-black/80 transition-opacity duration-300"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-5xl mx-4 h-[90vh] md:h-[85vh] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
+      <div className="relative w-full max-w-3xl sm:max-w-4xl md:max-w-5xl mx-4 h-[90vh] md:h-[85vh] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
         {/* Header */}
-        <div className="absolute top-0 left-0 right-0 px-6 py-4 bg-gray-800 border-b border-gray-700">
+        <div className="absolute top-0 left-0 right-0 px-4 sm:px-6 py-4 bg-gray-800 border-b border-gray-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="w-6 h-6 text-blue-400" />
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-100">
+              <h2 className="text-lg sm:text-2xl md:text-3xl font-bold text-gray-100">
                 CodeHive Genie
               </h2>
             </div>
@@ -173,8 +186,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
           </div>
         </div>
 
-        
-        <div className="h-full pt-20 pb-24 px-6 overflow-y-auto">
+        <div className="h-full pt-20 pb-24 px-4 sm:px-6 overflow-y-auto">
           <div
             ref={responseRef}
             className="min-h-[200px] max-h-[50vh] mb-6 p-6 bg-gray-800 rounded-xl border border-gray-700 shadow-sm overflow-y-auto text-gray-300"
@@ -206,16 +218,20 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
         </div>
 
         {/* Input Area */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gray-800 border-t border-gray-700">
-          <div className="flex flex-col md:flex-row gap-4">
+        {/* Input Area */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gray-800 border-t border-gray-700">
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Textarea */}
             <textarea
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ask me anything about coding..."
-              className="flex-1 p-4 h-24 md:h-16 bg-gray-700 border border-gray-600 rounded-xl text-gray-100 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="flex-1 p-4 h-24 sm:h-16 bg-gray-700 border border-gray-600 rounded-xl text-gray-100 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-            <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-gray-300">
+
+            {/* Options and Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-2">
+              <label className="flex items-center gap-2 text-gray-300 sm:ml-2">
                 <input
                   type="checkbox"
                   checked={includeCode}
@@ -224,28 +240,32 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
                 />
                 Include Code
               </label>
+
+              {/* Pause Button */}
               {loading && (
                 <button
                   onClick={handleStopGeneration}
-                  className="py-3 px-3 md:px-4 bg-red-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                  className="py-2 px-4 sm:px-6 bg-red-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
                 >
-                  <PauseCircle className="w-7 h-7" />
+                  <PauseCircle className="w-6 h-6" />
                 </button>
               )}
+
+              {/* Send Button */}
               <button
                 onClick={handleQuerySubmit}
                 disabled={loading || !query.trim()}
-                className="py-4 px-6 w-ful md:px-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                className="py-3 px-6 sm:px-8 w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    <span className="hidden md:inline">Processing...</span>
+                    <span className="hidden sm:inline">Processing...</span>
                   </>
                 ) : (
                   <>
                     <Send className="w-5 h-5" />
-                    <span className="hidden md:inline">Ask Genie</span>
+                    <span className="hidden sm:inline">Ask Genie</span>
                   </>
                 )}
               </button>
