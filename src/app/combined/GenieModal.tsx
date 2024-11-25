@@ -58,15 +58,17 @@ const CodeBlock = ({
 
 interface GenieModalProps {
   onClose: () => void;
+  code?: string; // Optional code prop
 }
 
-const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
+const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
   const [query, setQuery] = useState("");
+  const [includeCode, setIncludeCode] = useState(false); 
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const responseRef = useRef<HTMLDivElement>(null);
-  const stopSignalRef = useRef(false); // Used to signal stopping the generation
+  const stopSignalRef = useRef(false); 
 
   const typewriterEffect = async (text: string) => {
     const chunkSize = 10;
@@ -81,7 +83,10 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
     setLoading(true);
     setError("");
     setResponse("");
-    stopSignalRef.current = false; 
+    stopSignalRef.current = false;
+
+    
+    const formattedQuery = includeCode && code ? `Code: ${code}\nQuestion: ${query}` : query;
 
     try {
       const AUTH_SECRET = process.env.NEXT_PUBLIC_AUTH_SECRET;
@@ -93,7 +98,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
           "Content-Type": "application/json",
           Authorization: AUTH_SECRET!,
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query: formattedQuery }),
       });
 
       if (!response.ok) {
@@ -123,7 +128,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
   };
 
   const handleStopGeneration = () => {
-    stopSignalRef.current = true; 
+    stopSignalRef.current = true;
     setLoading(false);
   };
 
@@ -160,7 +165,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
           </div>
         </div>
 
-        {/* Response Section */}
+        
         <div className="h-full pt-20 pb-24 px-6 overflow-y-auto">
           <div
             ref={responseRef}
@@ -201,11 +206,20 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
               placeholder="Ask me anything about coding..."
               className="flex-1 p-4 h-24 md:h-16 bg-gray-700 border border-gray-600 rounded-xl text-gray-100 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-            <div className="flex gap-4">
+            <div className="flex items-center gap-2">
+              <label className="flex items-center gap-2 text-gray-300">
+                <input
+                  type="checkbox"
+                  checked={includeCode}
+                  onChange={(e) => setIncludeCode(e.target.checked)}
+                  className="w-4 h-4"
+                />
+                Include Code
+              </label>
               {loading && (
                 <button
                   onClick={handleStopGeneration}
-                  className="px-3 md:px-4 bg-red-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                  className="py-3 px-3 md:px-4 bg-red-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
                 >
                   <PauseCircle className="w-7 h-7" />
                 </button>
