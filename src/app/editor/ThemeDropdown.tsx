@@ -14,7 +14,7 @@ const modifiedCustomStyles = {
   ...customStyles,
   control: (provided: any) => ({
     ...provided,
-    minWidth: '170px', // Set your desired minimum width here
+    // minWidth: '170px', // Set your desired minimum width here
   }),
 };
 
@@ -29,6 +29,7 @@ const ThemeDropdown: React.FC<ThemeDropdownProps> = ({ handleThemeChange, theme 
       }))}
       value={theme}
       styles={modifiedCustomStyles}
+      className="lg:w-[200px]"
       onChange={handleThemeChange}
     />
   );

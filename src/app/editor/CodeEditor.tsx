@@ -64,7 +64,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   };
 
   return (
-    <div className="code-editor-container">
+    <div className="code-editor-container overflow-x-scroll lg:overflow-x-hidden">
       <Editor
         height="90vh"
         width="100vh"

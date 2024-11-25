@@ -120,7 +120,7 @@ interface OutputDetails {
 }
 
 const OutputWindow: React.FC<{ outputDetails: OutputDetails | null }> = ({ outputDetails }) => (
-  <div className="w-full p-6 bg-[#1e293b] rounded-lg text-white">
+  <div className="lg:w-full w-[90vw] p-6 bg-[#1e293b] rounded-lg text-white">
     <h1 className="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2">Output</h1>
     <div className="w-full h-56 bg-[#0f172a] rounded-lg overflow-y-auto p-4 mb-4">
       <pre className="font-semibold text-lg whitespace-pre-wrap">

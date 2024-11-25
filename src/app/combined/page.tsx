@@ -16,8 +16,15 @@ import {
   downloadCodeAsFile,
   downloadCodeAsImage,
 } from "@/helpers/downloadCode";
-
+import { FaVideo, FaVideoSlash } from "react-icons/fa6";
+import { FaMicrophone } from "react-icons/fa";
+import { IoMdExit } from "react-icons/io";
+import { MdFileDownload } from "react-icons/md";
+import { AiOutlineSnippets } from "react-icons/ai";
+import { FaMicrophoneSlash } from "react-icons/fa";
+import { AiOutlineAudioMuted } from "react-icons/ai";
 import { FaClipboard, FaCheck } from "react-icons/fa";
+import { RiRobot2Line } from "react-icons/ri";
 import { FaLink } from "react-icons/fa6";
 import GenieModal from "./GenieModal";
 
@@ -428,7 +435,16 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     videoElement.srcObject = stream;
     videoElement.autoplay = true;
     videoElement.playsInline = true;
-    videoElement.classList.add("peer-video", "rounded-lg", "aspect-video", "bg-gray-800", "overflow-hidden", "scroll-container", "w-full", "object-cover");
+    videoElement.classList.add(
+      "peer-video",
+      "rounded-lg",
+      // "aspect-video",
+      "bg-gray-800",
+      "overflow-hidden",
+      "scroll-container",
+      "w-full",
+      "object-cover"
+    );
     const videoContainer = document.getElementById("video-container");
     if (videoContainer) {
       videoContainer.appendChild(videoElement);
@@ -579,8 +595,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
 
   const toggleGenieModal = () => {
     setIsGenieModalOpen(!isGenieModalOpen);
-  }
-
+  };
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -659,10 +674,15 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
             <ChatModal socket={socketRef.current} userName={name} />
           )}
           {/* Top bar with room info and controls */}
-          <div className="mb-4 flex justify-between items-center">
-            <div className="flex items-center space-x-2 text-white bg-gray-800 px-4 py-2 rounded-lg shadow-lg">
-              <span className="font-medium">Room ID:</span>
-              <span className="text-blue-400 font-semibold">{roomId}</span>
+          <div className="mb-4 lg:flex justify-between items-center">
+            <div className="flex justify-between items-center space-x-2 text-white bg-gray-800 px-4 py-2 rounded-lg shadow-lg">
+              <span className="font-sm lg:font-medium">Room ID:</span>
+              <span className="text-blue-400 hidden lg:block font-semibold">
+                {roomId}
+              </span>
+              <span className="text-blue-400 block lg:hidden font-semibold">
+                {roomId.slice(0, 4)}...
+              </span>
               <span
                 onClick={() => copyToClipboard(roomId, setCopied)}
                 className={`ml-2 p-2 rounded-full cursor-pointer transition ${
@@ -693,7 +713,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               </span>
             </div>
 
-            <div className="flex gap-2">
+            <div className="hidden lg:flex gap-2">
               <button
                 onClick={toggleVideo}
                 className={`px-4 py-2 rounded-lg ${
@@ -733,11 +753,51 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 Download Snippet (PNG)
               </button>
             </div>
+            <div className="flex items-center justify-center mt-2 lg:hidden gap-2">
+              <button
+                onClick={toggleVideo}
+                className={`px-4 py-2 rounded-lg ${
+                  isVideoEnabled ? "bg-blue-500" : "bg-red-500"
+                } text-white`}
+              >
+                {isVideoEnabled ? <FaVideoSlash /> : <FaVideo />}
+              </button>
+              <button
+                onClick={toggleAudio}
+                className={`px-4 py-2 rounded-lg ${
+                  isAudioEnabled ? "bg-blue-500" : "bg-red-500"
+                } text-white`}
+              >
+                {isAudioEnabled ? <FaMicrophoneSlash /> : <FaMicrophone />}
+              </button>
+              <button
+                onClick={leaveRoom}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white"
+              >
+                <IoMdExit />
+              </button>
+              <button
+                onClick={downloadCodeAsFile.bind(null, code, language.value)}
+                className="px-4 py-2 rounded-lg bg-blue-500 text-white"
+              >
+                <MdFileDownload />
+              </button>
+              <button
+                onClick={downloadCodeAsImage.bind(
+                  null,
+                  code,
+                  "codehive_snippet.png"
+                )}
+                className="px-4 py-2 rounded-lg bg-blue-500 text-white"
+              >
+                <AiOutlineSnippets />
+              </button>
+            </div>
           </div>
           {/* Main content area */}
-          <div className="flex gap-4">
+          <div className="flex lg:flex-row flex-col gap-4">
             {/* Left side - Videos */}
-            <div className="w-1/4 flex flex-col gap-2">
+            <div className="w-full lg:w-1/4 flex flex-col gap-2">
               {/* Self video */}
               <div className="relative w-full">
                 <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden scroll-container">
@@ -756,11 +816,11 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               {/* Container for peer videos */}
               <div
                 id="video-container"
-                className="flex flex-col gap-2 h-[80vh] overflow-y-scroll scroll-container"
+                className="w-full lg:block lg:h-[80vh] overflow-y-scroll overflow-x-scroll lg:overflow-x-hidden scroll-container"
               >
                 {Object.entries(peers).map(
                   ([peerId, { peer, userName: peerUserName }]) => (
-                    <div key={peerId} className="relative w-full">
+                    <div key={peerId} className="lg:relative mt-4 lg:w-full">
                       {/* <PeerVideo peer={peer} userName={peerUserName} /> */}
                     </div>
                   )
@@ -770,7 +830,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
             {/* Right side - Code Editor */}
             <div className="w-3/4 space-y-4">
               <div className="flex justify-between items-center">
-                <div className="flex gap-4">
+                <div className="hidden lg:flex gap-4">
                   <LanguageDropdown onSelectChange={handleLanguageChange} />
                   <ThemeDropdown
                     handleThemeChange={handleThemeChange}
@@ -784,7 +844,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                   </button>
                 </div>
                 {isGenieModalOpen && <GenieModal onClose={toggleGenieModal} />}
-                <div className="flex items-center gap-2">
+                <div className="hidden lg:flex items-center gap-2">
                   <label className="text-white">Font Size:</label>
                   <input
                     type="number"
@@ -795,9 +855,38 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     max="40"
                   />
                 </div>
+                <div className="flex w-[90vw] gap-4 flex-col items-center justify-center lg:hidden">
+                  <div className="flex w-[90vw] lg:hidden gap-4">
+                    <LanguageDropdown onSelectChange={handleLanguageChange} />
+                    <ThemeDropdown
+                      handleThemeChange={handleThemeChange}
+                      theme={theme}
+                    />
+                    <button
+                      onClick={toggleGenieModal}
+                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    >
+                      <RiRobot2Line />
+                    </button>
+                  </div>
+                  {isGenieModalOpen && (
+                    <GenieModal onClose={toggleGenieModal} />
+                  )}
+                  <div className="flex items-center lg:hidden gap-2">
+                    <label className="text-white">Font Size:</label>
+                    <input
+                      type="number"
+                      value={fontSize}
+                      onChange={(e) => setFontSize(Number(e.target.value))}
+                      className="w-16 px-2 py-1 rounded"
+                      min="10"
+                      max="40"
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2">
+              <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2 lg:overflow-x-hidden lg:w-fit w-[90vw] overflow-x-scroll">
                   <CodeEditor
                     onCodeChange={onCodeChange}
                     fontSize={fontSize}
@@ -813,9 +902,10 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     }}
                   />
                 </div>
-                <div className="col-span-1 space-y-4">
+
+                <div className="flex flex-col gap-4 lg:col-span-1 lg:space-y-4">
                   <button
-                    className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+                    className="w-[90vw] lg:w-full lg:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
                     disabled={!code || isLoading}
                     onClick={executeCode}
                   >
