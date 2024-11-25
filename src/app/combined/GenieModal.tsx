@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Loader2, Sparkles, Send, X, Copy, Check } from "lucide-react";
+import { Loader2, Sparkles, Send, X, Copy, Check, PauseCircle } from "lucide-react";
 
 const CodeBlock = ({
   inline,
@@ -66,10 +66,12 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const responseRef = useRef<HTMLDivElement>(null);
+  const stopSignalRef = useRef(false); // Used to signal stopping the generation
 
   const typewriterEffect = async (text: string) => {
-    const chunkSize = 5;
+    const chunkSize = 10;
     for (let i = 0; i < text.length; i += chunkSize) {
+      if (stopSignalRef.current) break;
       await new Promise((resolve) => setTimeout(resolve, 1));
       setResponse((prev) => prev + text.slice(i, i + chunkSize));
     }
@@ -79,6 +81,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
     setLoading(true);
     setError("");
     setResponse("");
+    stopSignalRef.current = false; 
 
     try {
       const AUTH_SECRET = process.env.NEXT_PUBLIC_AUTH_SECRET;
@@ -104,6 +107,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
       const decoder = new TextDecoder("utf-8");
 
       while (true) {
+        if (stopSignalRef.current) break;
         const { value, done } = await reader!.read();
         if (done) break;
 
@@ -116,6 +120,11 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
       setError("Failed to fetch the response. Please try again.");
       setLoading(false);
     }
+  };
+
+  const handleStopGeneration = () => {
+    stopSignalRef.current = true; 
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -192,23 +201,33 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose }) => {
               placeholder="Ask me anything about coding..."
               className="flex-1 p-4 h-24 md:h-16 bg-gray-700 border border-gray-600 rounded-xl text-gray-100 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-            <button
-              onClick={handleQuerySubmit}
-              disabled={loading || !query.trim()}
-              className="py-4 px-6 md:px-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span className="hidden md:inline">Processing...</span>
-                </>
-              ) : (
-                <>
-                  <Send className="w-5 h-5" />
-                  <span className="hidden md:inline">Ask Genie</span>
-                </>
+            <div className="flex gap-4">
+              {loading && (
+                <button
+                  onClick={handleStopGeneration}
+                  className="px-3 md:px-4 bg-red-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                >
+                  <PauseCircle className="w-7 h-7" />
+                </button>
               )}
-            </button>
+              <button
+                onClick={handleQuerySubmit}
+                disabled={loading || !query.trim()}
+                className="py-4 px-6 md:px-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span className="hidden md:inline">Processing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5" />
+                    <span className="hidden md:inline">Ask Genie</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
