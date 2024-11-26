@@ -59,7 +59,7 @@ interface CollaborativeIDEProps {
   userName: string;
 }
 
-const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
+export default function CollaborativeIDE({ userName }: any) {
   const [code, setCode] = useState(
     defaultCodeTemplates[languageOptions[0].value]
   );
@@ -922,4 +922,4 @@ const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
   );
 };
 
-export default CollaborativeIDE;
+
