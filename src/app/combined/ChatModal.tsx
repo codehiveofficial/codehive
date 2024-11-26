@@ -13,7 +13,7 @@ interface ChatModalProps {
   userName: string;
 }
 
-const ChatModal: React.FC<ChatModalProps> = ({ socket, userName }) => {
+export default function ChatModal ({ socket, userName }:any) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false); // Controls visibility of chat modal
@@ -29,7 +29,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ socket, userName }) => {
   }, [socket]);
 
   const sendMessage = () => {
-    if (newMessage.trim() !== "") {
+    if (newMessage.trim() !== "" && socket.id) {
       const messageData: ChatMessage = {
         userId: socket.id,
         userName,
@@ -118,4 +118,3 @@ const ChatModal: React.FC<ChatModalProps> = ({ socket, userName }) => {
   );
 };
 
-export default ChatModal;

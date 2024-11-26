@@ -14,16 +14,18 @@ import {
   PauseCircle,
 } from "lucide-react";
 
+interface ExtraProps {
+  inline?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}
+
 const CodeBlock = ({
   inline,
   className,
   children,
   ...props
-}: {
-  inline?: boolean;
-  className?: string;
-  children: React.ReactNode;
-}) => {
+}: ExtraProps) => {
   const [isCopied, setIsCopied] = useState(false);
   const match = /language-(\w+)/.exec(className || "");
   const language = match ? match[1] : "plaintext";
@@ -83,7 +85,7 @@ interface GenieModalProps {
   code?: string; // Optional code prop
 }
 
-const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
+export default function GenieModal({ onClose, code = "" }:any)  {
   const [query, setQuery] = useState("");
   const [includeCode, setIncludeCode] = useState(false);
   const [response, setResponse] = useState("");
@@ -197,7 +199,7 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
             {response ? (
               <ReactMarkdown
                 components={{
-                  code: ({ inline, className, children, ...props }) => (
+                  code: ({ inline, className, children, ...props }: any) => (
                     <CodeBlock inline={inline} className={className} {...props}>
                       {children}
                     </CodeBlock>
@@ -280,4 +282,4 @@ const GenieModal: React.FC<GenieModalProps> = ({ onClose, code = "" }) => {
   );
 };
 
-export default GenieModal;
+
