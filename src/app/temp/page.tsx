@@ -18,7 +18,7 @@ interface VideoCallProps {
   userName: string;
 }
 
-const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
+export default function VideoCall({ userName }:any){
   const [roomId, setRoomId] = useState<string>("");
   const [peers, setPeers] = useState<{ [key: string]: PeerConnection }>({});
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -352,4 +352,4 @@ const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
   );
 };
 
-export default VideoCall;
+
