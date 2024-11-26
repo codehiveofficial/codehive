@@ -27,7 +27,7 @@ import { FaClipboard, FaCheck } from "react-icons/fa";
 import { RiRobot2Line } from "react-icons/ri";
 import { FaLink } from "react-icons/fa6";
 import GenieModal from "../GenieModal";
-import { useParams } from "next/navigation";
+// import { useParams } from "next/navigation";
 
 interface Theme {
   value: string;
@@ -56,15 +56,13 @@ const defaultCodeTemplates: Record<string, string> = {
     "// Write your TypeScript code here\nconsole.log('Hello, World!');",
 };
 
-interface CollaborativeIDEProps {
-  userName: string;
-}
 
-const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
+export default async function CollaborativeIDE2({ params, userName }: any)  {
   const [code, setCode] = useState(
     defaultCodeTemplates[languageOptions[0].value]
   );
-  const params = useParams();
+  const awaitedParams = await params;
+
   useEffect(() => {
     console.log(params);
   }, []);
@@ -81,7 +79,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     lineNumber: number;
     column: number;
   } | null>(null);
-  const meetId = params.meetId;
+  const meetId = awaitedParams.meetId;
   const [roomId, setRoomId] = useState(meetId || "");
   const [name, setName] = useState("");
   const [peers, setPeers] = useState<{ [key: string]: PeerConnection }>({});
@@ -930,4 +928,3 @@ const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
   );
 };
 
-export default CollaborativeIDE;

@@ -15,7 +15,7 @@ const modifiedCustomStyles = {
   }),
 };
 
-const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ onSelectChange }) => {
+export default function LanguageDropdown({ onSelectChange }: any) {
   return (
     <Select
       className="lg:w-[200px]"
@@ -27,5 +27,3 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ onSelectChange }) =
     />
   );
 };
-
-export default LanguageDropdown;

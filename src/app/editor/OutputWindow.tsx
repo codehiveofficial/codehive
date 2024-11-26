@@ -8,9 +8,8 @@ interface OutputDetails {
   time?: string;
 }
 
-const OutputWindow: React.FC<{ outputDetails: OutputDetails | null }> = ({
-  outputDetails,
-}) => (
+export default function OutputWindow({ outputDetails }:any) {
+  return (
   <div className="lg:w-full w-[90vw] p-6 bg-[#1e293b] rounded-lg text-white">
     <h1 className="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2">
       Output
@@ -46,6 +45,7 @@ const OutputWindow: React.FC<{ outputDetails: OutputDetails | null }> = ({
       </p>
     </div>
   </div>
-);
+  )
+};
 
-export default OutputWindow;
+

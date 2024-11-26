@@ -18,7 +18,7 @@ const modifiedCustomStyles = {
   }),
 };
 
-const ThemeDropdown: React.FC<ThemeDropdownProps> = ({ handleThemeChange, theme }) => {
+export default function ThemeDropdown({ handleThemeChange, theme }: any){
   return (
     <Select
       placeholder={`Select Theme`}
@@ -35,4 +35,3 @@ const ThemeDropdown: React.FC<ThemeDropdownProps> = ({ handleThemeChange, theme 
   );
 };
 
-export default ThemeDropdown;

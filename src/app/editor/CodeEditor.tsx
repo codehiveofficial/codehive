@@ -11,7 +11,7 @@ interface CodeEditorProps {
   remoteCursorPosition: { lineNumber: number; column: number } | null;
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({
+export default function CodeEditor ({
   code,
   onCodeChange,
   onCursorPositionChange,
@@ -19,7 +19,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   language,
   theme,
   remoteCursorPosition,
-}) => {
+}: any){
   const editorRef = useRef<any>(null);
   const monaco = useMonaco();
 
@@ -88,4 +88,3 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   );
 };
 
-export default CodeEditor;

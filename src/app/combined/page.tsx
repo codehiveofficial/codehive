@@ -59,7 +59,7 @@ interface CollaborativeIDEProps {
   userName: string;
 }
 
-const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
+export default function CollaborativeIDE({ userName }: any) {
   const [code, setCode] = useState(
     defaultCodeTemplates[languageOptions[0].value]
   );
@@ -888,4 +888,41 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   );
 };
 
-export default CollaborativeIDE;
+interface PeerVideoProps {
+  peer: Peer.Instance;
+  userName: string;
+}
+
+const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    if (!peer) return;
+    const handleStream = (stream: MediaStream) => {
+      if (ref.current) {
+        ref.current.srcObject = stream;
+      }
+    };
+    peer.on("stream", handleStream);
+    peer.on("error", (err: string) => {
+      console.error("Peer connection error:", err);
+    });
+    return () => {
+      peer.off("stream", handleStream);
+    };
+  }, [peer]);
+  return (
+    <div className="relative w-full aspect-video bg-gray-800 rounded-lg overflow-hidden">
+      <video
+        ref={ref}
+        autoPlay
+        playsInline
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-white">
+        {userName}
+      </div>
+    </div>
+  );
+};
+
+
