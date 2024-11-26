@@ -5,7 +5,7 @@ interface CustomInputProps {
   setCustomInput: (value: string) => void;
 }
 
-export default function CustomInput({ customInput, setCustomInput }: any)  {
+export default function CustomInput({ customInput, setCustomInput }: any) {
   return (
     <div className="flex flex-col w-full mt-4">
       <h1 className="text-xl lg:text-3xl text-white font-bold mb-4">
@@ -20,5 +20,4 @@ export default function CustomInput({ customInput, setCustomInput }: any)  {
       ></textarea>
     </div>
   );
-};
-
+}

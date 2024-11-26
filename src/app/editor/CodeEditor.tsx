@@ -2,16 +2,19 @@ import React, { useEffect, useRef } from "react";
 import Editor, { useMonaco } from "@monaco-editor/react";
 
 interface CodeEditorProps {
-  code: string; 
+  code: string;
   onCodeChange: (action: string, newCode: string) => void;
-  onCursorPositionChange: (position: { lineNumber: number; column: number }) => void;
+  onCursorPositionChange: (position: {
+    lineNumber: number;
+    column: number;
+  }) => void;
   fontSize: number;
   language: string;
   theme: string;
   remoteCursorPosition: { lineNumber: number; column: number } | null;
 }
 
-export default function CodeEditor ({
+export default function CodeEditor({
   code,
   onCodeChange,
   onCursorPositionChange,
@@ -19,7 +22,7 @@ export default function CodeEditor ({
   language,
   theme,
   remoteCursorPosition,
-}: any){
+}: any) {
   const editorRef = useRef<any>(null);
   const monaco = useMonaco();
 
@@ -44,7 +47,8 @@ export default function CodeEditor ({
           ),
           options: {
             className: "remote-cursor",
-            stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+            stickiness:
+              monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
           },
         };
         const decorations = editor.deltaDecorations([], [decoration]);
@@ -86,5 +90,4 @@ export default function CodeEditor ({
       `}</style>
     </div>
   );
-};
-
+}

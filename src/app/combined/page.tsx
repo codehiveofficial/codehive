@@ -798,7 +798,7 @@ export default function CollaborativeIDE({ userName }: any) {
                     onClick={toggleGenieModal}
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                   >
-                    <RiRobot2Line/>
+                    <RiRobot2Line />
                   </button>
                 </div>
                 {isGenieModalOpen && <GenieModal onClose={toggleGenieModal} />}
@@ -886,43 +886,4 @@ export default function CollaborativeIDE({ userName }: any) {
       )}
     </div>
   );
-};
-
-interface PeerVideoProps {
-  peer: Peer.Instance;
-  userName: string;
 }
-
-const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
-  const ref = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    if (!peer) return;
-    const handleStream = (stream: MediaStream) => {
-      if (ref.current) {
-        ref.current.srcObject = stream;
-      }
-    };
-    peer.on("stream", handleStream);
-    peer.on("error", (err: string) => {
-      console.error("Peer connection error:", err);
-    });
-    return () => {
-      peer.off("stream", handleStream);
-    };
-  }, [peer]);
-  return (
-    <div className="relative w-full aspect-video bg-gray-800 rounded-lg overflow-hidden">
-      <video
-        ref={ref}
-        autoPlay
-        playsInline
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-white">
-        {userName}
-      </div>
-    </div>
-  );
-};
-
-
