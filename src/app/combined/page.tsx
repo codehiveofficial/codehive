@@ -91,7 +91,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   const peersRef = useRef<{ [key: string]: PeerConnection }>({});
   const streamRef = useRef<MediaStream>();
   const [meetlinkcopied, setMeetLinkCopied] = useState(false);
-
   const [copied, setCopied] = useState(false);
   const [isGenieModalOpen, setIsGenieModalOpen] = useState(false);
 
@@ -206,7 +205,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
 
   // Socket initialization moved to room creation/joining
   const initializeSocket = () => {
-    socketRef.current = io("http://localhost:5000", {
+    socketRef.current = io(process.env.NEXT_PUBLIC_SOCKET_BACKEND_URL, {
       transports: ["websocket"],
       upgrade: false,
     });
@@ -257,7 +256,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     try {
       initializeSocket();
       // Ensure video stream is properly set up before creating room
-
       socketRef.current?.emit("create_room", async (newRoomId: string) => {
         setRoomId(newRoomId);
         await joinRoom(newRoomId);
@@ -442,7 +440,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       "bg-gray-800",
       "overflow-hidden",
       // "scroll-container",
-      "w-full",
+      "w-full"
       // "object-cover"
     );
     const videoContainer = document.getElementById("video-container");
@@ -583,7 +581,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     setMeetLinkCopied: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     navigator.clipboard
-      .writeText("http://localhost:3000/combined/" + text)
+      .writeText(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/combined/` + text)
       .then(() => {
         setMeetLinkCopied(true);
         setTimeout(() => setMeetLinkCopied(false), 2500);
@@ -652,7 +650,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 Create New Room
               </button>
             </div>
-
             <div className="flex flex-col lg:flex-row gap-2">
               <input
                 type="text"
@@ -719,7 +716,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 </span>
               </div>
             </div>
-
             <div className="hidden lg:flex gap-2">
               <button
                 onClick={toggleVideo}
@@ -827,7 +823,10 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               >
                 {Object.entries(peers).map(
                   ([peerId, { peer, userName: peerUserName }]) => (
-                    <div key={peerId} className="lg:relative hidden w-32 mt-4 lg:w-full">
+                    <div
+                      key={peerId}
+                      className="lg:relative hidden w-32 mt-4 lg:w-full"
+                    >
                       {/* <PeerVideo peer={peer} userName={peerUserName} /> */}
                     </div>
                   )
@@ -850,7 +849,9 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     Generate with Genie
                   </button>
                 </div>
-                {isGenieModalOpen && <GenieModal onClose={toggleGenieModal} code={code} />}
+                {isGenieModalOpen && (
+                  <GenieModal onClose={toggleGenieModal} code={code} />
+                )}
                 <div className="hidden lg:flex items-center gap-2">
                   <label className="text-white">Font Size:</label>
                   <input
@@ -912,7 +913,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     }}
                   />
                 </div>
-
                 <div className="flex flex-col gap-4 lg:col-span-1 lg:space-y-4">
                   <button
                     className="w-[90vw] lg:w-full lg:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"

@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react';
-import { Socket, io } from 'socket.io-client';
-import Peer from 'simple-peer';
+import React, { useEffect, useRef, useState } from "react";
+import { Socket, io } from "socket.io-client";
+import Peer from "simple-peer";
 
 interface User {
   userName: string;
@@ -19,7 +19,7 @@ interface VideoCallProps {
 }
 
 const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
-  const [roomId, setRoomId] = useState<string>('');
+  const [roomId, setRoomId] = useState<string>("");
   const [peers, setPeers] = useState<{ [key: string]: PeerConnection }>({});
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -38,38 +38,38 @@ const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
         video: {
           width: { ideal: 640 },
           height: { ideal: 480 },
-          frameRate: { ideal: 20, max: 24 }
+          frameRate: { ideal: 20, max: 24 },
         },
         audio: {
           echoCancellation: true,
-          noiseSuppression: true
-        }
+          noiseSuppression: true,
+        },
       });
-      
+
       streamRef.current = stream;
       setMyStream(stream);
-      
+
       if (userVideoRef.current) {
         userVideoRef.current.srcObject = stream;
       }
-      
+
       return stream;
     } catch (err) {
-      console.error('Error accessing media devices:', err);
+      console.error("Error accessing media devices:", err);
       return null;
     }
   };
 
   useEffect(() => {
-    socketRef.current = io('http://localhost:5000', {
-      transports: ['websocket'],
-      upgrade: false
+    socketRef.current = io(process.env.NEXT_PUBLIC_SOCKET_BACKEND_URL, {
+      transports: ["websocket"],
+      upgrade: false,
     });
 
     return () => {
       socketRef.current?.disconnect();
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current.getTracks().forEach((track) => track.stop());
       }
     };
   }, []);
@@ -83,7 +83,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
   const createRoom = async () => {
     const stream = await initializeUserMedia();
     if (stream) {
-      socketRef.current?.emit('create_room', (newRoomId: string) => {
+      socketRef.current?.emit("create_room", (newRoomId: string) => {
         setRoomId(newRoomId);
         joinRoom(newRoomId, stream);
       });
@@ -92,20 +92,24 @@ const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
 
   const joinRoom = async (roomIdToJoin: string, stream?: MediaStream) => {
     try {
-      const mediaStream = stream || await initializeUserMedia();
+      const mediaStream = stream || (await initializeUserMedia());
       if (!mediaStream) return;
 
-      socketRef.current?.emit('join_room', {
+      socketRef.current?.emit("join_room", {
         roomId: roomIdToJoin,
-        userName
+        userName,
       });
 
-      socketRef.current?.on('room_users', (users: { [key: string]: User }) => {
+      socketRef.current?.on("room_users", (users: { [key: string]: User }) => {
         const peers: { [key: string]: PeerConnection } = {};
 
         Object.entries(users).forEach(([userId, userData]) => {
           if (userId !== socketRef.current?.id && mediaStream) {
-            const peer = createPeer(userId, socketRef.current?.id || '', mediaStream);
+            const peer = createPeer(
+              userId,
+              socketRef.current?.id || "",
+              mediaStream
+            );
             peers[userId] = { peer, userName: userData.userName };
           }
         });
@@ -114,20 +118,23 @@ const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
         setPeers(peers);
       });
 
-      socketRef.current?.on('user_joined_with_signal', ({ signal, callerID, userName }) => {
-        const peer = addPeer(signal, callerID, mediaStream);
-        peersRef.current[callerID] = { peer, userName };
-        setPeers(prev => ({
-          ...prev,
-          [callerID]: { peer, userName }
-        }));
-      });
+      socketRef.current?.on(
+        "user_joined_with_signal",
+        ({ signal, callerID, userName }) => {
+          const peer = addPeer(signal, callerID, mediaStream);
+          peersRef.current[callerID] = { peer, userName };
+          setPeers((prev) => ({
+            ...prev,
+            [callerID]: { peer, userName },
+          }));
+        }
+      );
 
-      socketRef.current?.on('receiving_returned_signal', ({ signal, id }) => {
+      socketRef.current?.on("receiving_returned_signal", ({ signal, id }) => {
         peersRef.current[id].peer.signal(signal);
       });
 
-      socketRef.current?.on('user_left', ({ userId }) => {
+      socketRef.current?.on("user_left", ({ userId }) => {
         if (peersRef.current[userId]) {
           peersRef.current[userId].peer.destroy();
           const newPeers = { ...peersRef.current };
@@ -140,45 +147,57 @@ const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
       setIsJoined(true);
       setRoomId(roomIdToJoin);
     } catch (err) {
-      console.error('Error joining room:', err);
+      console.error("Error joining room:", err);
     }
   };
 
-  const createPeer = (userToSignal: string, callerID: string, stream: MediaStream) => {
+  const createPeer = (
+    userToSignal: string,
+    callerID: string,
+    stream: MediaStream
+  ) => {
     const peer = new Peer({
       initiator: true,
       trickle: false,
       stream,
       config: {
         iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:global.stun.twilio.com:3478' }
-        ]
-      }
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:global.stun.twilio.com:3478" },
+        ],
+      },
     });
 
-    peer.on('signal', signal => {
-      socketRef.current?.emit('sending_signal', { userToSignal, callerID, signal });
+    peer.on("signal", (signal) => {
+      socketRef.current?.emit("sending_signal", {
+        userToSignal,
+        callerID,
+        signal,
+      });
     });
 
     return peer;
   };
 
-  const addPeer = (incomingSignal: Peer.SignalData, callerID: string, stream: MediaStream) => {
+  const addPeer = (
+    incomingSignal: Peer.SignalData,
+    callerID: string,
+    stream: MediaStream
+  ) => {
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream,
       config: {
         iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:global.stun.twilio.com:3478' }
-        ]
-      }
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:global.stun.twilio.com:3478" },
+        ],
+      },
     });
 
-    peer.on('signal', signal => {
-      socketRef.current?.emit('returning_signal', { signal, callerID });
+    peer.on("signal", (signal) => {
+      socketRef.current?.emit("returning_signal", { signal, callerID });
     });
 
     peer.signal(incomingSignal);
@@ -188,26 +207,26 @@ const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
 
   const toggleVideo = () => {
     if (streamRef.current) {
-      streamRef.current.getVideoTracks().forEach(track => {
+      streamRef.current.getVideoTracks().forEach((track) => {
         track.enabled = !isVideoEnabled;
       });
       setIsVideoEnabled(!isVideoEnabled);
-      socketRef.current?.emit('toggle_video', {
+      socketRef.current?.emit("toggle_video", {
         roomId,
-        enabled: !isVideoEnabled
+        enabled: !isVideoEnabled,
       });
     }
   };
 
   const toggleAudio = () => {
     if (streamRef.current) {
-      streamRef.current.getAudioTracks().forEach(track => {
+      streamRef.current.getAudioTracks().forEach((track) => {
         track.enabled = !isAudioEnabled;
       });
       setIsAudioEnabled(!isAudioEnabled);
-      socketRef.current?.emit('toggle_audio', {
+      socketRef.current?.emit("toggle_audio", {
         roomId,
-        enabled: !isAudioEnabled
+        enabled: !isAudioEnabled,
       });
     }
   };
@@ -215,12 +234,12 @@ const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
   const leaveRoom = () => {
     Object.values(peersRef.current).forEach(({ peer }) => peer.destroy());
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach((track) => track.stop());
     }
     socketRef.current?.disconnect();
     setIsJoined(false);
     setPeers({});
-    setRoomId('');
+    setRoomId("");
     setMyStream(null);
   };
 
@@ -266,26 +285,28 @@ const VideoCall: React.FC<VideoCallProps> = ({ userName }) => {
                 You ({userName})
               </div>
             </div>
-            {Object.entries(peers).map(([peerId, { peer, userName: peerUserName }]) => (
-              <PeerVideo key={peerId} peer={peer} userName={peerUserName} />
-            ))}
+            {Object.entries(peers).map(
+              ([peerId, { peer, userName: peerUserName }]) => (
+                <PeerVideo key={peerId} peer={peer} userName={peerUserName} />
+              )
+            )}
           </div>
           <div className="flex gap-4 justify-center mt-4">
             <button
               onClick={toggleVideo}
               className={`px-6 py-2 rounded-full ${
-                isVideoEnabled ? 'bg-blue-500' : 'bg-red-500'
+                isVideoEnabled ? "bg-blue-500" : "bg-red-500"
               } text-white transition-colors duration-200`}
             >
-              {isVideoEnabled ? 'Turn Off Video' : 'Turn On Video'}
+              {isVideoEnabled ? "Turn Off Video" : "Turn On Video"}
             </button>
             <button
               onClick={toggleAudio}
               className={`px-6 py-2 rounded-full ${
-                isAudioEnabled ? 'bg-blue-500' : 'bg-red-500'
+                isAudioEnabled ? "bg-blue-500" : "bg-red-500"
               } text-white transition-colors duration-200`}
             >
-              {isAudioEnabled ? 'Turn Off Audio' : 'Turn On Audio'}
+              {isAudioEnabled ? "Turn Off Audio" : "Turn On Audio"}
             </button>
             <button
               onClick={leaveRoom}
@@ -309,7 +330,7 @@ const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    peer.on('stream', (stream) => {
+    peer.on("stream", (stream) => {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }

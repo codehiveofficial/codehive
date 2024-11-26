@@ -204,7 +204,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
 
   // Socket initialization moved to room creation/joining
   const initializeSocket = () => {
-    socketRef.current = io("http://localhost:5000", {
+    socketRef.current = io(process.env.NEXT_PUBLIC_SOCKET_BACKEND_URL, {
       transports: ["websocket"],
       upgrade: false,
     });
@@ -433,7 +433,16 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     videoElement.srcObject = stream;
     videoElement.autoplay = true;
     videoElement.playsInline = true;
-    videoElement.classList.add("peer-video", "rounded-lg", "aspect-video", "bg-gray-800", "overflow-hidden", "scroll-container", "w-full", "object-cover");
+    videoElement.classList.add(
+      "peer-video",
+      "rounded-lg",
+      "aspect-video",
+      "bg-gray-800",
+      "overflow-hidden",
+      "scroll-container",
+      "w-full",
+      "object-cover"
+    );
     const videoContainer = document.getElementById("video-container");
     if (videoContainer) {
       videoContainer.appendChild(videoElement);
@@ -572,7 +581,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     setMeetLinkCopied: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     navigator.clipboard
-      .writeText("http://localhost:3000/combined?id=" + text)
+      .writeText(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/combined?id=` + text)
       .then(() => {
         setMeetLinkCopied(true);
         setTimeout(() => setMeetLinkCopied(false), 2500);

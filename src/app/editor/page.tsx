@@ -11,7 +11,7 @@ import axios from "axios";
 import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 
-const socket = io("http://localhost:5000"); // Replace with your server URL
+const socket = io(process.env.NEXT_PUBLIC_SOCKET_BACKEND_URL);
 
 interface Theme {
   value: string;
