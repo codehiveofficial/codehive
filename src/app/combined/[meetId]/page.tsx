@@ -56,12 +56,6 @@ const defaultCodeTemplates: Record<string, string> = {
     "// Write your TypeScript code here\nconsole.log('Hello, World!');",
 };
 
-interface CollaborativeIDEProps {
-  params: {
-    meetId: string;
-  };
-  userName: string;
-}
 
 export default async function CollaborativeIDE2({ params, userName }: any)  {
   const [code, setCode] = useState(
