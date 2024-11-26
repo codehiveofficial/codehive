@@ -260,7 +260,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
         setRoomId(newRoomId);
         await joinRoomClicked(newRoomId);
       });
-      
     } catch (err) {
       console.error("Error creating room:", err);
       setMediaError("Failed to create room. Please try again.");
@@ -665,6 +664,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 </span>
               </div>
             </div>
+
             <div className="hidden lg:flex gap-2">
               <button
                 onClick={toggleVideo}
@@ -768,14 +768,11 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               {/* Container for peer videos */}
               <div
                 id="video-container"
-                className="w-full grid grid-cols-2 gap-2 lg:block overflow-y-scroll scroll-container"
+                className="w-full lg:block lg:h-[80vh] overflow-y-scroll lg:overflow-x-hidden scroll-container"
               >
                 {Object.entries(peers).map(
                   ([peerId, { peer, userName: peerUserName }]) => (
-                    <div
-                      key={peerId}
-                      className="lg:relative hidden w-32 mt-4 lg:w-full"
-                    >
+                    <div key={peerId} className="lg:relative mt-4 lg:w-full">
                       {/* <PeerVideo peer={peer} userName={peerUserName} /> */}
                     </div>
                   )
@@ -783,7 +780,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               </div>
             </div>
             {/* Right side - Code Editor */}
-            <div className="w-3/4 space-y-4">
+            <div className="w-full lg:w-3/4 space-y-4">
               <div className="flex justify-between items-center">
                 <div className="hidden lg:flex gap-4">
                   <LanguageDropdown onSelectChange={handleLanguageChange} />
@@ -793,14 +790,18 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                   />
                   <button
                     onClick={toggleGenieModal}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="px-4 md:hidden py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                   >
                     Generate with Genie
                   </button>
+                  <button
+                    onClick={toggleGenieModal}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    <RiRobot2Line/>
+                  </button>
                 </div>
-                {isGenieModalOpen && (
-                  <GenieModal onClose={toggleGenieModal} code={code} />
-                )}
+                {isGenieModalOpen && <GenieModal onClose={toggleGenieModal} />}
                 <div className="hidden lg:flex items-center gap-2">
                   <label className="text-white">Font Size:</label>
                   <input
@@ -812,8 +813,8 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     max="40"
                   />
                 </div>
-                <div className="flex w-[90vw] gap-4 flex-col items-center justify-center lg:hidden">
-                  <div className="flex w-[90vw] lg:hidden gap-4">
+                <div className="flex w-full lg:hidden gap-4 flex-col items-center justify-center">
+                  <div className="flex w-full lg:hidden gap-4">
                     <LanguageDropdown onSelectChange={handleLanguageChange} />
                     <ThemeDropdown
                       handleThemeChange={handleThemeChange}
@@ -825,7 +826,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                         type="number"
                         value={fontSize}
                         onChange={(e) => setFontSize(Number(e.target.value))}
-                        className="w-12 px-2 py-1 rounded"
+                        className="w-14 px-2 py-1 rounded"
                         min="10"
                         max="40"
                       />
@@ -833,20 +834,17 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                   </div>
                   <button
                     onClick={toggleGenieModal}
-                    className="w-[90vw] px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="px-4 w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                   >
-                    <div className="flex gap-4 items-center justify-center">
-                      Generate Code with Genie
-                      <RiRobot2Line />
-                    </div>
+                    Generate Code with Genie
                   </button>
                   {isGenieModalOpen && (
-                    <GenieModal onClose={toggleGenieModal} code={code} />
+                    <GenieModal onClose={toggleGenieModal} />
                   )}
                 </div>
               </div>
               <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4">
-                <div className="lg:col-span-2 lg:overflow-x-hidden lg:w-fit w-[90vw] overflow-x-scroll">
+                <div className="lg:col-span-2 lg:overflow-x-hidden lg:w-full w-full">
                   <CodeEditor
                     onCodeChange={onCodeChange}
                     fontSize={fontSize}
@@ -862,62 +860,30 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     }}
                   />
                 </div>
-                <div className="flex flex-col gap-4 lg:col-span-1 lg:space-y-4">
+
+                <div className="flex justify-items-center flex-col gap-4 lg:col-span-1 lg:space-y-4">
                   <button
-                    className="w-[90vw] lg:w-full lg:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+                    className="w-full lg:w-full lg:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
                     disabled={!code || isLoading}
                     onClick={executeCode}
                   >
                     {isLoading ? "Running..." : "Run Code"}
                   </button>
-                  <OutputWindow outputDetails={outputDetails} />
-                  <CustomInput
-                    customInput={customInput}
-                    setCustomInput={setCustomInput}
-                  />
+                  <div className="flex justify-items-center">
+                    <OutputWindow outputDetails={outputDetails} />
+                  </div>
+                  <div className="flex justify-items-center">
+                    <CustomInput
+                      customInput={customInput}
+                      setCustomInput={setCustomInput}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-interface PeerVideoProps {
-  peer: Peer.Instance;
-  userName: string;
-}
-
-const PeerVideo: React.FC<PeerVideoProps> = ({ peer, userName }) => {
-  const ref = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    if (!peer) return;
-    const handleStream = (stream: MediaStream) => {
-      if (ref.current) {
-        ref.current.srcObject = stream;
-      }
-    };
-    peer.on("stream", handleStream);
-    peer.on("error", (err: string) => {
-      console.error("Peer connection error:", err);
-    });
-    return () => {
-      peer.off("stream", handleStream);
-    };
-  }, [peer]);
-  return (
-    <div className="relative w-full aspect-video bg-gray-800 rounded-lg overflow-hidden">
-      <video
-        ref={ref}
-        autoPlay
-        playsInline
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded text-white">
-        {userName}
-      </div>
     </div>
   );
 };
