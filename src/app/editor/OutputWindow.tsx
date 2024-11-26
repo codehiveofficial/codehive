@@ -119,7 +119,8 @@ interface OutputDetails {
   time?: string;
 }
 
-const OutputWindow: React.FC<{ outputDetails: OutputDetails | null }> = ({ outputDetails }) => (
+export default function OutputWindow({ outputDetails }:any) {
+  return (
   <div className="lg:w-full w-[90vw] p-6 bg-[#1e293b] rounded-lg text-white">
     <h1 className="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2">Output</h1>
     <div className="w-full h-56 bg-[#0f172a] rounded-lg overflow-y-auto p-4 mb-4">
@@ -151,6 +152,7 @@ const OutputWindow: React.FC<{ outputDetails: OutputDetails | null }> = ({ outpu
       </p>
     </div>
   </div>
-);
+  )
+};
 
-export default OutputWindow;
+
