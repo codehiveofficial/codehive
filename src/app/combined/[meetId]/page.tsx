@@ -1,7 +1,7 @@
 "use client";
 import { languageOptions } from "@/constants/languageOptions";
 import LanguageDropdown from "@/app/editor/LanguageDropdown";
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import ThemeDropdown from "@/app/editor/ThemeDropdown";
 import OutputWindow from "@/app/editor/OutputWindow";
 import CustomInput from "@/app/editor/CustomInput";
@@ -27,7 +27,7 @@ import { FaClipboard, FaCheck } from "react-icons/fa";
 import { RiRobot2Line } from "react-icons/ri";
 import { FaLink } from "react-icons/fa6";
 import GenieModal from "../GenieModal";
-// import { useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 interface Theme {
   value: string;
@@ -57,11 +57,11 @@ const defaultCodeTemplates: Record<string, string> = {
 };
 
 
-export default async function CollaborativeIDE2({ params, userName }: any)  {
+export default function CollaborativeIDE2({ userName }: any)  {
   const [code, setCode] = useState(
     defaultCodeTemplates[languageOptions[0].value]
   );
-  const awaitedParams = await params;
+  const params = useParams();
 
   useEffect(() => {
     console.log(params);
@@ -79,7 +79,7 @@ export default async function CollaborativeIDE2({ params, userName }: any)  {
     lineNumber: number;
     column: number;
   } | null>(null);
-  const meetId = awaitedParams.meetId;
+  const meetId = params.meetId;
   const [roomId, setRoomId] = useState(meetId || "");
   const [name, setName] = useState("");
   const [peers, setPeers] = useState<{ [key: string]: PeerConnection }>({});
