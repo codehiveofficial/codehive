@@ -623,7 +623,7 @@ export default function CollaborativeIDE({ userName }: any) {
           )}
           {/* Top bar with room info and controls */}
           <div className="mb-4 lg:flex justify-between items-center">
-            <div className="flex justify-between items-center space-x-2 text-white bg-gray-800 px-4 py-2 rounded-lg shadow-lg">
+            <div className="flex justify-between items-center mr-2 space-x-2 text-white bg-gray-800 px-4 py-2 rounded-lg shadow-lg">
               <div className="flex gap-2">
                 <span className="font-sm lg:font-medium">Room ID:</span>
                 <span className="text-blue-400 hidden lg:block font-semibold">
@@ -768,7 +768,7 @@ export default function CollaborativeIDE({ userName }: any) {
               {/* Container for peer videos */}
               <div
                 id="video-container"
-                className="w-full lg:block lg:h-[80vh] overflow-y-scroll lg:overflow-x-hidden scroll-container"
+                className="w-full lg:block lg:h-[80vh] lg:overflow-x-hidden scroll-container"
               >
                 {Object.entries(peers).map(
                   ([peerId, { peer, userName: peerUserName }]) => (
@@ -790,13 +790,7 @@ export default function CollaborativeIDE({ userName }: any) {
                   />
                   <button
                     onClick={toggleGenieModal}
-                    className="px-4 md:hidden py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                  >
-                    Generate with Genie
-                  </button>
-                  <button
-                    onClick={toggleGenieModal}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="px-4 lg:block py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                   >
                     <RiRobot2Line />
                   </button>
@@ -808,13 +802,13 @@ export default function CollaborativeIDE({ userName }: any) {
                     type="number"
                     value={fontSize}
                     onChange={(e) => setFontSize(Number(e.target.value))}
-                    className="w-16 px-2 py-1 rounded"
+                    className="w-12 px-2 py-1 rounded"
                     min="10"
                     max="40"
                   />
                 </div>
                 <div className="flex w-full lg:hidden gap-4 flex-col items-center justify-center">
-                  <div className="flex w-full lg:hidden gap-4">
+                  <div className="flex w-full lg:hidden gap-4 themecenter">
                     <LanguageDropdown onSelectChange={handleLanguageChange} />
                     <ThemeDropdown
                       handleThemeChange={handleThemeChange}
@@ -861,7 +855,7 @@ export default function CollaborativeIDE({ userName }: any) {
                   />
                 </div>
 
-                <div className="flex justify-items-center flex-col gap-4 lg:col-span-1 lg:space-y-4">
+                <div className="flex justify-items-center flex-col gap-2 lg:col-span-1 lg:space-y-4">
                   <button
                     className="w-full lg:w-full lg:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
                     disabled={!code || isLoading}

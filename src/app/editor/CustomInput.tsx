@@ -7,10 +7,10 @@ interface CustomInputProps {
 
 export default function CustomInput({ customInput, setCustomInput }: any) {
   return (
-    <div className="flex flex-col w-full mt-4">
-      <h1 className="text-xl lg:text-3xl text-white font-bold mb-4">
+    <div className="flex flex-col w-full">
+      {/* <h1 className="text-xl lg:text-3xl text-white font-bold mb-4">
         Custom Input
-      </h1>
+      </h1> */}
       <textarea
         rows={5}
         value={customInput}

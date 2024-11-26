@@ -1,6 +1,7 @@
 .scroll-container {
   max-height: 400px;
   max-width: 100%;
+  overflow-y: auto;
 }
 
 .scroll-container::-webkit-scrollbar {
@@ -20,4 +21,8 @@
 
 .peer-video {
   margin-bottom: 10px;
+}
+
+.themecenter {
+  justify-content: center;
 }
