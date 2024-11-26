@@ -12,14 +12,22 @@ import "@/app/combined/combined.css";
 import Peer from "simple-peer";
 import axios from "axios";
 import ChatModal from "../ChatModal";
-import { useParams } from "next/navigation";
 import {
   downloadCodeAsFile,
   downloadCodeAsImage,
 } from "@/helpers/downloadCode";
-
+import { FaVideo, FaVideoSlash } from "react-icons/fa6";
+import { FaMicrophone } from "react-icons/fa";
+import { IoMdExit } from "react-icons/io";
+import { MdFileDownload } from "react-icons/md";
+import { AiOutlineSnippets } from "react-icons/ai";
+import { FaMicrophoneSlash } from "react-icons/fa";
+import { AiOutlineAudioMuted } from "react-icons/ai";
 import { FaClipboard, FaCheck } from "react-icons/fa";
+import { RiRobot2Line } from "react-icons/ri";
 import { FaLink } from "react-icons/fa6";
+import GenieModal from "../GenieModal";
+import { useParams } from "next/navigation";
 
 interface Theme {
   value: string;
@@ -57,7 +65,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     defaultCodeTemplates[languageOptions[0].value]
   );
   const params = useParams();
-  console.log("Khagesh sharma");
   useEffect(() => {
     console.log(params);
   }, []);
@@ -92,6 +99,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
   const [meetlinkcopied, setMeetLinkCopied] = useState(false);
 
   const [copied, setCopied] = useState(false);
+  const [isGenieModalOpen, setIsGenieModalOpen] = useState(false);
 
   const setupVideoStream = async (
     stream: MediaStream,
@@ -255,7 +263,6 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     try {
       initializeSocket();
       // Ensure video stream is properly set up before creating room
-
       socketRef.current?.emit("create_room", async (newRoomId: string) => {
         setRoomId(newRoomId);
         await joinRoom(newRoomId);
@@ -436,12 +443,12 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     videoElement.classList.add(
       "peer-video",
       "rounded-lg",
-      "aspect-video",
+      // "aspect-video",
       "bg-gray-800",
       "overflow-hidden",
-      "scroll-container",
-      "w-full",
-      "object-cover"
+      // "scroll-container",
+      "w-full"
+      // "object-cover"
     );
     const videoContainer = document.getElementById("video-container");
     if (videoContainer) {
@@ -581,7 +588,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
     setMeetLinkCopied: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     navigator.clipboard
-      .writeText(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/combined?id=` + text)
+      .writeText(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/combined/` + text)
       .then(() => {
         setMeetLinkCopied(true);
         setTimeout(() => setMeetLinkCopied(false), 2500);
@@ -589,6 +596,10 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       .catch((err) => {
         console.error("Failed to copy: ", err);
       });
+  };
+
+  const toggleGenieModal = () => {
+    setIsGenieModalOpen(!isGenieModalOpen);
   };
 
   return (
@@ -629,22 +640,24 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               </div>
             )}
           </div>
-          <div className="space-y-4">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              className="border w-full p-2 rounded-lg"
-            />
-            <button
-              onClick={createRoom}
-              disabled={!streamReady}
-              className="w-full bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Create New Room
-            </button>
-            <div className="flex gap-2">
+          <div className="space-y-4 w-[90vw] lg:w-fit md:w-fit">
+            <div className="flex flex-col gap-2">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                className="border w-full p-2 rounded-lg"
+              />
+              <button
+                onClick={createRoom}
+                disabled={!streamReady}
+                className="w-full bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Create New Room
+              </button>
+            </div>
+            <div className="flex flex-col lg:flex-row gap-2">
               <input
                 type="text"
                 value={roomId}
@@ -668,41 +681,49 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
             <ChatModal socket={socketRef.current} userName={name} />
           )}
           {/* Top bar with room info and controls */}
-          <div className="mb-4 flex justify-between items-center">
-            <div className="flex items-center space-x-2 text-white bg-gray-800 px-4 py-2 rounded-lg shadow-lg">
-              <span className="font-medium">Room ID:</span>
-              <span className="text-blue-400 font-semibold">{roomId}</span>
-              <span
-                onClick={() => copyToClipboard(roomId, setCopied)}
-                className={`ml-2 p-2 rounded-full cursor-pointer transition ${
-                  copied ? "bg-green-500" : "bg-blue-500 hover:bg-blue-600"
-                }`}
-                title={copied ? "Copied!" : "Copy Room ID"}
-              >
-                {copied ? (
-                  <FaCheck className="text-white" />
-                ) : (
-                  <FaClipboard className="text-white" />
-                )}
-              </span>
-              <span
-                onClick={() => copyMeetLink(roomId, setMeetLinkCopied)}
-                className={`ml-2 p-2 rounded-full cursor-pointer transition ${
-                  meetlinkcopied
-                    ? "bg-green-500"
-                    : "bg-blue-500 hover:bg-blue-600"
-                }`}
-                title={meetlinkcopied ? "Copied!" : "Copy Meet Link"}
-              >
-                {meetlinkcopied ? (
-                  <FaCheck className="text-white" />
-                ) : (
-                  <FaLink className="text-white" />
-                )}
-              </span>
+          <div className="mb-4 lg:flex justify-between items-center">
+            <div className="flex justify-between items-center space-x-2 text-white bg-gray-800 px-4 py-2 rounded-lg shadow-lg">
+              <div className="flex gap-2">
+                <span className="font-sm lg:font-medium">Room ID:</span>
+                <span className="text-blue-400 hidden lg:block font-semibold">
+                  {roomId}
+                </span>
+                <span className="text-blue-400 block lg:hidden font-semibold">
+                  {roomId.slice(0, 4)}...
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <span
+                  onClick={() => copyToClipboard(roomId, setCopied)}
+                  className={`ml-2 p-2 rounded-full cursor-pointer transition ${
+                    copied ? "bg-green-500" : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                  title={copied ? "Copied!" : "Copy Room ID"}
+                >
+                  {copied ? (
+                    <FaCheck className="text-white" />
+                  ) : (
+                    <FaClipboard className="text-white" />
+                  )}
+                </span>
+                <span
+                  onClick={() => copyMeetLink(roomId, setMeetLinkCopied)}
+                  className={`ml-2 p-2 rounded-full cursor-pointer transition ${
+                    meetlinkcopied
+                      ? "bg-green-500"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                  title={meetlinkcopied ? "Copied!" : "Copy Meet Link"}
+                >
+                  {meetlinkcopied ? (
+                    <FaCheck className="text-white" />
+                  ) : (
+                    <FaLink className="text-white" />
+                  )}
+                </span>
+              </div>
             </div>
-
-            <div className="flex gap-2">
+            <div className="hidden lg:flex gap-2">
               <button
                 onClick={toggleVideo}
                 className={`px-4 py-2 rounded-lg ${
@@ -742,11 +763,51 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                 Download Snippet (PNG)
               </button>
             </div>
+            <div className="flex items-center justify-center mt-2 lg:hidden gap-2">
+              <button
+                onClick={toggleVideo}
+                className={`px-4 py-2 rounded-lg ${
+                  isVideoEnabled ? "bg-blue-500" : "bg-red-500"
+                } text-white`}
+              >
+                {isVideoEnabled ? <FaVideoSlash /> : <FaVideo />}
+              </button>
+              <button
+                onClick={toggleAudio}
+                className={`px-4 py-2 rounded-lg ${
+                  isAudioEnabled ? "bg-blue-500" : "bg-red-500"
+                } text-white`}
+              >
+                {isAudioEnabled ? <FaMicrophoneSlash /> : <FaMicrophone />}
+              </button>
+              <button
+                onClick={leaveRoom}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white"
+              >
+                <IoMdExit />
+              </button>
+              <button
+                onClick={downloadCodeAsFile.bind(null, code, language.value)}
+                className="px-4 py-2 rounded-lg bg-blue-500 text-white"
+              >
+                <MdFileDownload />
+              </button>
+              <button
+                onClick={downloadCodeAsImage.bind(
+                  null,
+                  code,
+                  "codehive_snippet.png"
+                )}
+                className="px-4 py-2 rounded-lg bg-blue-500 text-white"
+              >
+                <AiOutlineSnippets />
+              </button>
+            </div>
           </div>
           {/* Main content area */}
-          <div className="flex gap-4">
+          <div className="flex lg:flex-row flex-col gap-4">
             {/* Left side - Videos */}
-            <div className="w-1/4 flex flex-col gap-2">
+            <div className="w-full lg:w-1/4 flex flex-col gap-2">
               {/* Self video */}
               <div className="relative w-full">
                 <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden scroll-container">
@@ -765,11 +826,14 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               {/* Container for peer videos */}
               <div
                 id="video-container"
-                className="flex flex-col gap-2 h-[80vh] overflow-y-scroll scroll-container"
+                className="w-full grid grid-cols-2 gap-2 lg:block overflow-y-scroll scroll-container"
               >
                 {Object.entries(peers).map(
                   ([peerId, { peer, userName: peerUserName }]) => (
-                    <div key={peerId} className="relative w-full">
+                    <div
+                      key={peerId}
+                      className="lg:relative hidden w-32 mt-4 lg:w-full"
+                    >
                       {/* <PeerVideo peer={peer} userName={peerUserName} /> */}
                     </div>
                   )
@@ -779,14 +843,23 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
             {/* Right side - Code Editor */}
             <div className="w-3/4 space-y-4">
               <div className="flex justify-between items-center">
-                <div className="flex gap-4">
+                <div className="hidden lg:flex gap-4">
                   <LanguageDropdown onSelectChange={handleLanguageChange} />
                   <ThemeDropdown
                     handleThemeChange={handleThemeChange}
                     theme={theme}
                   />
+                  <button
+                    onClick={toggleGenieModal}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    Generate with Genie
+                  </button>
                 </div>
-                <div className="flex items-center gap-2">
+                {isGenieModalOpen && (
+                  <GenieModal onClose={toggleGenieModal} code={code} />
+                )}
+                <div className="hidden lg:flex items-center gap-2">
                   <label className="text-white">Font Size:</label>
                   <input
                     type="number"
@@ -797,9 +870,41 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     max="40"
                   />
                 </div>
+                <div className="flex w-[90vw] gap-4 flex-col items-center justify-center lg:hidden">
+                  <div className="flex w-[90vw] lg:hidden gap-4">
+                    <LanguageDropdown onSelectChange={handleLanguageChange} />
+                    <ThemeDropdown
+                      handleThemeChange={handleThemeChange}
+                      theme={theme}
+                    />
+                    <div className="flex items-center lg:hidden gap-2">
+                      {/* <label className="text-white">Font Size:</label> */}
+                      <input
+                        type="number"
+                        value={fontSize}
+                        onChange={(e) => setFontSize(Number(e.target.value))}
+                        className="w-12 px-2 py-1 rounded"
+                        min="10"
+                        max="40"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={toggleGenieModal}
+                    className="w-[90vw] px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    <div className="flex gap-4 items-center justify-center">
+                      Generate Code with Genie
+                      <RiRobot2Line />
+                    </div>
+                  </button>
+                  {isGenieModalOpen && (
+                    <GenieModal onClose={toggleGenieModal} code={code} />
+                  )}
+                </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2">
+              <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2 lg:overflow-x-hidden lg:w-fit w-[90vw] overflow-x-scroll">
                   <CodeEditor
                     onCodeChange={onCodeChange}
                     fontSize={fontSize}
@@ -815,9 +920,9 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
                     }}
                   />
                 </div>
-                <div className="col-span-1 space-y-4">
+                <div className="flex flex-col gap-4 lg:col-span-1 lg:space-y-4">
                   <button
-                    className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+                    className="w-[90vw] lg:w-full lg:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
                     disabled={!code || isLoading}
                     onClick={executeCode}
                   >
