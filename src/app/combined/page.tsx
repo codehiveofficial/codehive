@@ -823,7 +823,7 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
               {/* Container for peer videos */}
               <div
                 id="video-container"
-                className="w-full grid grid-cols-2 gap-2 overflow-x-scroll lg:block lg:h-[80vh] overflow-y-scroll scroll-container"
+                className="w-full grid grid-cols-2 gap-2 lg:block overflow-y-scroll scroll-container"
               >
                 {Object.entries(peers).map(
                   ([peerId, { peer, userName: peerUserName }]) => (
