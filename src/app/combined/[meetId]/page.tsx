@@ -265,66 +265,16 @@ const CollaborativeIDE: React.FC<CollaborativeIDEProps> = ({ userName }) => {
       // Ensure video stream is properly set up before creating room
       socketRef.current?.emit("create_room", async (newRoomId: string) => {
         setRoomId(newRoomId);
-        await joinRoom(newRoomId);
+        await joinRoomClicked(newRoomId);
       });
-      await initializeMediaStream();
+      
     } catch (err) {
       console.error("Error creating room:", err);
       setMediaError("Failed to create room. Please try again.");
     }
   };
 
-  const joinRoom = async (roomIdToJoin: string) => {
-    if (!streamRef.current) {
-      setMediaError(
-        "Please ensure camera and microphone access is granted before joining a room."
-      );
-      return;
-    }
-    if (!name) {
-      alert("Please enter your name");
-      return;
-    }
-    try {
-      if (!socketRef.current) {
-        initializeSocket();
-      }
-
-      socketRef.current?.emit("join_room", {
-        roomId: roomIdToJoin,
-        userName,
-      });
-      socketRef.current?.on(
-        "user_joined",
-        ({ userId, userName: peerUserName }) => {
-          if (streamRef.current) {
-            const peer = createPeer(
-              userId,
-              socketRef.current?.id || "",
-              streamRef.current
-            );
-            peersRef.current[userId] = { peer, userName: peerUserName };
-            setPeers((currentPeers) => ({
-              ...currentPeers,
-              [userId]: { peer, userName: peerUserName },
-            }));
-          }
-        }
-      );
-      socketRef.current?.on(
-        "receive_code_change",
-        ({ code, cursorPosition }) => {
-          setCode(code);
-          setRemoteCursorPosition(cursorPosition);
-        }
-      );
-      setIsJoined(true);
-      setRoomId(roomIdToJoin);
-    } catch (err) {
-      console.error("Error joining room:", err);
-      setMediaError("Failed to join room. Please try again.");
-    }
-  };
+  
   const joinRoomClicked = async (roomIdToJoin: string) => {
     if (!streamRef.current) {
       setMediaError(
