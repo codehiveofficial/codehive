@@ -31,7 +31,7 @@ const defaultCodeTemplates: Record<string, string> = {
   typescript: "// Write your TypeScript code here\nconsole.log('Hello, World!');",
 };
 
-const Landing: React.FC<LandingProps> = (props) => {
+export default function Landing(props:any){
   const [roomId, setRoomId] = useState<string>("");
   const [code, setCode] = useState<string>(
     props.code || defaultCodeTemplates[languageOptions[0].value] || "// Write your code here"
@@ -222,4 +222,4 @@ const Landing: React.FC<LandingProps> = (props) => {
   );
 };
 
-export default Landing;
+
