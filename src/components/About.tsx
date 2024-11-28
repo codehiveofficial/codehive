@@ -1,3 +1,4 @@
+import Link from "next/link";
 import aboutImg from "../../public/rb_2035.png";
 import Image from "next/image";
 export default function About() {
@@ -38,27 +39,29 @@ export default function About() {
                 </p>
               </div>
             </div>
-            <button className="sm:w-fit w-full group px-3.5 py-2 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 rounded-lg shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] transition-all duration-700 ease-in-out justify-center items-center flex">
-              <span className="px-1.5 text-white text-sm font-medium leading-6 group-hover:-translate-x-0.5 transition-all duration-700 ease-in-out">
-                Try Now
-              </span>
-              <svg
-                className="group-hover:translate-x-0.5 transition-all duration-700 ease-in-out"
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-              >
-                <path
-                  d="M6.75265 4.49658L11.2528 8.99677L6.75 13.4996"
-                  stroke="#FFFFFF"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
+            <Link href="/combined">
+              <button className="sm:w-fit w-full group px-3.5 py-2 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 rounded-lg shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] transition-all duration-700 ease-in-out justify-center items-center flex">
+                <span className="px-1.5 text-white text-sm font-medium leading-6 group-hover:-translate-x-0.5 transition-all duration-700 ease-in-out">
+                  Try Now
+                </span>
+                <svg
+                  className="group-hover:translate-x-0.5 transition-all duration-700 ease-in-out"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                >
+                  <path
+                    d="M6.75265 4.49658L11.2528 8.99677L6.75 13.4996"
+                    stroke="#FFFFFF"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </Link>
           </div>
           {/* Image Section */}
           <div className="w-full lg:justify-start justify-center items-start flex">

@@ -1,4 +1,6 @@
+import Link from "next/link";
 export default function Hero() {
+  
   return (
     <div id="home" className=" relative overflow-hidden before:absolute z-10 before:top-0 before:start-1/2 before:bg-[url('https://preline.co/assets/svg/examples-dark/polygon-bg-element.svg')] before:bg-no-repeat before:bg-top before:bg-cover before:size-full before:-z-[1] before:transform before:-translate-x-1/2 text-white">
       
@@ -21,9 +23,9 @@ export default function Hero() {
 
         {/* Call to Action */}
         <div className="mt-8 flex justify-center gap-4">
-          <a
+          <Link
             className="inline-flex items-center gap-x-3 px-6 py-3 rounded-lg font-spacegrotesksemibold text-sm text-white bg-gradient-to-r from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 shadow-lg transition-all"
-            href="#get-started"
+            href="/combined"
           >
             Get Started
             <svg
@@ -40,7 +42,7 @@ export default function Hero() {
                 d="M9 5l7 7-7 7"
               />
             </svg>
-          </a>
+          </Link>
           <a
             className="inline-flex items-center gap-x-3 px-6 py-3 rounded-lg font-spacegrotesksemibold text-sm border border-neutral-700 text-neutral-200 hover:bg-neutral-800 shadow transition-all"
             href="#features"
