@@ -1,17 +1,18 @@
 
-
+"use client";
 import { motion } from "framer-motion";
 import { FiBatteryCharging, FiWifi } from "react-icons/fi";
+import { useState } from "react";
 
-export default function Phone({ filled }: any) {
+export default function Phone({ filled, formdata }: any) {
   return (
     <section className="grid place-content-center min-h-screen">
-      <FloatingPhone filled={filled} />
+      <FloatingPhone filled={filled} formdata={formdata}/>
     </section>
   );
 }
 
-function FloatingPhone({ filled }: any)  {
+function FloatingPhone({ filled, formdata }: any)  {
   return (
     <div
       style={{
@@ -37,7 +38,7 @@ function FloatingPhone({ filled }: any)  {
         className="relative h-96 w-56 rounded-[24px] border-2 border-b-4 border-r-4 border-white border-l-gray-200 border-t-gray-200 bg-gray-900 p-1 pl-[3px] pt-[3px]"
       >
         <HeaderBar />
-        <Screen filled={filled} />
+        <Screen filled={filled} formdata={formdata}/>
       </motion.div>
     </div>
   );
@@ -55,7 +56,36 @@ const HeaderBar = () => {
   );
 };
 
-const Screen = ({ filled }: any) => {
+
+
+const Screen = ({ filled, formdata }: any) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_CONTACT_US_API!, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: process.env.NEXT_PUBLIC_AUTH_MESSAGE!,
+        },
+        body: JSON.stringify(formdata),
+      });
+
+      if (!response.ok) {
+        throw new Error((await response.json()).message || "Failed to send message.");
+      }
+      alert("Message sent successfully!");
+      window.location.reload();
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="relative z-0 grid h-full w-full place-content-center overflow-hidden rounded-[20px] bg-white">
       <div className="flex justify-center items-center mb-4">
@@ -85,20 +115,24 @@ const Screen = ({ filled }: any) => {
       </div>
 
       <div className="text-center px-4 mb-4">
-  <h2 className="text-xl font-semibold text-gray-800 mb-2">
-  Collaborate. Code. Communicate.
-  </h2>
-  <p className="text-sm text-gray-600 mb-4">
-    Let's connect and bring ideas to life.
-  </p>
-</div>
+        <h2 className="text-xl font-semibold text-gray-800 mb-2">
+          Collaborate. Code. Communicate.
+        </h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Let's connect and bring ideas to life.
+        </p>
+      </div>
 
-
-      <button className="absolute bottom-4 left-4 right-4 z-10 rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 text-white py-2.5 text-sm font-medium  transition-colors duration-300 ease-in-out shadow-md">
-        {filled ? "Message Sent" : "Contact Us"}
+      <button
+        onClick={handleSubmit}
+        className="absolute bottom-4 left-4 right-4 z-10 rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 text-white py-2.5 text-sm font-medium transition-colors duration-300 ease-in-out shadow-md"
+        disabled={loading}
+      >
+        {loading ? "Sending..." : filled ? "Send Message" : "Contact Us"}
       </button>
 
       <div className="absolute -bottom-72 left-[50%] h-96 w-96 -translate-x-[50%] rounded-full bg-gradient-to-r from-blue-600 to-violet-600 opacity-40" />
     </div>
   );
 };
+

@@ -69,7 +69,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="pt-16 pb-20">
+    <section className="pt-16 pb-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-x-24">
           <div className="flex items-center lg:mb-0 mb-10">
@@ -148,7 +148,7 @@ export default function Contact() {
           </div>
           <div className="lg:max-w-xl w-full h-[600px] flex items-center lg:pt-32 justify-center">
             <div className="z-10">
-              <Phone filled={isFormValid} />
+              <Phone filled={isFormValid} formdata={formData} />
             </div>
           </div>
         </div>
