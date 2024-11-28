@@ -36,7 +36,7 @@ export default function Contact() {
     isFieldValid('phone');
 
   return (
-    <section className="pt-16 pb-20">
+    <section id="contact" className="pt-16 pb-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-x-24">
           <div className="flex items-center lg:mb-0 mb-10">

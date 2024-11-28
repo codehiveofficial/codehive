@@ -10,14 +10,14 @@ const Aboutus = () => {
   return (
     <div className="flex flex-col lg:flex-row md:flex-col lg:gap-8 md:gap-8 gap-2 items-center justify-center">
       <CardContainer className="inter-var">
-        <CardBody className="bg-black relative group/card border-white/[0.2] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border">
-          <CardItem translateZ="50" className="text-xl font-bold text-white">
+        <CardBody className="bg-black flex items-center justify-center flex-col relative group/card border-white/[0.2] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border">
+          <CardItem translateZ="50" className="text-xl font-spacegrotesksemibold text-white">
             Khagesh Sharma
           </CardItem>
           <CardItem
             as="p"
             translateZ="60"
-            className="text-white text-sm max-w-sm mt-2"
+            className="text-white font-spacegroteskregular text-md text-center max-w-sm mt-2"
           >
             A Full-Stack Web Developer and DevOps Engineer
           </CardItem>
@@ -81,14 +81,14 @@ const Aboutus = () => {
         </CardBody>
       </CardContainer>
       <CardContainer className="inter-var">
-        <CardBody className="bg-black relative group/card border-white/[0.2] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border">
-          <CardItem translateZ="50" className="text-xl font-bold text-white">
+        <CardBody className="bg-black flex items-center justify-center flex-col relative group/card border-white/[0.2] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border">
+          <CardItem translateZ="50" className="text-xl font-spacegrotesksemibold text-white">
             Abhay Dixit
           </CardItem>
           <CardItem
             as="p"
             translateZ="60"
-            className="text-white text-sm max-w-sm mt-2"
+            className="text-white font-spacegroteskregular text-center text-md max-w-sm mt-2"
           >
             A Full-Stack Web Developer and AI/ML Developer
           </CardItem>

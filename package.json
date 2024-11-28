@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@material-tailwind/react": "^2.1.10",
     "@monaco-editor/react": "^4.6.0",
     "@types/simple-peer": "^9.11.8",
     "@types/uuid": "^10.0.0",

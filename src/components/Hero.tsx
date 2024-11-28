@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <div className=" relative overflow-hidden before:absolute z-10 before:top-0 before:start-1/2 before:bg-[url('https://preline.co/assets/svg/examples-dark/polygon-bg-element.svg')] before:bg-no-repeat before:bg-top before:bg-cover before:size-full before:-z-[1] before:transform before:-translate-x-1/2 text-white">
+    <div id="home" className=" relative overflow-hidden before:absolute z-10 before:top-0 before:start-1/2 before:bg-[url('https://preline.co/assets/svg/examples-dark/polygon-bg-element.svg')] before:bg-no-repeat before:bg-top before:bg-cover before:size-full before:-z-[1] before:transform before:-translate-x-1/2 text-white">
       
       <div className="absolute  pointer-events-none"></div>
 

@@ -1,52 +1,70 @@
 const Footer = () => {
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
   return (
-    <footer className=" rounded-lg shadow  m-4">
-      <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
-        <div className="sm:flex sm:items-center sm:justify-between">
-          <a
-            href="https://flowbite.com/"
-            className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse"
-          >
-            <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              className="h-8"
-              alt="Flowbite Logo"
-            />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
-              Flowbite
-            </span>
-          </a>
-          <ul className="flex flex-wrap items-center mb-6 text-sm font-medium  sm:mb-0 text-gray-400">
+    <footer className="w-full mt-32 py-14 bg-black border-t border-white/[0.2]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center ">
+        <div className="flex items-center justify-center">
+          <img src="" className="h-24" alt="Logo" />
+          <p className="font-spacegrotesksemibold text-white text-2xl">
+            Codehive
+          </p>
+        </div>
+        <div className="max-w-3xl mx-auto">
+          <ul className="text-lg flex items-center justify-center font-spacegroteskregular flex-col gap-7 md:flex-row md:gap-12 transition-all duration-500 py-16">
             <li>
-              <a href="#" className="hover:underline me-4 md:me-6">
+              <button
+                onClick={() => scrollToSection("home")}
+                className="text-white hover:text-blue-700"
+              >
+                Home
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollToSection("features")}
+                className="text-white hover:text-blue-700"
+              >
+                Features
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollToSection("about")}
+                className="text-white hover:text-blue-700"
+              >
                 About
-              </a>
+              </button>
             </li>
             <li>
-              <a href="#" className="hover:underline me-4 md:me-6">
-                Privacy Policy
-              </a>
+              <button
+                onClick={() => scrollToSection("developers")}
+                className="text-white hover:text-blue-700"
+              >
+                Developers
+              </button>
             </li>
             <li>
-              <a href="#" className="hover:underline me-4 md:me-6">
-                Licensing
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
+              <button
+                onClick={() => scrollToSection("contact")}
+                className="text-white hover:text-blue-700"
+              >
                 Contact
-              </a>
+              </button>
             </li>
           </ul>
+          <span className="text-lg font-spacegroteskregular text-gray-500 text-center block">
+            ©<a href="/">Codehive</a> {new Date().getFullYear()}, All rights
+            reserved.
+          </span>
         </div>
-        <hr className="my-6  sm:mx-auto border-gray-700 lg:my-8" />
-        <span className="block text-sm  sm:text-center text-gray-400">
-          © 2023{" "}
-          <a href="https://flowbite.com/" className="hover:underline">
-            Flowbite™
-          </a>
-          . All Rights Reserved.
-        </span>
       </div>
     </footer>
   );
