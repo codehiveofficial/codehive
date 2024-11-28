@@ -16,7 +16,7 @@ const FeaturesSection = () => {
       color: "bg-blue-50",
     },
     {
-      icon: "📞",
+      icon: "💡",
       title: "Integrated Communication Tools",
       description:
         "Stay connected with inbuilt video calling and chat features, making collaboration smooth and efficient. Download your code as styled snippets or files, simplifying project sharing and documentation.",
@@ -24,7 +24,7 @@ const FeaturesSection = () => {
       color: "bg-green-50",
     },
     {
-      icon: "🤖",
+      icon: "🌟",
       title: "AI-Powered Coding Assistance",
       description:
         "Genie, our fine-tuned AI chatbot, provides smart code suggestions and instant corrections, empowering developers to write cleaner, more efficient code.",
@@ -69,7 +69,7 @@ const FeaturesSection = () => {
       {features.map((feature, index) => (
         <motion.div
           key={feature.title}
-          className={`flex flex-col shadow-slate-100 md:flex-row bg-gradient-to-tl from-blue-600 to-violet-600 items-center mb-16 rounded-2xl overflow-hidden shadow-md ${
+          className={`flex flex-col shadow-slate-400 md:flex-row bg-gradient-to-tl from-blue-600 to-violet-600 items-center mb-16 rounded-2xl overflow-hidden shadow-md ${
             feature.color
           } ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}
           variants={containerVariants}
