@@ -1,137 +1,153 @@
+// export default function Hero() {
+//   return (
+//     <div className="">
+//       <div className="relative overflow-hidden before:absolute z-10 before:top-0 before:start-1/2 before:bg-[url('https://preline.co/assets/svg/examples-dark/polygon-bg-element.svg')] before:bg-no-repeat before:bg-top before:bg-cover before:size-full before:-z-[1] before:transform before:-translate-x-1/2">
+//         <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 pt-48 pb-24">
+//           <div className="text-center">
+//             <h1 className="block font-extrabold text-4xl md:text-5xl lg:text-6xl text-neutral-200">
+//               Revolutionize Coding with{' '}
+//               <span className="bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600 text-transparent">
+//                 Codehive
+//               </span>
+//             </h1>
+//             <p className="mt-5 text-lg text-neutral-400 max-w-3xl mx-auto">
+//               A cutting-edge platform for collaborative coding, AI-driven code assistance, real-time video communication, and more. Build, innovate, and succeed as a team, all in one seamless environment.
+//             </p>
+//           </div>
+
+//           <div className="mt-8 flex justify-center gap-4">
+//             <a
+//               className="inline-flex items-center justify-center gap-x-3 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 text-white text-sm font-semibold rounded-lg py-3 px-6 shadow-lg focus:outline-none"
+//               href="#get-started"
+//             >
+//               Get Started
+//               <svg
+//                 className="shrink-0 w-5 h-5"
+//                 xmlns="http://www.w3.org/2000/svg"
+//                 fill="none"
+//                 viewBox="0 0 24 24"
+//                 stroke="currentColor"
+//               >
+//                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+//               </svg>
+//             </a>
+//             <a
+//               className="inline-flex items-center justify-center gap-x-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 text-sm font-medium rounded-lg py-3 px-6 shadow-lg focus:outline-none"
+//               href="#features"
+//             >
+//               Learn More
+//               <svg
+//                 className="shrink-0 w-5 h-5"
+//                 xmlns="http://www.w3.org/2000/svg"
+//                 fill="none"
+//                 viewBox="0 0 24 24"
+//                 stroke="currentColor"
+//               >
+//                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+//               </svg>
+//             </a>
+//           </div>
+
+          
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
 export default function Hero() {
   return (
-    <div className="">
-    <div className="relative overflow-hidden before:absolute z-10 before:top-0 before:start-1/2  before:bg-[url('https://preline.co/assets/svg/examples-dark/polygon-bg-element.svg')] before:bg-no-repeat before:bg-top before:bg-cover before:size-full before:-z-[1] before:transform before:-translate-x-1/2">
-      <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 pt-48 pb-20">
-        <div className="flex justify-center">
-          <a
-            className="inline-flex items-center gap-x-2 border  text-sm  p-1 ps-3 rounded-full transition  focus:outline-none  bg-neutral-800 border-neutral-700 text-neutral-200 hover:border-neutral-600 focus:border-neutral-600"
-            href="#"
-          >
-            PRO release - Join to waitlist
-            <span className="py-1.5 px-2.5 inline-flex justify-center items-center gap-x-2 rounded-full  font-semibold text-sm  bg-neutral-700 text-neutral-400">
-              <svg
-                className="shrink-0 size-4"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </span>
-          </a>
-        </div>
+    <div className=" relative overflow-hidden before:absolute z-10 before:top-0 before:start-1/2 before:bg-[url('https://preline.co/assets/svg/examples-dark/polygon-bg-element.svg')] before:bg-no-repeat before:bg-top before:bg-cover before:size-full before:-z-[1] before:transform before:-translate-x-1/2 text-white">
+      
+      <div className="absolute  pointer-events-none"></div>
 
-        <div className="mt-5 max-w-2xl text-center mx-auto">
-          <h1 className="block font-bold  text-4xl md:text-5xl lg:text-6xl text-neutral-200">
-            Let's Build
-            <span className="bg-clip-text bg-gradient-to-tl from-blue-600 to-violet-600 text-transparent">
-              Together
+      <div className="max-w-[85rem] mx-auto px-6 lg:px-8 pt-48 pb-20">
+        
+        <div className="text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+            Collaborate. Code. Communicate.
+            <br />
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-violet-600">
+              All in One Place.
             </span>
           </h1>
-        </div>
-
-        <div className="mt-5 max-w-3xl text-center mx-auto">
-          <p className="text-lg  text-neutral-400">
-            Preline UI is an open-source set of prebuilt UI components,
-            ready-to-use examples and Figma design system based on the
-            utility-first Tailwind CSS framework.
+          <p className="mt-5 text-lg text-neutral-400 max-w-2xl mx-auto">
+            Welcome to Codehive, your ultimate collaborative coding platform. Code together in real time, share ideas with built-in chat and video calls, and unleash the power of AI with Codehive Genie for smarter coding solutions.
           </p>
         </div>
 
-        <div className="mt-8 gap-3 flex justify-center">
+        {/* Call to Action */}
+        <div className="mt-8 flex justify-center gap-4">
           <a
-            className="inline-flex justify-center items-center gap-x-3 text-center bg-gradient-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 border border-transparent text-white text-sm font-medium rounded-md focus:outline-none focus:from-violet-600 focus:to-blue-600 py-3 px-4"
-            href="#"
+            className="inline-flex items-center gap-x-3 px-6 py-3 rounded-lg font-semibold text-sm text-white bg-gradient-to-r from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 shadow-lg transition-all"
+            href="#get-started"
           >
-            Get started
+            Get Started
             <svg
-              className="shrink-0 size-4"
+              className="w-5 h-5"
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
               fill="none"
+              viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
             >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
-          </a>
-          <button
-            type="button"
-            className="relative group p-2 ps-3 inline-flex items-center gap-x-2 text-sm font-mono rounded-lg border    shadow-sm  focus:outline-none  disabled:opacity-50 disabled:pointer-events-none bg-neutral-900 border-neutral-700 text-white hover:bg-neutral-800 focus:bg-neutral-800"
-          >
-            $ npm i preline
-            <span className="flex justify-center items-center  rounded-md size-7 bg-neutral-700 text-neutral-400">
-              <svg
-                className="shrink-0 size-4 group-hover:rotate-6 transition"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+              <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-              >
-                <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-              </svg>
-            </span>
-          </button>
-        </div>
-
-        <div className="mt-5 flex justify-center items-center gap-x-1 sm:gap-x-3">
-          <span className="text-sm text-neutral-400">
-            Package Manager:
-          </span>
-          <span className="text-sm font-bold text-white">
-            npm
-          </span>
-          <svg
-            className="size-5 text-neutral-600"
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path d="M6 13L10 3" stroke="currentColor" strokeLinecap="round" />
-          </svg>
+                strokeWidth="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </a>
           <a
-            className="inline-flex items-center gap-x-1 text-sm  decoration-2 hover:underline focus:outline-none focus:underline font-medium text-blue-500"
-            href="#"
+            className="inline-flex items-center gap-x-3 px-6 py-3 rounded-lg font-medium text-sm border border-neutral-700 text-neutral-200 hover:bg-neutral-800 shadow transition-all"
+            href="#features"
           >
-            Installation Guide
+            Learn More
             <svg
-              className="shrink-0 size-4"
+              className="w-5 h-5"
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
               fill="none"
+              viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
             >
-              <path d="m9 18 6-6-6-6" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
             </svg>
           </a>
         </div>
+
+        {/* Highlights Section */}
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          <div>
+            <h3 className="text-xl font-bold text-blue-400">Real-Time Collaboration</h3>
+            <p className="mt-2 text-neutral-400">
+              Code together across devices with live updates.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-violet-400">AI Assistance</h3>
+            <p className="mt-2 text-neutral-400">
+              Get code fixes, suggestions, and generation with Codehive Genie.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-blue-400">Integrated Tools</h3>
+            <p className="mt-2 text-neutral-400">
+              Chat, video calls, and file sharing for seamless teamwork.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-violet-400">Customizable Themes</h3>
+            <p className="mt-2 text-neutral-400">
+              Choose from 20+ editor themes to suit your style.
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
     </div>
   );
 }
