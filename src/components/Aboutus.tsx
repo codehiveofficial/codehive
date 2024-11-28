@@ -90,7 +90,7 @@ const Aboutus = () => {
             translateZ="60"
             className="text-white text-sm max-w-sm mt-2"
           >
-            A Full-Stack Web and AI/ML Developer
+            A Full-Stack Web Developer and AI/ML Developer
           </CardItem>
           <CardItem translateZ="100" className="w-full mt-4">
             <Image
