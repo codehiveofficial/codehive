@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import logo from "../../public/logo.png"
+import Image from "next/image";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,8 +25,8 @@ const Navbar = () => {
     <nav className="bg-opacity-50 backdrop-blur-md fixed w-full z-20 top-0 start-0 rounded-lg shadow-lg">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img
-            src="https://flowbite.com/docs/images/logo.svg"
+          <Image
+            src={logo}
             className="h-8"
             alt="Codehive Logo"
           />
