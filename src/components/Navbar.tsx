@@ -26,7 +26,7 @@ const Navbar = () => {
           <img
             src="https://flowbite.com/docs/images/logo.svg"
             className="h-8"
-            alt="Flowbite Logo"
+            alt="Codehive Logo"
           />
           <span className="self-center text-white lg:text-2xl md:text-2xl lg:block md:block hidden font-semibold whitespace-nowrap">
             Codehive
@@ -37,7 +37,7 @@ const Navbar = () => {
             type="button"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center"
           >
-            Get started
+            <a href="http://localhost:3000/combined">Get started</a>
           </button>
           <button
             onClick={toggleMenu}
