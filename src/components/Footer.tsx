@@ -11,9 +11,9 @@ const Footer = () => {
   return (
     <footer className="w-full mt-32 py-14 bg-black border-t border-white/[0.2]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center ">
-        <div className="flex items-center justify-center">
-          {/* <img src="" className="h-24" alt="Logo" /> */}
-          <p className="font-spacegrotesksemibold text-white text-2xl">
+        <div onClick={() => scrollToSection("home")} className="flex items-center justify-center">
+          <img src="" className="h-24" alt="Logo" />
+          <p className="font-spacegrotesksemibold text-white text-2xl cursor-pointer">
             Codehive
           </p>
         </div>
