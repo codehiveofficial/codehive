@@ -6,7 +6,7 @@ export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: ''
+    message: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -23,8 +23,8 @@ export default function Contact() {
         return formData.name.trim().length > 0;
       case 'email':
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
-      case 'phone':
-        return formData.phone.trim().length > 0;
+      case 'message':
+        return formData.message.trim().length > 0;
       default:
         return false;
     }
@@ -33,7 +33,7 @@ export default function Contact() {
   const isFormValid = 
     isFieldValid('name') && 
     isFieldValid('email') && 
-    isFieldValid('phone');
+    isFieldValid('message');
 
   return (
     <section className="pt-16 pb-20">
@@ -92,16 +92,16 @@ export default function Contact() {
                 <div className="relative">
                   <label htmlFor="text" className="block font-spacegrotesksemibold text-gray-100 mb-2">Your Message</label>
                   <textarea
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
+                    id="message"
+                    name="message"
+                    value={formData.message}
                     onChange={handleInputChange}
                     className={`
                       w-full h-24 pl-4 pr-4 pt-4 text-gray-900 resize-none
                       border-2 rounded-lg transition-all duration-300
                       focus:outline-none focus:ring-2 focus:border-indigo-500
                       font-spacegroteskregular
-                      ${formData.phone && !isFieldValid('phone') 
+                      ${formData.message && !isFieldValid('message') 
                         ? 'border-red-500 focus:ring-red-200' 
                         : 'border-gray-300 focus:ring-indigo-200'}
                     `}
