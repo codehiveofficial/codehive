@@ -50,7 +50,7 @@ export default function Contact() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: process.env.NEXT_AUTH_MESSAGE!,
+          Authorization: process.env.NEXT_PUBLIC_AUTH_MESSAGE!,
         },
         body: JSON.stringify(formData),
       });
