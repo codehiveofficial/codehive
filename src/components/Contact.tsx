@@ -1,70 +1,3 @@
-// "use client";
-// import Phone from "./Phone";
-// import { useState } from "react";
-
-// export default function Contact() {
-
-//     const [isFilled, setIsFilled] = useState(false);
-
-//   const handleInputChange = (e:any) => {
-//     const form = e.target.closest("form");
-//     const name = form.querySelector("input[type='text']").value.trim();
-//     const email = form.querySelector("input[type='email']").value.trim();
-//     const phone = form.querySelector("textarea").value.trim();
-
-//     // Check if all fields are filled
-//     setIsFilled(name !== "" && email !== "" && phone !== "");
-//   };
-
-//   return (
-//     <section className="py-24">
-//       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-//         <div className="grid lg:grid-cols-2 grid-cols-1 gap-x-24">
-//           <div className="flex items-center lg:mb-0 mb-10">
-//             <div className="">
-//               <h4 className="text-indigo-600 text-base font-medium leading-6 mb-4 lg:text-left text-center">
-//                 Reach to us
-//               </h4>
-//               <h2 className="text-gray-900 font-manrope text-4xl font-semibold leading-10 mb-9 lg:text-left text-center">
-//                 Contact Us
-//               </h2>
-//               <form action="">
-//                 <input
-//                   type="text"
-//                   className="w-full h-14 shadow-sm text-gray-600 placeholder-text-400 text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none py-2 px-4 mb-8"
-//                   placeholder="Name"
-//                     onChange={handleInputChange}
-//                 />
-//                 <input
-//                   type="email"
-//                   className="w-full h-14 shadow-sm text-gray-600 placeholder-text-400 text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none py-2 px-4 mb-8"
-//                   placeholder="Email"
-//                     onChange={handleInputChange}
-//                 />
-//                 <textarea
-//                   name=""
-//                   id="text"
-//                   className="w-full h-48 shadow-sm resize-none text-gray-600 placeholder-text-400 text-lg font-normal leading-7 rounded-2xl border border-gray-200 focus:outline-none px-4 py-4 mb-8"
-//                   placeholder="Phone"
-//                     onChange={handleInputChange}
-//                 ></textarea>
-//                 <button className="w-full h-12 text-center text-white text-base font-semibold leading-6 rounded-full bg-indigo-600 shadow transition-all duration-700 hover:bg-indigo-800">
-//                   Submit
-//                 </button>
-//               </form>
-//             </div>
-//           </div>
-//           <div className="lg:max-w-xl w-full h-[600px] flex items-center justify-center ">
-//             <div className="z-10">
-//               <Phone filled={isFilled} />
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
 "use client";
 import { useState } from "react";
 import Phone from "./Phone";
@@ -103,7 +36,7 @@ export default function Contact() {
     isFieldValid('phone');
 
   return (
-    <section className="py-24 bg-black">
+    <section className="py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-x-24">
           <div className="flex items-center lg:mb-0 mb-10">
@@ -111,14 +44,16 @@ export default function Contact() {
               <h4 className="text-indigo-600 text-base font-medium leading-6 mb-4 lg:text-left text-center">
                 Get in Touch
               </h4>
-              <h2 className="text-gray-900 font-manrope text-4xl font-semibold leading-10 mb-9 lg:text-left text-center">
+              <h2 className="text-gray-100 font-manrope text-4xl font-semibold leading-10 mb-9 lg:text-left text-center">
                 Contact Our Team
               </h2>
               
               <form className="space-y-6">
                 <div className="relative">
+                  <label htmlFor="name" className="block text-gray-100 mb-2">Your Name</label>
                   <input
                     type="text"
+                    id="name"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
@@ -135,8 +70,10 @@ export default function Contact() {
                 </div>
 
                 <div className="relative">
+                  <label htmlFor="email" className="block text-gray-100 mb-2">Email Address</label>
                   <input
                     type="email"
+                    id="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
@@ -153,7 +90,9 @@ export default function Contact() {
                 </div>
 
                 <div className="relative">
+                  <label htmlFor="phone" className="block text-gray-100 mb-2">Your Message</label>
                   <textarea
+                    id="phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
@@ -185,7 +124,7 @@ export default function Contact() {
             </div>
           </div>
           
-          <div className="lg:max-w-xl w-full h-[600px] flex items-center justify-center">
+          <div className="lg:max-w-xl w-full h-[600px] flex items-center lg:pt-32 justify-center">
             <div className="z-10">
               <Phone filled={isFormValid} />
             </div>

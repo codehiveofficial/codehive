@@ -19,7 +19,7 @@ function FloatingPhone({ filled }: any)  {
         transform: "rotateY(-30deg) rotateX(15deg)",
         boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
       }}
-      className="rounded-[24px] bg-gradient-to-br from-gray-800 to-gray-900"
+      className="rounded-[24px] bg-gradient-to-br from-neutral-200 to-gray-400"
     >
       <motion.div
         initial={{
