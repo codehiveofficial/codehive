@@ -19,7 +19,7 @@ export default function Home() {
         <FeaturesSection />
       </div>
       <About />
-      <div className="flex flex-col mt-10 md:mt-32 lg:mt-40 items-center justify-center">
+      <div className="flex flex-col mt-10 md:mt-15 lg:mt-10 items-center justify-center">
         <p className="font-spacegrotesksemibold text-center text-white text-3xl mb-10 md:text-4xl lg:text-5xl">
           Meet the Developers of Codehive
         </p>

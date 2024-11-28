@@ -85,19 +85,20 @@ const Screen = ({ filled }: any) => {
       </div>
 
       <div className="text-center px-4 mb-4">
-        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-          Connect Today
-        </h2>
-        <p className="text-sm text-gray-600 mb-4">
-          Reach out and let's start a conversation
-        </p>
-      </div>
+  <h2 className="text-xl font-semibold text-gray-800 mb-2">
+  Collaborate. Code. Communicate.
+  </h2>
+  <p className="text-sm text-gray-600 mb-4">
+    Let's connect and bring ideas to life.
+  </p>
+</div>
 
-      <button className="absolute bottom-4 left-4 right-4 z-10 rounded-lg bg-blue-600 text-white py-2.5 text-sm font-medium hover:bg-blue-700 transition-colors duration-300 ease-in-out shadow-md">
+
+      <button className="absolute bottom-4 left-4 right-4 z-10 rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 text-white py-2.5 text-sm font-medium  transition-colors duration-300 ease-in-out shadow-md">
         {filled ? "Message Sent" : "Contact Us"}
       </button>
 
-      <div className="absolute -bottom-72 left-[50%] h-96 w-96 -translate-x-[50%] rounded-full bg-blue-500 opacity-60" />
+      <div className="absolute -bottom-72 left-[50%] h-96 w-96 -translate-x-[50%] rounded-full bg-gradient-to-r from-blue-600 to-violet-600 opacity-40" />
     </div>
   );
 };
