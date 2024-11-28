@@ -38,7 +38,7 @@ export default function About() {
                 </p>
               </div>
             </div>
-            <button className="sm:w-fit w-full group px-3.5 py-2 bg-indigo-700 hover:bg-indigo-600 rounded-lg shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] transition-all duration-700 ease-in-out justify-center items-center flex">
+            <button className="sm:w-fit w-full group px-3.5 py-2 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 rounded-lg shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] transition-all duration-700 ease-in-out justify-center items-center flex">
               <span className="px-1.5 text-white text-sm font-medium leading-6 group-hover:-translate-x-0.5 transition-all duration-700 ease-in-out">
                 Try Now
               </span>

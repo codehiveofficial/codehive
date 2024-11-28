@@ -81,7 +81,7 @@ const FeaturesSection = () => {
             <div className="text-5xl mb-4 lg:text-start md:text-start text-center">
               {feature.icon}
             </div>
-            <h2 className="lg:text-3xl font-spacegroteskregular text-blue-600 text-xl lg:text-start md:text-start text-center font-bold mb-4">
+            <h2 className="lg:text-3xl font-spacegroteskregular bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-violet-600 text-xl lg:text-start md:text-start text-center font-bold mb-4">
               {feature.title}
             </h2>
             <p className="text-white font-spacegrotesklight lg:text-lg text-md lg:text-start md:text-start text-center leading-relaxed">
