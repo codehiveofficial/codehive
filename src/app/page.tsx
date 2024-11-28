@@ -12,16 +12,16 @@ export default function Home() {
     <main className="bg-black p-1">
       <Navbar />
       <Hero />
-      <div className="flex flex-col gap-4 items-center justify-center mt-32">
-        <p className="font-bold text-white text-lg md:text-lg lg:text-5xl">
-          Features
+      <div className="flex flex-col gap-4 items-center justify-center mt-10 md:mt-32 lg:mt-40">
+        <p className="font-spacegrotesksemibold text-white text-2xl md:text-3xl lg:text-5xl">
+          Features of Codehive
         </p>
         <FeaturesSection />
       </div>
       <About />
-      <div className="flex flex-col mt-10">
-        <p className="flex font-bold items-center justify-center text-white text-lg md:text-lg lg:text-5xl">
-          Developers of Codehive
+      <div className="flex flex-col mt-10 md:mt-32 lg:mt-40 items-center justify-center">
+        <p className="font-spacegrotesksemibold text-center text-white text-2xl md:text-3xl lg:text-5xl">
+          Meet the Developers of Codehive
         </p>
         <Aboutus />
       </div>

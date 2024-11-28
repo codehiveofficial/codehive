@@ -8,7 +8,7 @@ import Link from "next/link";
 
 const Aboutus = () => {
   return (
-    <div className="flex flex-col lg:flex-row md:flex-row gap-8 items-center justify-center">
+    <div className="flex flex-col lg:flex-row md:flex-row lg:gap-8 md:gap-8 gap-2 items-center justify-center">
       <CardContainer className="inter-var">
         <CardBody className="bg-black relative group/card border-white/[0.2] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border">
           <CardItem translateZ="50" className="text-xl font-bold text-white">

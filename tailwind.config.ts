@@ -12,6 +12,13 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        spacegroteskbold: "Space Grotesk Bold",
+        spacegrotesklight: "Space Grotesk Light",
+        spacegroteskmedium: "Space Grotesk Medium",
+        spacegroteskregular: "Space Grotesk Regular",
+        spacegrotesksemibold: "Space Grotesk Semibold",
+      },
     },
   },
   plugins: [],

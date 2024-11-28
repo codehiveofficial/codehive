@@ -13,7 +13,7 @@ const FeaturesSection = () => {
       description:
         "Codehive offers a real-time collaborative coding playground, enabling seamless teamwork. With support for 5+ programming languages and 20+ color themes, it's designed to cater to diverse developer preferences.",
       image: Feature1,
-      color: "bg-blue-50",
+      color: "bg-black",
     },
     {
       icon: "💡",
@@ -21,7 +21,7 @@ const FeaturesSection = () => {
       description:
         "Stay connected with inbuilt video calling and chat features, making collaboration smooth and efficient. Download your code as styled snippets or files, simplifying project sharing and documentation.",
       image: Feature2,
-      color: "bg-green-50",
+      color: "bg-black",
     },
     {
       icon: "🌟",
@@ -29,7 +29,7 @@ const FeaturesSection = () => {
       description:
         "Genie, our fine-tuned AI chatbot, provides smart code suggestions and instant corrections, empowering developers to write cleaner, more efficient code.",
       image: Feature3,
-      color: "bg-green-50",
+      color: "bg-black",
     },
   ];
 
@@ -60,7 +60,7 @@ const FeaturesSection = () => {
 
   return (
     <motion.div
-      className="container lg:w-[80vw] mx-auto px-4 py-16 font-spacegroteskmedium"
+      className="container lg:w-[80vw] mx-auto px-4 lg:py-8 md:py-8 py-4 font-spacegroteskmedium"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
@@ -69,7 +69,7 @@ const FeaturesSection = () => {
       {features.map((feature, index) => (
         <motion.div
           key={feature.title}
-          className={`flex flex-col shadow-slate-400 md:flex-row bg-gradient-to-tl from-blue-600 to-violet-600 items-center mb-16 rounded-2xl overflow-hidden shadow-md ${
+          className={`flex flex-col md:flex-row items-center mb-16 rounded-2xl overflow-hidden shadow-md ${
             feature.color
           } ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}
           variants={containerVariants}
@@ -81,15 +81,15 @@ const FeaturesSection = () => {
             <div className="text-5xl mb-4 lg:text-start md:text-start text-center">
               {feature.icon}
             </div>
-            <h2 className="lg:text-3xl text-2xl lg:text-start md:text-start text-center font-bold mb-4 text-white">
+            <h2 className="lg:text-3xl font-spacegroteskregular text-blue-600 text-xl lg:text-start md:text-start text-center font-bold mb-4">
               {feature.title}
             </h2>
-            <p className="text-white lg:text-lg text-md lg:text-start md:text-start text-center leading-relaxed">
+            <p className="text-white font-spacegrotesklight lg:text-lg text-md lg:text-start md:text-start text-center leading-relaxed">
               {feature.description}
             </p>
           </motion.div>
           <motion.div
-            className="md:w-1/2 p-8"
+            className="md:w-1/2 lg:p-8 md:p-8 p-2"
             variants={itemVariants(index % 2 === 1)}
           >
             <Image
