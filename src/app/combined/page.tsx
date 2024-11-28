@@ -796,7 +796,7 @@ export default function CollaborativeIDE({ userName }: any) {
                     <span>Genie</span>
                   </button>
                 </div>
-                {isGenieModalOpen && <GenieModal onClose={toggleGenieModal} />}
+                {isGenieModalOpen && <GenieModal onClose={toggleGenieModal} code={code} />}
                 <div className="hidden lg:flex items-center gap-2">
                   <label className="text-white">Font Size:</label>
                   <input
