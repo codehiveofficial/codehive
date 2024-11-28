@@ -27,7 +27,7 @@ const Navbar = () => {
         <a href="" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
             src={logo}
-            className="h-8"
+            className="h-10 w-10"
             alt="Codehive Logo"
           />
           <span className="self-center text-white lg:text-2xl md:text-2xl lg:block md:block hidden font-semibold whitespace-nowrap">
