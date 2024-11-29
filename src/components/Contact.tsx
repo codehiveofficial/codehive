@@ -1,5 +1,3 @@
-
-
 "use client";
 import { useState } from "react";
 import Phone from "./Phone";
@@ -14,7 +12,7 @@ export default function Contact() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e:any) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -22,7 +20,7 @@ export default function Contact() {
     }));
   };
 
-  const isFieldValid = (field:any) => {
+  const isFieldValid = (field: any) => {
     switch (field) {
       case "name":
         return formData.name.trim().length > 0;
@@ -35,15 +33,16 @@ export default function Contact() {
     }
   };
 
-  const isFormValid =
-    isFieldValid("name") && isFieldValid("email") && isFieldValid("message");
-
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (!isFormValid) return;
+
+    // Validate fields and alert if any are empty or invalid
+    if (!isFieldValid("name") || !isFieldValid("email") || !isFieldValid("message")) {
+      alert("All fields are required and must be valid.");
+      return;
+    }
 
     setIsSubmitting(true);
-    
 
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_CONTACT_US_API!, {
@@ -59,9 +58,9 @@ export default function Contact() {
         throw new Error((await response.json()).message || "Failed to send message.");
       }
       alert("Message sent successfully!");
-      
+
       setFormData({ name: "", email: "", message: "" });
-    } catch (error:any) {
+    } catch (error: any) {
       alert(error.message);
     } finally {
       setIsSubmitting(false);
@@ -88,11 +87,7 @@ export default function Contact() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className={`w-full h-14 pl-4 pr-10 text-gray-900 border-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-indigo-500 font-spacegroteskregular ${
-                      formData.name && !isFieldValid("name")
-                        ? "border-red-500 focus:ring-red-200"
-                        : "border-gray-300 focus:ring-indigo-200"
-                    }`}
+                    className={`w-full h-14 pl-4 pr-10 text-gray-900 border-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-indigo-500 font-spacegroteskregular`}
                     placeholder="Your Name"
                   />
                 </div>
@@ -106,11 +101,7 @@ export default function Contact() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`w-full h-14 pl-4 pr-10 text-gray-900 border-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-indigo-500 font-spacegroteskregular ${
-                      formData.email && !isFieldValid("email")
-                        ? "border-red-500 focus:ring-red-200"
-                        : "border-gray-300 focus:ring-indigo-200"
-                    }`}
+                    className={`w-full h-14 pl-4 pr-10 text-gray-900 border-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-indigo-500 font-spacegroteskregular`}
                     placeholder="Email Address"
                   />
                 </div>
@@ -123,32 +114,22 @@ export default function Contact() {
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}
-                    className={`w-full h-24 pl-4 pr-4 pt-4 text-gray-900 resize-none border-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-indigo-500 font-spacegroteskregular ${
-                      formData.message && !isFieldValid("message")
-                        ? "border-red-500 focus:ring-red-200"
-                        : "border-gray-300 focus:ring-indigo-200"
-                    }`}
+                    className={`w-full h-24 pl-4 pr-4 pt-4 text-gray-900 resize-none border-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-indigo-500 font-spacegroteskregular`}
                     placeholder="Your Message"
                   ></textarea>
                 </div>
                 <button
                   type="submit"
-                  disabled={!isFormValid || isSubmitting}
-                  className={`w-full h-14 text-white font-spacegrotesksemibold rounded-lg transition-all duration-300 ${
-                    isFormValid && !isSubmitting
-                      ?"bg-gradient-to-r from-blue-600 to-violet-600"
-                      : "bg-gradient-to-r from-blue-600 to-violet-600 cursor-not-allowed"
-                  }`}
+                  className="w-full h-14 text-white font-spacegrotesksemibold rounded-lg transition-all duration-300 bg-gradient-to-r from-blue-600 to-violet-600"
                 >
                   {isSubmitting ? "Sending..." : "Send Message"}
                 </button>
-                
               </form>
             </div>
           </div>
           <div className="lg:max-w-xl w-full h-[600px] flex items-center lg:pt-32 justify-center">
             <div className="z-10">
-              <Phone filled={isFormValid} formdata={formData} />
+              <Phone filled={isFieldValid("name") && isFieldValid("email") && isFieldValid("message")} formdata={formData} />
             </div>
           </div>
         </div>
