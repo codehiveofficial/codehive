@@ -5,8 +5,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Video Calling App',
-  description: 'Simple video calling application using WebRTC',
+  title: 'Codehive',
+  description: 'Collaborate. Code. Communicate.',
 };
 
 export default function RootLayout({
