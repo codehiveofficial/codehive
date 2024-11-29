@@ -1,7 +1,6 @@
-# Codehive ![Codehive Logo](https://github.com/codehiveofficial/codehive/blob/main/public/logo.png?raw=true)💻  
+# Codehive 🌐💻  
 
 Codehive is a web-based platform designed to provide a **collaborative coding environment** integrated with **communication services** and an **AI-powered code assistant**. It aims to empower developers and teams with seamless collaboration, code sharing, and debugging tools.  
-  
 
 ---
 
