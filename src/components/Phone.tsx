@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FiBatteryCharging, FiWifi } from "react-icons/fi";
 import { useState } from "react";
 
+
 export default function Phone({ filled, formdata }: any) {
   return (
     <section className="grid place-content-center min-h-screen">
@@ -20,7 +21,7 @@ function FloatingPhone({ filled, formdata }: any)  {
         transform: "rotateY(-30deg) rotateX(15deg)",
         boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
       }}
-      className="rounded-[24px] bg-gradient-to-br from-neutral-200 to-gray-400"
+      className="rounded-[24px] bg-gradient-to-br from-neutral-100 to-gray-500"
     >
       <motion.div
         initial={{
@@ -87,31 +88,24 @@ const Screen = ({ filled, formdata }: any) => {
   };
 
   return (
-    <div className="relative z-0 grid h-full w-full place-content-center overflow-hidden rounded-[20px] bg-white">
-      <div className="flex justify-center items-center mb-4">
+    <div className="relative z-0 grid h-full w-full place-content-center overflow-hidden rounded-[20px] bg-gray-300">
+            <div className="relative flex justify-center items-center mb-4">
         <svg
           width="60"
           height="60"
           viewBox="0 0 60 60"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          
         >
-          <path
-            d="M30 10L45 30L30 50L15 30L30 10Z"
-            fill="none"
-            stroke="#2C5282"
-            strokeWidth="3"
-            strokeLinejoin="round"
-          />
-          <circle
-            cx="30"
-            cy="30"
-            r="28"
-            stroke="#2C5282"
-            strokeWidth="2"
-            fill="none"
-          />
+          
         </svg>
+        <img
+          src="./logo.png"
+          alt="logo"
+          className="absolute h-15 w-14"
+          style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+        />
       </div>
 
       <div className="text-center px-4 mb-4">
