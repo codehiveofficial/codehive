@@ -36,6 +36,20 @@ Codehive is a web-based platform designed to provide a **collaborative coding en
 - Fully optimized for use on **phones**, **tablets**, and **laptops**.  
 
 ---
+## 📸 Screenshots  
+
+### 🌟 Collaborative Editor  
+![Collaborative Editor](https://github.com/codehiveofficial/codehive/blob/main/public/img2.png?raw=true)  
+
+### 🌟 Codehive Genie in Action  
+![Codehive Genie](https://github.com/codehiveofficial/codehive/blob/main/public/img3.png?raw=true)
+
+### 🌟 Video Calling and Chat  
+![Video Calling](https://github.com/codehiveofficial/codehive/blob/main/public/img3.png?raw=true)  
+
+
+
+---
 
 ## 🛠️ **Tech Stack**  
 
