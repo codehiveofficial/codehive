@@ -92,12 +92,12 @@ Coordinate with the following repositories to set up the required environment va
 
 Create a `.env` file in the root directory and configure the following variables:  
 ```env  
-NEXT_PUBLIC_AUTH_SECRET=geniecopilot  
-NEXT_PUBLIC_CODEHIVE_GENIE_API_URL=https://codehive-genie.vercel.app/genie  
-NEXT_PUBLIC_SOCKET_BACKEND_URL=https://codehive-server.onrender.com  
-NEXT_PUBLIC_FRONTEND_URL=http://localhost:3000  
-NEXT_PUBLIC_CONTACT_US_API=https://codehive-contactus.vercel.app/submit  
-NEXT_PUBLIC_AUTH_MESSAGE='trifectas'  
+NEXT_PUBLIC_AUTH_SECRET= 
+NEXT_PUBLIC_CODEHIVE_GENIE_API_URL= 
+NEXT_PUBLIC_SOCKET_BACKEND_URL= 
+NEXT_PUBLIC_FRONTEND_URL= 
+NEXT_PUBLIC_CONTACT_US_API= 
+NEXT_PUBLIC_AUTH_MESSAGE=  
 ```  
 
 ### 4. **Run the Development Server** ▶️  
