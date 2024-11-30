@@ -2,8 +2,6 @@
 
 Codehive is a web-based platform designed to provide a **collaborative coding environment** integrated with **communication services** and an **AI-powered code assistant**. It aims to empower developers and teams with seamless collaboration, code sharing, and debugging tools.  
 
----
-
 ## 🌟 **Key Features**  
 
 ### 🔗 **Collaborative Code Editor** 📝  
@@ -35,7 +33,6 @@ Codehive is a web-based platform designed to provide a **collaborative coding en
 ### 📱 **Responsive Design** 📱  
 - Fully optimized for use on **phones**, **tablets**, and **laptops**.  
 
----
 ## 📸 Screenshots  
 
 ### 🌟 Collaborative Editor  
@@ -47,9 +44,6 @@ Codehive is a web-based platform designed to provide a **collaborative coding en
 ### 🌟 Video Calling and Chat  
 ![Video Calling](https://github.com/codehiveofficial/codehive/blob/main/public/img3.png?raw=true)  
 
-
-
----
 
 ## 🛠️ **Tech Stack**  
 
@@ -69,7 +63,6 @@ Codehive is a web-based platform designed to provide a **collaborative coding en
   - Built using **Node.js** and **Express**.  
   - Handles **video calling** and **chat streaming** using **Socket.IO**.  
 
----
 
 ## 🚀 **Installation Guide**  
 
@@ -106,19 +99,16 @@ npm run dev
 ```  
 Your server will be running on [http://localhost:3000](http://localhost:3000).  
 
----
 
 ## 🌍 **Deployment**  
 - 🚀 We recommend deploying the **Next.js** app on **Vercel** for its seamless Next.js template support.  
 - 🛠️ For other repositories, follow their respective README instructions.  
 
----
 
 ## 📜 **License**  
 Codehive is licensed under the **MIT License**.  
 [View License](https://github.com/codehiveofficial/codehive/blob/main/LICENSE)  
 
----
 
 ## ❓ **Have Questions?**  
 For any queries, feel free to:  
