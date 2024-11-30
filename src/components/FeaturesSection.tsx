@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Feature1 from "../../public/img2.png";
-import Feature2 from "../../public/img3.png";
+import Feature2 from "../../public/Screenshot 2024-12-01 015641.png";
 import Feature3 from "../../public/img3.png";
 
 const FeaturesSection = () => {
