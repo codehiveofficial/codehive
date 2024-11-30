@@ -79,9 +79,7 @@ export const downloadCodeAsImage = async (code:string, filename:string) => {
   });
 
   
-  codeElement.innerHTML = codeElement.innerHTML
-    .replace(/\b(const|let|function|return|if|else|async|await)\b/g, `<span style="color: #81a1c1;">$1</span>`)  // Keywords
-    .replace(/('[^']*'|"[^"]*")/g, `<span style="color: #a3be8c;">$1</span>`);  // Strings
+  
 
   wrapperElement.appendChild(codeElement);
 
