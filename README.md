@@ -42,7 +42,10 @@ Codehive is a web-based platform designed to provide a **collaborative coding en
 ![Codehive Genie](https://github.com/codehiveofficial/codehive/blob/main/public/img3.png?raw=true)
 
 ### 🌟 Video Calling and Chat  
-![Video Calling](https://github.com/codehiveofficial/codehive/blob/main/public/img3.png?raw=true)  
+![Video Calling](https://github.com/codehiveofficial/codehive/blob/main/public/Screenshot%202024-12-01%20015641.png)  
+
+### 🌟 Generate Beautiful Code Snippets
+![Code Snippets](https://github.com/codehiveofficial/codehive/blob/main/public/codehive_snippet%20(4).png)  
 
 
 ## 🛠️ **Tech Stack**  
