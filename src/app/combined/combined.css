@@ -26,3 +26,52 @@
 .themecenter {
   justify-content: center;
 }
+
+/* Custom styles for the new layout */
+.bg-gray-850 {
+  background-color: #1f2937;
+}
+
+.tab-border-bottom {
+  border-bottom-width: 2px;
+  border-color: #3b82f6;
+}
+
+/* Smooth transitions for collapsible panels */
+.panel-transition {
+  transition: height 0.3s ease-in-out;
+}
+
+/* Chat modal integration styles */
+.chat-modal-embedded {
+  height: 100%;
+  max-height: none;
+  position: relative;
+  transform: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Video grid improvements */
+.video-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* Custom input styles */
+.input-panel {
+  resize: vertical;
+  min-height: 80px;
+  max-height: 200px;
+}
+
+/* Tab content area */
+.tab-content {
+  height: calc(100vh - 120px);
+  overflow: hidden;
+}

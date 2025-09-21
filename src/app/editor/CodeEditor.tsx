@@ -68,10 +68,10 @@ export default function CodeEditor({
   };
 
   return (
-    <div className="code-editor-container overflow-x-hidden lg:overflow-x-hidden">
+    <div className="code-editor-container overflow-hidden h-full w-full">
       <Editor
-        height="90vh"
-        width="100vh"
+        height="100%"
+        width="100%"
         language={language}
         value={code}
         theme={theme}
@@ -80,6 +80,7 @@ export default function CodeEditor({
           fontSize,
           minimap: { enabled: false },
           scrollBeyondLastLine: false,
+          automaticLayout: true, // This helps with resizing
         }}
         onMount={handleEditorDidMount}
       />
