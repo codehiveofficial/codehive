@@ -25,7 +25,7 @@ Codehive is a web-based platform designed to provide a **collaborative coding en
 - Provides assistance in:  
   - Generating code.  
   - Debugging and optimizing code.  
-- Powered by **Llama 3.1** via the **Groq AI Cloud**.  
+- Powered by **Llama 3.3** via the **Groq AI Cloud**.  
 
 ### 📦 **In-Built Compiler** ⚡  
 - Run and test your code directly within the platform.  
@@ -59,7 +59,7 @@ Codehive is a web-based platform designed to provide a **collaborative coding en
 
 ### Backend  
 - **Codehive Genie** ([Repo](https://github.com/codehiveofficial/codehive-genie)):  
-  - Python-based **Flask API** utilizing **Llama 3.1** for AI-driven coding assistance.  
+  - Python-based **Flask API** utilizing **Llama 3.3** for AI-driven coding assistance.  
   - Integrated with **Groq AI Cloud** for LLM parameterization.  
 
 - **Codehive Server** ([Repo](https://github.com/codehiveofficial/codehive-server)):  
