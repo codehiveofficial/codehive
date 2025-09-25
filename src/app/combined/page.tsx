@@ -775,7 +775,7 @@ export default function CollaborativeIDE({ userName }: any) {
                       <FaClipboard className="text-sm" />
                     )}
                   </button>
-                  <button
+                  {/* <button
                     onClick={() => copyMeetLink(roomId, setMeetLinkCopied)}
                     className={`p-2 rounded transition ${meetlinkcopied ? "bg-success text-success-foreground" : "bg-background hover:bg-accent border border-border"
                       }`}
@@ -786,7 +786,7 @@ export default function CollaborativeIDE({ userName }: any) {
                     ) : (
                       <FaLink className="text-sm" />
                     )}
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
