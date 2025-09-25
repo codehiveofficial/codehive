@@ -11,7 +11,6 @@ import { Socket, io } from "socket.io-client";
 import "@/app/combined/combined.css";
 import Peer from "simple-peer";
 import axios from "axios";
-import ChatModal from "./ChatModal";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -30,7 +29,6 @@ import { AiOutlineAudioMuted } from "react-icons/ai";
 import { FaClipboard, FaCheck } from "react-icons/fa";
 import { RiRobot2Line } from "react-icons/ri";
 import { FaLink } from "react-icons/fa6";
-import GenieModal from "./GenieModal";
 import { useParams } from "next/navigation";
 
 interface Theme {
@@ -73,8 +71,8 @@ export default function CollaborativeIDE({ userName }: any) {
   const [customInput, setCustomInput] = useState("");
   const [outputDetails, setOutputDetails] = useState<any>(null);
   const [theme, setTheme] = useState<Theme>({
-    value: "oceanic-next",
-    label: "Oceanic Next",
+    value: "brilliance-black",
+    label: "Brilliance Black",
   });
   const [language, setLanguage] = useState(languageOptions[0]);
   const [fontSize, setFontSize] = useState(18);
@@ -201,8 +199,8 @@ export default function CollaborativeIDE({ userName }: any) {
   useEffect(() => {
     initializeMediaStream();
     // Initialize theme
-    defineTheme("oceanic-next").then(() => {
-      setTheme({ value: "oceanic-next", label: "Oceanic Next" });
+    defineTheme("brilliance-black").then(() => {
+      setTheme({ value: "brilliance-black", label: "Brilliance Black" });
     });
     // Cleanup function
     return () => {
@@ -749,7 +747,7 @@ export default function CollaborativeIDE({ userName }: any) {
                 className="border p-2 rounded-lg"
               />
               <button
-                onClick={() => joinRoomClicked(roomId)}
+                onClick={() => joinRoomClicked(roomId[0])}
                 disabled={!streamReady}
                 className="bg-green-500 text-white w-full px-6 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -771,7 +769,7 @@ export default function CollaborativeIDE({ userName }: any) {
                     {roomId}
                   </span>
                   <button
-                    onClick={() => copyToClipboard(roomId, setCopied)}
+                    onClick={() => copyToClipboard(roomId[0], setCopied)}
                     className={`p-1.5 rounded transition ${
                       copied ? "bg-green-500" : "bg-gray-600 hover:bg-gray-500"
                     }`}
@@ -784,7 +782,7 @@ export default function CollaborativeIDE({ userName }: any) {
                     )}
                   </button>
                   <button
-                    onClick={() => copyMeetLink(roomId, setMeetLinkCopied)}
+                    onClick={() => copyMeetLink(roomId[0], setMeetLinkCopied)}
                     className={`p-1.5 rounded transition ${
                       meetlinkcopied ? "bg-green-500" : "bg-gray-600 hover:bg-gray-500"
                     }`}

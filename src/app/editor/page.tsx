@@ -38,15 +38,15 @@ export default function Landing(props:any){
   );
   const [customInput, setCustomInput] = useState<string>("");
   const [outputDetails, setOutputDetails] = useState<any>(null);
-  const [theme, setTheme] = useState<Theme>({ value: "oceanic-next", label: "Oceanic Next" });
+  const [theme, setTheme] = useState<Theme>({ value: "brilliance-black", label: "Brilliance Black" });
   const [language, setLanguage] = useState(languageOptions[0]);
   const [fontSize, setFontSize] = useState<number>(18);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [remoteCursorPosition, setRemoteCursorPosition] = useState<{ lineNumber: number; column: number } | null>(null);
 
   useEffect(() => {
-    defineTheme("oceanic-next").then(() => {
-      setTheme({ value: "oceanic-next", label: "Oceanic Next" });
+    defineTheme("brilliance-black").then(() => {
+      setTheme({ value: "brilliance-black", label: "Brilliance Black" });
     });
 
     // Listen for incoming code and cursor changes
