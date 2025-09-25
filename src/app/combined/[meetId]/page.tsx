@@ -1,8 +1,8 @@
 "use client";
 import { languageOptions } from "@/constants/languageOptions";
-import LanguageDropdown from "@/app/editor/LanguageDropdown";
+import CustomLanguageDropdown from "@/app/editor/CustomLanguageDropdown";
 import React, { useEffect, useRef, useState } from "react";
-import ThemeDropdown from "@/app/editor/ThemeDropdown";
+import CustomThemeDropdown from "@/app/editor/CustomThemeDropdown";
 import OutputWindow from "@/app/editor/OutputWindow";
 import CustomInput from "@/app/editor/CustomInput";
 import CodeEditor from "@/app/editor/CodeEditor";
@@ -64,8 +64,10 @@ interface CollaborativeIDEProps {
 }
 
 export default function CollaborativeIDE({ userName }: any) {
+  // Find C++ option for initialization
+  const cppOption = languageOptions.find(option => option.value === "cpp") || languageOptions[0];
   const [code, setCode] = useState(
-    defaultCodeTemplates[languageOptions[0].value]
+    defaultCodeTemplates[cppOption.value] || defaultCodeTemplates["cpp"] || "// Write your C++ code here"
   );
   const params = useParams();
   const [customInput, setCustomInput] = useState("");
@@ -74,7 +76,10 @@ export default function CollaborativeIDE({ userName }: any) {
     value: "brilliance-black",
     label: "Brilliance Black",
   });
-  const [language, setLanguage] = useState(languageOptions[0]);
+  const [language, setLanguage] = useState(() => {
+    const cppOption = languageOptions.find(option => option.value === "cpp");
+    return cppOption || languageOptions[0];
+  });
   const [fontSize, setFontSize] = useState(16);
   const [isLoading, setIsLoading] = useState(false);
   const [remoteCursorPosition, setRemoteCursorPosition] = useState<{
@@ -760,95 +765,90 @@ export default function CollaborativeIDE({ userName }: any) {
       ) : (
         <div className="h-screen flex flex-col">
           {/* New Header Design */}
-          <div className="bg-gray-800 border-b border-gray-700 px-4 py-3">
+          <div className="bg-muted border-b border-border px-4 py-3">
             <div className="flex items-center justify-between">
-              {/* Left - Room ID */}
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 text-white">
-                  <span className="text-sm font-medium">Room:</span>
-                  <span className="text-blue-400 font-semibold bg-gray-700 px-2 py-1 rounded text-sm">
+              {/* Left - Room Info and Controls */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-foreground">
+                  <span className="text-sm font-spacegroteskmedium">Room:</span>
+                  <span className="text-info font-spacegrotesksemibold bg-background px-2 py-1 rounded text-sm border border-border">
                     {roomId}
                   </span>
+                </div>
+                <div className="flex items-center gap-1">
                   <button
                     onClick={() => copyToClipboard(roomId[0], setCopied)}
-                    className={`p-1.5 rounded transition ${copied ? "bg-green-500" : "bg-gray-600 hover:bg-gray-500"
+                    className={`p-2 rounded transition ${copied ? "bg-success text-success-foreground" : "bg-background hover:bg-accent border border-border"
                       }`}
                     title={copied ? "Copied!" : "Copy Room ID"}
                   >
                     {copied ? (
-                      <FaCheck className="text-white text-xs" />
+                      <FaCheck className="text-sm" />
                     ) : (
-                      <FaClipboard className="text-white text-xs" />
+                      <FaClipboard className="text-sm" />
                     )}
                   </button>
                   <button
                     onClick={() => copyMeetLink(roomId[0], setMeetLinkCopied)}
-                    className={`p-1.5 rounded transition ${meetlinkcopied ? "bg-green-500" : "bg-gray-600 hover:bg-gray-500"
+                    className={`p-2 rounded transition ${meetlinkcopied ? "bg-success text-success-foreground" : "bg-background hover:bg-accent border border-border"
                       }`}
                     title={meetlinkcopied ? "Copied!" : "Copy Meet Link"}
                   >
                     {meetlinkcopied ? (
-                      <FaCheck className="text-white text-xs" />
+                      <FaCheck className="text-sm" />
                     ) : (
-                      <FaLink className="text-white text-xs" />
+                      <FaLink className="text-sm" />
                     )}
                   </button>
                 </div>
               </div>
 
-              {/* Center - Run Code Button */}
-              <div className="flex-1 flex justify-center">
+              {/* Center - Run Code, Camera & Mic Controls */}
+              <div className="flex items-center gap-3">
                 <button
-                  className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 font-medium"
+                  className="px-4 py-2 bg-success text-success-foreground rounded-lg hover:bg-success/90 disabled:opacity-50 font-spacegroteskmedium transition-colors text-sm"
                   disabled={!code || isLoading}
                   onClick={handleRunCode}
                 >
                   {isLoading ? "Running..." : "▶ Run Code"}
                 </button>
-              </div>
-
-              {/* Right - Action Buttons */}
-              <div className="flex items-center gap-2">
                 <button
                   onClick={toggleVideo}
-                  className={`p-2 rounded ${isVideoEnabled ? "bg-blue-500 hover:bg-blue-600" : "bg-red-500 hover:bg-red-600"
-                    } text-white transition`}
+                  className={`p-2 rounded transition ${isVideoEnabled ? "bg-info hover:bg-info/90 text-info-foreground" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                    }`}
                   title={isVideoEnabled ? "Turn Off Video" : "Turn On Video"}
                 >
                   {isVideoEnabled ? <FaVideo className="text-sm" /> : <FaVideoSlash className="text-sm" />}
                 </button>
                 <button
                   onClick={toggleAudio}
-                  className={`p-2 rounded ${isAudioEnabled ? "bg-blue-500 hover:bg-blue-600" : "bg-red-500 hover:bg-red-600"
-                    } text-white transition`}
+                  className={`p-2 rounded transition ${isAudioEnabled ? "bg-info hover:bg-info/90 text-info-foreground" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                    }`}
                   title={isAudioEnabled ? "Turn Off Audio" : "Turn On Audio"}
                 >
                   {isAudioEnabled ? <FaMicrophone className="text-sm" /> : <FaMicrophoneSlash className="text-sm" />}
                 </button>
+              </div>
+
+              {/* Right - Download & Leave Buttons */}
+              <div className="flex items-center gap-2">
                 <button
                   onClick={downloadCodeAsFile.bind(null, code, language.value)}
-                  className="p-2 bg-gray-600 hover:bg-gray-500 text-white rounded transition"
+                  className="p-2 bg-accent hover:bg-accent/80 text-foreground rounded transition border border-border"
                   title="Download File"
                 >
                   <MdFileDownload className="text-sm" />
                 </button>
                 <button
                   onClick={downloadCodeAsImage.bind(null, code, "codehive_snippet.png")}
-                  className="p-2 bg-gray-600 hover:bg-gray-500 text-white rounded transition"
+                  className="p-2 bg-accent hover:bg-accent/80 text-foreground rounded transition border border-border"
                   title="Download Snippet"
                 >
                   <AiOutlineSnippets className="text-sm" />
                 </button>
                 <button
-                  onClick={() => setActiveTab('genie')}
-                  className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition"
-                  title="AI Genie"
-                >
-                  <RiRobot2Line className="text-sm" />
-                </button>
-                <button
                   onClick={leaveRoom}
-                  className="p-2 bg-red-500 hover:bg-red-600 text-white rounded transition"
+                  className="p-2 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded transition"
                   title="Leave Room"
                 >
                   <IoMdExit className="text-sm" />
@@ -861,8 +861,8 @@ export default function CollaborativeIDE({ userName }: any) {
           <div className="flex-1 overflow-hidden">
             <PanelGroup direction="horizontal">
               {/* Left Panel - Videos & Chat */}
-              <Panel defaultSize={33} minSize={20} maxSize={45}>
-                <div className="h-full bg-gray-850 border-r border-gray-700 flex flex-col">
+              <Panel defaultSize={20} minSize={20} maxSize={45}>
+                <div className="h-full bg-muted border-r border-border flex flex-col">
                   <PanelGroup direction="vertical">
                     {/* Videos Section */}
                     <Panel defaultSize={70} minSize={40}>
@@ -870,7 +870,7 @@ export default function CollaborativeIDE({ userName }: any) {
                         <div className="space-y-2 lg:space-y-3 h-full flex flex-col">
                           {/* Self video */}
                           <div className="relative flex-shrink-0">
-                            <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden">
+                            <div className="aspect-video bg-background rounded-lg overflow-hidden border border-border">
                               <video
                                 ref={userVideoRef}
                                 autoPlay
@@ -878,7 +878,7 @@ export default function CollaborativeIDE({ userName }: any) {
                                 playsInline
                                 className="w-full h-full object-cover"
                               />
-                              <div className="absolute bottom-2 left-2 bg-black bg-opacity-60 px-2 py-1 rounded text-white text-xs">
+                              <div className="absolute bottom-2 left-2 bg-background/80 px-2 py-1 rounded text-foreground text-xs font-spacegroteskregular">
                                 You
                               </div>
                             </div>
@@ -891,8 +891,8 @@ export default function CollaborativeIDE({ userName }: any) {
                           >
                             {Object.entries(peers).map(([peerId, { peer, userName: peerUserName }]) => (
                               <div key={peerId} className="relative">
-                                <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden">
-                                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-60 px-2 py-1 rounded text-white text-xs">
+                                <div className="aspect-video bg-background rounded-lg overflow-hidden border border-border">
+                                  <div className="absolute bottom-2 left-2 bg-background/80 px-2 py-1 rounded text-foreground text-xs font-spacegroteskregular">
                                     {peerUserName}
                                   </div>
                                 </div>
@@ -906,22 +906,23 @@ export default function CollaborativeIDE({ userName }: any) {
                     {/* Resize Handle for Videos/Chat */}
                     {showChat && (
                       <>
-                        <PanelResizeHandle className="h-1 bg-gray-700 hover:bg-gray-600 transition-colors cursor-row-resize" />
+                        <PanelResizeHandle className="h-1 bg-border hover:bg-info transition-colors cursor-row-resize" />
 
                         {/* Chat Panel */}
                         <Panel defaultSize={30} minSize={15} maxSize={60}>
-                          <div className="h-full bg-gray-800 flex flex-col">
-                            <div className="p-2 border-b border-gray-700">
+                          <div className="h-full bg-muted flex flex-col border border-border">
+                            <div className="p-2 border-b border-border bg-background">
                               <div className="flex items-center justify-between">
-                                <h3 className="text-white text-sm font-semibold">Chat</h3>
+                                <h3 className="text-foreground text-sm font-spacegroteskmedium">Chat</h3>
                                 <div className="flex items-center gap-2">
                                   <div className="flex items-center gap-1">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span className="text-xs text-gray-400">Online</span>
+                                    <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                                    <span className="text-xs text-muted-foreground">Online</span>
                                   </div>
                                   <button
                                     onClick={() => setShowChat(false)}
-                                    className="text-gray-400 hover:text-white text-xs"
+                                    className="text-muted-foreground hover:text-foreground text-xs p-1 rounded transition"
+                                    title="Hide Chat"
                                   >
                                     ✕
                                   </button>
@@ -936,25 +937,25 @@ export default function CollaborativeIDE({ userName }: any) {
                                 id="chat-messages"
                               >
                                 {chatMessages.length === 0 ? (
-                                  <div className="text-center text-gray-500 text-xs py-4">
+                                  <div className="text-center text-muted-foreground text-xs py-4">
                                     No messages yet. Start chatting!
                                   </div>
                                 ) : (
                                   chatMessages.map((message, index) => (
                                     <div key={index} className={`text-xs ${message.userId === socketRef.current?.id ? 'text-right' : 'text-left'}`}>
                                       <div className={`inline-block max-w-[80%] px-2 py-1 rounded ${message.userId === socketRef.current?.id
-                                          ? 'bg-blue-500 text-white'
-                                          : 'bg-gray-600 text-white'
+                                        ? 'bg-info text-info-foreground'
+                                        : 'bg-accent text-foreground'
                                         }`}>
-                                        <div className="font-semibold text-xs opacity-75">{message.userName}</div>
-                                        <div>{message.message}</div>
+                                        <div className="font-spacegroteskmedium text-xs opacity-75">{message.userName}</div>
+                                        <div className="font-spacegroteskregular">{message.message}</div>
                                       </div>
                                     </div>
                                   ))
                                 )}
                               </div>
 
-                              <div className="p-2 border-t border-gray-700">
+                              <div className="p-2 border-t border-border">
                                 <div className="flex gap-2">
                                   <input
                                     type="text"
@@ -962,11 +963,11 @@ export default function CollaborativeIDE({ userName }: any) {
                                     onChange={(e) => setNewChatMessage(e.target.value)}
                                     onKeyPress={handleChatKeyPress}
                                     placeholder="Type a message..."
-                                    className="flex-1 bg-gray-700 text-white px-3 py-2 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="flex-1 bg-input text-foreground px-3 py-2 rounded text-sm focus:outline-none focus:ring-2 focus:ring-info border border-border font-spacegroteskregular"
                                   />
                                   <button
                                     onClick={sendChatMessage}
-                                    className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm transition"
+                                    className="px-3 py-2 bg-info hover:bg-info/90 text-info-foreground rounded text-sm transition font-spacegroteskmedium"
                                   >
                                     Send
                                   </button>
@@ -980,14 +981,14 @@ export default function CollaborativeIDE({ userName }: any) {
 
                     {/* Chat Toggle Button (only show when chat is hidden) */}
                     {!showChat && (
-                      <div className="p-2 border-t border-gray-700">
+                      <div className="p-2 border-t border-border">
                         <button
                           onClick={() => setShowChat(true)}
-                          className="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white rounded flex items-center justify-center gap-2 transition"
+                          className="w-full py-2 bg-accent hover:bg-accent/80 text-foreground rounded flex items-center justify-center gap-2 transition border border-border"
                         >
                           <span>💬</span>
-                          <span className="hidden sm:inline">Show Chat</span>
-                          <span className="sm:hidden">Chat</span>
+                          <span className="hidden sm:inline font-spacegroteskregular">Show Chat</span>
+                          <span className="sm:hidden font-spacegroteskregular">Chat</span>
                         </button>
                       </div>
                     )}
@@ -996,36 +997,36 @@ export default function CollaborativeIDE({ userName }: any) {
               </Panel>
 
               {/* Resize Handle */}
-              <PanelResizeHandle className="w-1 lg:w-2 bg-gray-700 hover:bg-gray-600 transition-colors cursor-col-resize" />
+              <PanelResizeHandle className="w-1 lg:w-2 bg-border hover:bg-info transition-colors cursor-col-resize" />
 
               {/* Right Panel - Tabs System */}
               <Panel minSize={55}>
                 <div className="h-full w-full flex flex-col">
                   {/* Tab Header */}
-                  <div className="bg-gray-800 border-b border-gray-700 flex">
+                  <div className="bg-muted border-b border-border flex">
                     <button
                       onClick={() => setActiveTab('editor')}
-                      className={`px-3 lg:px-4 py-2 text-sm font-medium border-r border-gray-700 transition ${activeTab === 'editor'
-                          ? 'bg-gray-900 text-white border-b-2 border-blue-500'
-                          : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                      className={`px-3 lg:px-4 py-2 text-sm font-spacegroteskmedium border-r border-border transition ${activeTab === 'editor'
+                        ? 'bg-background text-foreground border-b-2 border-info'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                         }`}
                     >
                       Editor
                     </button>
                     <button
                       onClick={() => setActiveTab('output')}
-                      className={`px-3 lg:px-4 py-2 text-sm font-medium border-r border-gray-700 transition ${activeTab === 'output'
-                          ? 'bg-gray-900 text-white border-b-2 border-blue-500'
-                          : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                      className={`px-3 lg:px-4 py-2 text-sm font-spacegroteskmedium border-r border-border transition ${activeTab === 'output'
+                        ? 'bg-background text-foreground border-b-2 border-info'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                         }`}
                     >
                       Output
                     </button>
                     <button
                       onClick={() => setActiveTab('genie')}
-                      className={`px-3 lg:px-4 py-2 text-sm font-medium border-r border-gray-700 transition ${activeTab === 'genie'
-                          ? 'bg-gray-900 text-white border-b-2 border-blue-500'
-                          : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                      className={`px-3 lg:px-4 py-2 text-sm font-spacegroteskmedium border-r border-border transition ${activeTab === 'genie'
+                        ? 'bg-background text-foreground border-b-2 border-info'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                         }`}
                     >
                       <span className="hidden sm:inline">AI Genie</span>
@@ -1035,13 +1036,13 @@ export default function CollaborativeIDE({ userName }: any) {
                     {/* Tab Controls */}
                     {activeTab === 'editor' && (
                       <div className="flex items-center gap-1 lg:gap-2 ml-auto mr-2 lg:mr-4">
-                        <LanguageDropdown onSelectChange={handleLanguageChange} />
-                        <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
+                        <CustomLanguageDropdown onSelectChange={handleLanguageChange} />
+                        <CustomThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
                         <input
                           type="number"
                           value={fontSize}
                           onChange={(e) => setFontSize(Number(e.target.value))}
-                          className="w-12 lg:w-16 px-1 lg:px-2 py-1 rounded bg-gray-700 text-white border border-gray-600 text-sm"
+                          className="w-12 lg:w-16 px-1 lg:px-2 py-1 rounded bg-input text-foreground border border-border text-sm focus:outline-none focus:ring-2 focus:ring-info font-spacegroteskregular"
                           min="10"
                           max="40"
                           title="Font Size"
@@ -1077,22 +1078,26 @@ export default function CollaborativeIDE({ userName }: any) {
 
                           {showInput && (
                             <>
-                              <PanelResizeHandle className="h-1 bg-gray-700 hover:bg-gray-600 transition-colors cursor-row-resize" />
+                              <PanelResizeHandle className="h-1 bg-border hover:bg-info transition-colors cursor-row-resize" />
 
                               <Panel defaultSize={25} minSize={10} maxSize={50}>
-                                <div className="h-full bg-gray-850 flex flex-col">
-                                  <div className="p-2 border-b border-gray-700 bg-gray-800">
+                                <div className="h-full bg-muted flex flex-col border border-border">
+                                  <div className="px-3 py-2 bg-background border-b border-border">
                                     <div className="flex items-center justify-between">
-                                      <span className="text-white text-sm font-semibold">Input</span>
-                                      <button
-                                        onClick={() => setShowInput(false)}
-                                        className="text-gray-400 hover:text-white text-xs"
-                                      >
-                                        ✕
-                                      </button>
+                                      <span className="text-foreground text-sm font-spacegroteskmedium">Input</span>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs text-muted-foreground">stdin</span>
+                                        <button
+                                          onClick={() => setShowInput(false)}
+                                          className="text-muted-foreground hover:text-foreground text-sm p-1 rounded transition"
+                                          title="Hide Input"
+                                        >
+                                          ✕
+                                        </button>
+                                      </div>
                                     </div>
                                   </div>
-                                  <div className="flex-1 p-2">
+                                  <div className="flex-1 p-3">
                                     <CustomInput
                                       customInput={customInput}
                                       setCustomInput={setCustomInput}
@@ -1105,10 +1110,11 @@ export default function CollaborativeIDE({ userName }: any) {
 
                           {/* Input Panel Toggle (only show when input is hidden) */}
                           {!showInput && (
-                            <div className="border-t border-gray-700 bg-gray-800 p-2">
+                            <div className="border-t border-border bg-background p-3">
                               <button
                                 onClick={() => setShowInput(true)}
-                                className="text-sm text-gray-400 hover:text-white flex items-center gap-2"
+                                className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 transition font-spacegroteskregular"
+                                title="Show Input Panel"
                               >
                                 <span>📝</span>
                                 <span>Show Input</span>
@@ -1131,12 +1137,12 @@ export default function CollaborativeIDE({ userName }: any) {
                       <div className="h-full flex flex-col">
                         {/* Response Area */}
                         <div className="flex-1 p-4 overflow-hidden flex flex-col">
-                          <h3 className="text-lg font-semibold mb-4 text-white">🧞‍♂️ AI Code Assistant</h3>
+                          <h3 className="text-lg font-spacegrotesksemibold mb-4 text-foreground">AI Code Assistant</h3>
 
-                          <div className="flex-1 bg-gray-800 rounded-lg border border-gray-700 overflow-hidden flex flex-col">
+                          <div className="flex-1 bg-background rounded-lg border border-border overflow-hidden flex flex-col">
                             <div className="flex-1 p-4 overflow-y-auto scroll-container">
                               {genieResponse ? (
-                                <div className="text-gray-300">
+                                <div className="text-foreground">
                                   <ReactMarkdown
                                     components={{
                                       code: ({ inline, className, children, ...props }: any) => {
@@ -1152,42 +1158,42 @@ export default function CollaborativeIDE({ userName }: any) {
                                             {String(children).replace(/\n$/, '')}
                                           </SyntaxHighlighter>
                                         ) : (
-                                          <code className="bg-gray-700 px-1 py-0.5 rounded text-blue-300" {...props}>
+                                          <code className="bg-muted px-1 py-0.5 rounded text-info font-spacegroteskregular" {...props}>
                                             {children}
                                           </code>
                                         );
                                       },
-                                      h1: ({ children }) => <h1 className="text-xl font-bold mb-3 text-white">{children}</h1>,
-                                      h2: ({ children }) => <h2 className="text-lg font-semibold mb-2 text-white">{children}</h2>,
-                                      h3: ({ children }) => <h3 className="text-md font-semibold mb-2 text-white">{children}</h3>,
-                                      p: ({ children }) => <p className="mb-3 leading-relaxed">{children}</p>,
+                                      h1: ({ children }) => <h1 className="text-xl font-spacegroteskbold mb-3 text-foreground">{children}</h1>,
+                                      h2: ({ children }) => <h2 className="text-lg font-spacegrotesksemibold mb-2 text-foreground">{children}</h2>,
+                                      h3: ({ children }) => <h3 className="text-md font-spacegrotesksemibold mb-2 text-foreground">{children}</h3>,
+                                      p: ({ children }) => <p className="mb-3 leading-relaxed font-spacegroteskregular">{children}</p>,
                                       ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1">{children}</ul>,
                                       ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1">{children}</ol>,
-                                      li: ({ children }) => <li className="text-gray-300">{children}</li>,
+                                      li: ({ children }) => <li className="text-foreground font-spacegroteskregular">{children}</li>,
                                     }}
                                   >
                                     {genieResponse}
                                   </ReactMarkdown>
                                 </div>
                               ) : (
-                                <div className="flex items-center justify-center h-full text-gray-400">
+                                <div className="flex items-center justify-center h-full text-muted-foreground">
                                   <div className="text-center">
-                                    <div className="text-4xl mb-4">🧞‍♂️</div>
-                                    <p>Ask me anything about coding!</p>
-                                    <p className="text-sm mt-2">I can help with code generation, debugging, explanations, and more.</p>
+                                    <div className="text-4xl mb-4">�</div>
+                                    <p className="font-spacegroteskmedium">Ask me anything about coding!</p>
+                                    <p className="text-sm mt-2 font-spacegroteskregular">I can help with code generation, debugging, explanations, and more.</p>
                                   </div>
                                 </div>
                               )}
 
                               {genieLoading && (
-                                <div className="flex items-center gap-2 text-blue-400">
-                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
-                                  <span>Genie is thinking...</span>
+                                <div className="flex items-center gap-2 text-info">
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-info"></div>
+                                  <span className="font-spacegroteskregular">Assistant is thinking...</span>
                                 </div>
                               )}
 
                               {genieError && (
-                                <div className="bg-red-900/50 border border-red-700 rounded-lg p-3 text-red-300">
+                                <div className="bg-destructive/10 border border-destructive rounded-lg p-3 text-destructive">
                                   {genieError}
                                 </div>
                               )}
@@ -1210,19 +1216,19 @@ export default function CollaborativeIDE({ userName }: any) {
                               </label>
                             </div>
 
-                            <div className="flex gap-2">
+                            <div className="flex gap-3 p-3 border-t border-border bg-muted">
                               <textarea
                                 value={genieQuery}
                                 onChange={(e) => setGenieQuery(e.target.value)}
                                 onKeyPress={handleGenieKeyPress}
                                 placeholder="Ask me anything about coding... (Press Enter to send, Shift+Enter for new line)"
-                                className="flex-1 bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                className="flex-1 bg-input text-foreground px-3 py-2 rounded border border-border focus:outline-none focus:ring-2 focus:ring-info resize-none font-spacegroteskregular text-sm"
                                 rows={2}
                               />
                               <button
                                 onClick={handleGenieSubmit}
                                 disabled={genieLoading || !genieQuery.trim()}
-                                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded transition font-medium"
+                                className="px-4 py-2 bg-info hover:bg-info/90 disabled:opacity-50 disabled:cursor-not-allowed text-info-foreground rounded transition font-spacegroteskmedium text-sm"
                               >
                                 {genieLoading ? "..." : "Ask"}
                               </button>

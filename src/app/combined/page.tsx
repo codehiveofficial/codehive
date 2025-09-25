@@ -109,6 +109,8 @@ export default function CollaborativeIDE({ userName }: any) {
   const [showChat, setShowChat] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{ userId: string, userName: string, message: string }>>([]);
   const [newChatMessage, setNewChatMessage] = useState("");
+  // Store actual remote media streams keyed by peer id (only present when stream received)
+  const [remoteStreams, setRemoteStreams] = useState<Record<string, MediaStream>>({});
 
   // AI Genie states
   const [genieQuery, setGenieQuery] = useState("");
@@ -264,13 +266,16 @@ export default function CollaborativeIDE({ userName }: any) {
     socketRef.current.on("user_left", ({ userId }) => {
       if (peersRef.current[userId]) {
         peersRef.current[userId].peer.destroy();
-        if (peersRef.current[userId].videoElement && peersRef.current[userId].videoElement.parentNode) {
-          peersRef.current[userId].videoElement.parentNode.removeChild(peersRef.current[userId].videoElement);
-        }
         const newPeers = { ...peersRef.current };
         delete newPeers[userId];
         peersRef.current = newPeers;
         setPeers(newPeers);
+        setRemoteStreams(prev => {
+          if (!prev[userId]) return prev;
+          const copy = { ...prev };
+          delete copy[userId];
+          return copy;
+        });
       }
     });
 
@@ -421,43 +426,12 @@ export default function CollaborativeIDE({ userName }: any) {
     return peer;
   };
 
-  const addVideoStream = (stream: any, userId: any) => {
-    const videoElement = document.createElement("video");
-    videoElement.srcObject = stream;
-    videoElement.autoplay = true;
-    videoElement.playsInline = true;
-    videoElement.classList.add(
-      "peer-video",
-      "rounded-lg",
-      "bg-muted",
-      "border",
-      "border-border",
-      "overflow-hidden",
-      "w-full",
-      "h-full",
-      "object-cover"
-    );
-
-    const videoContainer = document.getElementById("video-container");
-    if (videoContainer) {
-      // Create a wrapper div for the video
-      const wrapperDiv = document.createElement("div");
-      wrapperDiv.className = "relative aspect-video bg-muted border border-border rounded-lg overflow-hidden";
-      wrapperDiv.appendChild(videoElement);
-
-      // Add username label
-      const labelDiv = document.createElement("div");
-      labelDiv.className = "absolute bottom-2 left-2 bg-background bg-opacity-90 px-2 py-1 rounded text-foreground text-xs font-spacegroteskregular";
-      labelDiv.textContent = peersRef.current[userId]?.userName || "Unknown";
-      wrapperDiv.appendChild(labelDiv);
-
-      videoContainer.appendChild(wrapperDiv);
-    }
-
-    // Store the reference if needed for cleanup later
-    if (peersRef.current[userId]) {
-      peersRef.current[userId].videoElement = videoElement;
-    }
+  const addVideoStream = (stream: MediaStream, userId: string) => {
+    setRemoteStreams(prev => {
+      // Avoid unnecessary state change if stream already present
+      if (prev[userId]) return prev;
+      return { ...prev, [userId]: stream };
+    });
   };
 
   // Code Editor Functions
@@ -552,15 +526,8 @@ export default function CollaborativeIDE({ userName }: any) {
   };
 
   const leaveRoom = () => {
-    Object.values(peersRef.current).forEach(({ peer, videoElement }) => {
+    Object.values(peersRef.current).forEach(({ peer }) => {
       peer.destroy();
-      if (videoElement && videoElement.parentNode) {
-        // Remove the wrapper div (parent of the video element)
-        const wrapperDiv = videoElement.parentNode.parentNode;
-        if (wrapperDiv && wrapperDiv.parentNode) {
-          wrapperDiv.parentNode.removeChild(wrapperDiv);
-        }
-      }
     });
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
@@ -568,6 +535,7 @@ export default function CollaborativeIDE({ userName }: any) {
     socketRef.current?.disconnect();
     setIsJoined(false);
     setPeers({});
+    setRemoteStreams({});
     setRoomId("");
     setMyStream(null);
     setMediaError("");
@@ -690,6 +658,23 @@ export default function CollaborativeIDE({ userName }: any) {
       handleGenieSubmit();
     }
   };
+
+  // Prune remote streams whose peer left
+  useEffect(() => {
+    setRemoteStreams(prev => {
+      const activeIds = new Set(Object.keys(peers));
+      let changed = false;
+      const next: Record<string, MediaStream> = {};
+      Object.entries(prev).forEach(([id, stream]) => {
+        if (activeIds.has(id)) {
+          next[id] = stream;
+        } else {
+          changed = true;
+        }
+      });
+      return changed ? next : prev;
+    });
+  }, [peers]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -891,15 +876,30 @@ export default function CollaborativeIDE({ userName }: any) {
                             id="video-container"
                             className="flex-1 space-y-2 overflow-y-auto scroll-container"
                           >
-                            {Object.entries(peers).map(([peerId, { peer, userName: peerUserName }]) => (
-                              <div key={peerId} className="relative">
-                                <div className="aspect-video bg-muted border border-border rounded-lg overflow-hidden">
-                                  <div className="absolute bottom-2 left-2 bg-background bg-opacity-90 px-2 py-1 rounded text-foreground text-xs font-spacegroteskregular">
+                            {Object.entries(peers)
+                              .filter(([peerId]) => !!remoteStreams[peerId])
+                              .map(([peerId, { userName: peerUserName }]) => (
+                                <div key={peerId} className="relative aspect-video bg-muted border border-border rounded-lg overflow-hidden">
+                                  <video
+                                    autoPlay
+                                    playsInline
+                                    ref={el => {
+                                      if (el && remoteStreams[peerId] && el.srcObject !== remoteStreams[peerId]) {
+                                        el.srcObject = remoteStreams[peerId];
+                                      }
+                                    }}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  <div className="absolute bottom-2 left-2 bg-background/80 px-2 py-1 rounded text-foreground text-xs font-spacegroteskregular">
                                     {peerUserName}
                                   </div>
                                 </div>
+                              ))}
+                            {Object.keys(peers).length > 0 && Object.keys(remoteStreams).length === 0 && (
+                              <div className="text-muted-foreground text-xs flex items-center justify-center h-full">
+                                Waiting for participant video streams...
                               </div>
-                            ))}
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1115,7 +1115,7 @@ export default function CollaborativeIDE({ userName }: any) {
                                   className="text-xs text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-md transition-all duration-150 font-spacegroteskmedium shadow-sm hover:shadow-md"
                                   title="Add custom input for your program"
                                 >
-                                  Add Input
+                                  Add Input +
                                 </button>
                               </div>
                             </div>
