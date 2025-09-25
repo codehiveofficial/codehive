@@ -20,18 +20,22 @@ const modifiedCustomStyles = {
 
 export default function ThemeDropdown({ handleThemeChange, theme }: any){
   return (
-    <Select
-      placeholder={`Select Theme`}
-      options={Object.entries(monacoThemes).map(([themeId, themeName]) => ({
-        label: themeName,
-        value: themeId,
-        key: themeId,
-      }))}
-      value={theme}
-      styles={modifiedCustomStyles}
-      className="lg:w-[200px]"
-      onChange={handleThemeChange}
-    />
+    <div className="min-w-[140px]">
+      <Select
+        placeholder="Select Theme"
+        options={Object.entries(monacoThemes).map(([themeId, themeName]) => ({
+          label: themeName,
+          value: themeId,
+          key: themeId,
+        }))}
+        value={theme}
+        styles={modifiedCustomStyles}
+        className="text-sm"
+        onChange={handleThemeChange}
+        isSearchable={false}
+        menuPosition="fixed"
+      />
+    </div>
   );
 };
 

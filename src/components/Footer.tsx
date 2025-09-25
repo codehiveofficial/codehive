@@ -12,14 +12,14 @@ const Footer = () => {
     }
   };
   return (
-    <footer className="w-full mt-32 py-14 bg-black border-t border-white/[0.2]">
+    <footer className="w-full mt-32 py-14 bg-background border-t border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center ">
         <div
           onClick={() => scrollToSection("home")}
           className="flex gap-4 items-center justify-center"
         >
           <Image src={logo} className="h-10 w-10" alt="Codehive Logo" />
-          <p className="font-spacegrotesksemibold text-white text-2xl cursor-pointer">
+          <p className="font-spacegrotesksemibold text-foreground text-2xl cursor-pointer">
             Codehive
           </p>
         </div>
@@ -28,7 +28,7 @@ const Footer = () => {
             <li>
               <button
                 onClick={() => scrollToSection("home")}
-                className="text-white hover:text-blue-700"
+                className="text-muted-foreground hover:text-info transition-colors"
               >
                 Home
               </button>
@@ -36,7 +36,7 @@ const Footer = () => {
             <li>
               <button
                 onClick={() => scrollToSection("features")}
-                className="text-white hover:text-blue-700"
+                className="text-muted-foreground hover:text-info transition-colors"
               >
                 Features
               </button>
@@ -44,7 +44,7 @@ const Footer = () => {
             <li>
               <button
                 onClick={() => scrollToSection("about")}
-                className="text-white hover:text-blue-700"
+                className="text-muted-foreground hover:text-info transition-colors"
               >
                 About
               </button>
@@ -52,7 +52,7 @@ const Footer = () => {
             <li>
               <button
                 onClick={() => scrollToSection("developers")}
-                className="text-white hover:text-blue-700"
+                className="text-muted-foreground hover:text-info transition-colors"
               >
                 Developers
               </button>
@@ -60,14 +60,14 @@ const Footer = () => {
             <li>
               <button
                 onClick={() => scrollToSection("contact")}
-                className="text-white hover:text-blue-700"
+                className="text-muted-foreground hover:text-info transition-colors"
               >
                 Contact
               </button>
             </li>
           </ul>
-          <span className="text-lg font-spacegroteskregular text-gray-500 text-center block">
-            ©<a href="/">Codehive</a> {new Date().getFullYear()}, All rights
+          <span className="text-lg font-spacegroteskregular text-muted-foreground text-center block">
+            ©<a href="/" className="hover:text-info transition-colors">Codehive</a> {new Date().getFullYear()}, All rights
             reserved.
           </span>
         </div>

@@ -5,19 +5,16 @@ interface CustomInputProps {
   setCustomInput: (value: string) => void;
 }
 
-export default function CustomInput({ customInput, setCustomInput }: any) {
+export default function CustomInput({ customInput, setCustomInput }: CustomInputProps) {
   return (
-    <div className="flex flex-col w-full">
-      {/* <h1 className="text-xl lg:text-3xl text-white font-bold mb-4">
-        Custom Input
-      </h1> */}
+    <div className="w-full h-full">
       <textarea
-        rows={5}
         value={customInput}
         onChange={(e) => setCustomInput(e.target.value)}
-        placeholder="Set custom input"
-        className="focus:outline-none lg:w-full border-2 text-black border-black rounded-md px-4 py-2 bg-gray-500 mt-2 placeholder-gray-300"
-      ></textarea>
+        placeholder="Enter input data for your program..."
+        className="w-full h-full resize-none focus:outline-none focus:ring-1 focus:ring-primary/30 border-0 rounded-md px-3 py-2 bg-background text-foreground placeholder-muted-foreground/60 font-mono text-xs leading-relaxed transition-colors hover:bg-muted/20"
+        spellCheck={false}
+      />
     </div>
   );
 }
