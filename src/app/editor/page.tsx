@@ -40,7 +40,7 @@ export default function Landing(props:any){
   const [outputDetails, setOutputDetails] = useState<any>(null);
   const [theme, setTheme] = useState<Theme>({ value: "brilliance-black", label: "Brilliance Black" });
   const [language, setLanguage] = useState(languageOptions[0]);
-  const [fontSize, setFontSize] = useState<number>(18);
+  const [fontSize, setFontSize] = useState<number>(16);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [remoteCursorPosition, setRemoteCursorPosition] = useState<{ lineNumber: number; column: number } | null>(null);
 

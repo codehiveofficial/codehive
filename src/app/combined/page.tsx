@@ -70,6 +70,7 @@ export default function CollaborativeIDE({ userName }: any) {
   const [code, setCode] = useState(
     defaultCodeTemplates[cppOption.value] || defaultCodeTemplates["cpp"] || "// Write your C++ code here"
   );
+  const [loading, setLoading] = useState(false);
   const [customInput, setCustomInput] = useState("");
   const [outputDetails, setOutputDetails] = useState<any>(null);
   const [theme, setTheme] = useState<Theme>({
@@ -80,7 +81,7 @@ export default function CollaborativeIDE({ userName }: any) {
     const cppOption = languageOptions.find(option => option.value === "cpp");
     return cppOption || languageOptions[0];
   });
-  const [fontSize, setFontSize] = useState(18);
+  const [fontSize, setFontSize] = useState(16);
   const [isLoading, setIsLoading] = useState(false);
   const [remoteCursorPosition, setRemoteCursorPosition] = useState<{
     lineNumber: number;
@@ -286,6 +287,7 @@ export default function CollaborativeIDE({ userName }: any) {
   };
 
   const createRoom = async () => {
+    setLoading(true);
     if (!streamRef.current) {
       setMediaError(
         "Please ensure camera and microphone access is granted before creating a room."
@@ -741,7 +743,7 @@ export default function CollaborativeIDE({ userName }: any) {
                 disabled={!streamReady}
                 className="w-full bg-info text-info-foreground px-6 py-2 rounded-lg hover:bg-info/90 disabled:opacity-50 disabled:cursor-not-allowed font-spacegroteskmedium transition-colors"
               >
-                Create New Room
+                {loading ? "Creating..." : "Create New Room"}
               </button>
             </div>
             <div className="flex flex-col lg:flex-row gap-2">
@@ -943,8 +945,8 @@ export default function CollaborativeIDE({ userName }: any) {
                                   chatMessages.map((message, index) => (
                                     <div key={index} className={`text-xs ${message.userId === socketRef.current?.id ? 'text-right' : 'text-left'}`}>
                                       <div className={`inline-block max-w-[80%] px-2 py-1 rounded ${message.userId === socketRef.current?.id
-                                          ? 'bg-blue-500 text-white'
-                                          : 'bg-gray-600 text-white'
+                                        ? 'bg-blue-500 text-white'
+                                        : 'bg-gray-600 text-white'
                                         }`}>
                                         <div className="font-semibold text-xs opacity-75">{message.userName}</div>
                                         <div>{message.message}</div>
@@ -1005,8 +1007,8 @@ export default function CollaborativeIDE({ userName }: any) {
                     <button
                       onClick={() => setActiveTab('editor')}
                       className={`px-3 lg:px-4 py-2 text-sm font-spacegroteskmedium border-r border-border transition ${activeTab === 'editor'
-                          ? 'bg-background text-foreground border-b-2 border-info'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                        ? 'bg-background text-foreground border-b-2 border-info'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                         }`}
                     >
                       Editor
@@ -1014,8 +1016,8 @@ export default function CollaborativeIDE({ userName }: any) {
                     <button
                       onClick={() => setActiveTab('output')}
                       className={`px-3 lg:px-4 py-2 text-sm font-spacegroteskmedium border-r border-border transition ${activeTab === 'output'
-                          ? 'bg-background text-foreground border-b-2 border-info'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                        ? 'bg-background text-foreground border-b-2 border-info'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                         }`}
                     >
                       Output
@@ -1023,8 +1025,8 @@ export default function CollaborativeIDE({ userName }: any) {
                     <button
                       onClick={() => setActiveTab('genie')}
                       className={`px-3 lg:px-4 py-2 text-sm font-spacegroteskmedium border-r border-border transition ${activeTab === 'genie'
-                          ? 'bg-background text-foreground border-b-2 border-info'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                        ? 'bg-background text-foreground border-b-2 border-info'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                         }`}
                     >
                       <span className="hidden sm:inline">AI Genie</span>

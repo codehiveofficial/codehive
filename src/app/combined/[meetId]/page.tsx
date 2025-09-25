@@ -75,13 +75,14 @@ export default function CollaborativeIDE({ userName }: any) {
     label: "Brilliance Black",
   });
   const [language, setLanguage] = useState(languageOptions[0]);
-  const [fontSize, setFontSize] = useState(18);
+  const [fontSize, setFontSize] = useState(16);
   const [isLoading, setIsLoading] = useState(false);
   const [remoteCursorPosition, setRemoteCursorPosition] = useState<{
     lineNumber: number;
     column: number;
   } | null>(null);
   const meetId = params.meetId;
+  const [loading, setLoading] = useState(false);
   const [roomId, setRoomId] = useState(meetId || "");
   const [name, setName] = useState("");
   const [peers, setPeers] = useState<{ [key: string]: PeerConnection }>({});
@@ -102,9 +103,9 @@ export default function CollaborativeIDE({ userName }: any) {
   const [activeTab, setActiveTab] = useState<'editor' | 'output' | 'genie'>('editor');
   const [showInput, setShowInput] = useState(false);
   const [showChat, setShowChat] = useState(false);
-  const [chatMessages, setChatMessages] = useState<Array<{userId: string, userName: string, message: string}>>([]);
+  const [chatMessages, setChatMessages] = useState<Array<{ userId: string, userName: string, message: string }>>([]);
   const [newChatMessage, setNewChatMessage] = useState("");
-  
+
   // AI Genie states
   const [genieQuery, setGenieQuery] = useState("");
   const [genieResponse, setGenieResponse] = useState("");
@@ -235,13 +236,13 @@ export default function CollaborativeIDE({ userName }: any) {
       transports: ["websocket"],
       upgrade: false,
     });
-    
+
     socketRef.current.on("receiving_returned_signal", ({ signal, id }) => {
       if (peersRef.current[id]) {
         peersRef.current[id].peer.signal(signal);
       }
     });
-    
+
     socketRef.current.on(
       "user_joined_with_signal",
       ({ signal, callerID, userName: peerUserName }) => {
@@ -255,7 +256,7 @@ export default function CollaborativeIDE({ userName }: any) {
         }
       }
     );
-    
+
     socketRef.current.on("user_left", ({ userId }) => {
       if (peersRef.current[userId]) {
         peersRef.current[userId].peer.destroy();
@@ -270,7 +271,7 @@ export default function CollaborativeIDE({ userName }: any) {
     });
 
     // Chat message listener
-    socketRef.current.on("receive_message", (data: {userId: string, userName: string, message: string}) => {
+    socketRef.current.on("receive_message", (data: { userId: string, userName: string, message: string }) => {
       setChatMessages((prevMessages) => [...prevMessages, data]);
     });
 
@@ -429,23 +430,23 @@ export default function CollaborativeIDE({ userName }: any) {
       "h-full",
       "object-cover"
     );
-    
+
     const videoContainer = document.getElementById("video-container");
     if (videoContainer) {
       // Create a wrapper div for the video
       const wrapperDiv = document.createElement("div");
       wrapperDiv.className = "relative aspect-video bg-gray-800 rounded-lg overflow-hidden";
       wrapperDiv.appendChild(videoElement);
-      
+
       // Add username label
       const labelDiv = document.createElement("div");
       labelDiv.className = "absolute bottom-2 left-2 bg-black bg-opacity-60 px-2 py-1 rounded text-white text-xs";
       labelDiv.textContent = peersRef.current[userId]?.userName || "Unknown";
       wrapperDiv.appendChild(labelDiv);
-      
+
       videoContainer.appendChild(wrapperDiv);
     }
-    
+
     // Store the reference if needed for cleanup later
     if (peersRef.current[userId]) {
       peersRef.current[userId].videoElement = videoElement;
@@ -629,13 +630,13 @@ export default function CollaborativeIDE({ userName }: any) {
   // AI Genie functionality
   const handleGenieSubmit = async () => {
     if (!genieQuery.trim()) return;
-    
+
     setGenieLoading(true);
     setGenieError("");
     setGenieResponse("");
 
-    const formattedQuery = includeCodeInGenie && code 
-      ? `Code: ${code}\nQuestion: ${genieQuery}` 
+    const formattedQuery = includeCodeInGenie && code
+      ? `Code: ${code}\nQuestion: ${genieQuery}`
       : genieQuery;
 
     try {
@@ -735,7 +736,7 @@ export default function CollaborativeIDE({ userName }: any) {
                 disabled={!streamReady}
                 className="w-full bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create New Room
+                {loading ? "Creating..." : "Create Room"}
               </button>
             </div>
             <div className="flex flex-col lg:flex-row gap-2">
@@ -770,9 +771,8 @@ export default function CollaborativeIDE({ userName }: any) {
                   </span>
                   <button
                     onClick={() => copyToClipboard(roomId[0], setCopied)}
-                    className={`p-1.5 rounded transition ${
-                      copied ? "bg-green-500" : "bg-gray-600 hover:bg-gray-500"
-                    }`}
+                    className={`p-1.5 rounded transition ${copied ? "bg-green-500" : "bg-gray-600 hover:bg-gray-500"
+                      }`}
                     title={copied ? "Copied!" : "Copy Room ID"}
                   >
                     {copied ? (
@@ -783,9 +783,8 @@ export default function CollaborativeIDE({ userName }: any) {
                   </button>
                   <button
                     onClick={() => copyMeetLink(roomId[0], setMeetLinkCopied)}
-                    className={`p-1.5 rounded transition ${
-                      meetlinkcopied ? "bg-green-500" : "bg-gray-600 hover:bg-gray-500"
-                    }`}
+                    className={`p-1.5 rounded transition ${meetlinkcopied ? "bg-green-500" : "bg-gray-600 hover:bg-gray-500"
+                      }`}
                     title={meetlinkcopied ? "Copied!" : "Copy Meet Link"}
                   >
                     {meetlinkcopied ? (
@@ -812,18 +811,16 @@ export default function CollaborativeIDE({ userName }: any) {
               <div className="flex items-center gap-2">
                 <button
                   onClick={toggleVideo}
-                  className={`p-2 rounded ${
-                    isVideoEnabled ? "bg-blue-500 hover:bg-blue-600" : "bg-red-500 hover:bg-red-600"
-                  } text-white transition`}
+                  className={`p-2 rounded ${isVideoEnabled ? "bg-blue-500 hover:bg-blue-600" : "bg-red-500 hover:bg-red-600"
+                    } text-white transition`}
                   title={isVideoEnabled ? "Turn Off Video" : "Turn On Video"}
                 >
                   {isVideoEnabled ? <FaVideo className="text-sm" /> : <FaVideoSlash className="text-sm" />}
                 </button>
                 <button
                   onClick={toggleAudio}
-                  className={`p-2 rounded ${
-                    isAudioEnabled ? "bg-blue-500 hover:bg-blue-600" : "bg-red-500 hover:bg-red-600"
-                  } text-white transition`}
+                  className={`p-2 rounded ${isAudioEnabled ? "bg-blue-500 hover:bg-blue-600" : "bg-red-500 hover:bg-red-600"
+                    } text-white transition`}
                   title={isAudioEnabled ? "Turn Off Audio" : "Turn On Audio"}
                 >
                   {isAudioEnabled ? <FaMicrophone className="text-sm" /> : <FaMicrophoneSlash className="text-sm" />}
@@ -886,9 +883,9 @@ export default function CollaborativeIDE({ userName }: any) {
                               </div>
                             </div>
                           </div>
-                          
+
                           {/* Peer videos */}
-                          <div 
+                          <div
                             id="video-container"
                             className="flex-1 space-y-2 overflow-y-auto scroll-container"
                           >
@@ -910,7 +907,7 @@ export default function CollaborativeIDE({ userName }: any) {
                     {showChat && (
                       <>
                         <PanelResizeHandle className="h-1 bg-gray-700 hover:bg-gray-600 transition-colors cursor-row-resize" />
-                        
+
                         {/* Chat Panel */}
                         <Panel defaultSize={30} minSize={15} maxSize={60}>
                           <div className="h-full bg-gray-800 flex flex-col">
@@ -931,11 +928,11 @@ export default function CollaborativeIDE({ userName }: any) {
                                 </div>
                               </div>
                             </div>
-                            
+
                             <div className="flex-1 flex flex-col overflow-hidden">
-                              <div 
+                              <div
                                 ref={chatMessagesRef}
-                                className="flex-1 overflow-y-auto p-2 space-y-2 scroll-container" 
+                                className="flex-1 overflow-y-auto p-2 space-y-2 scroll-container"
                                 id="chat-messages"
                               >
                                 {chatMessages.length === 0 ? (
@@ -945,11 +942,10 @@ export default function CollaborativeIDE({ userName }: any) {
                                 ) : (
                                   chatMessages.map((message, index) => (
                                     <div key={index} className={`text-xs ${message.userId === socketRef.current?.id ? 'text-right' : 'text-left'}`}>
-                                      <div className={`inline-block max-w-[80%] px-2 py-1 rounded ${
-                                        message.userId === socketRef.current?.id 
-                                          ? 'bg-blue-500 text-white' 
+                                      <div className={`inline-block max-w-[80%] px-2 py-1 rounded ${message.userId === socketRef.current?.id
+                                          ? 'bg-blue-500 text-white'
                                           : 'bg-gray-600 text-white'
-                                      }`}>
+                                        }`}>
                                         <div className="font-semibold text-xs opacity-75">{message.userName}</div>
                                         <div>{message.message}</div>
                                       </div>
@@ -957,7 +953,7 @@ export default function CollaborativeIDE({ userName }: any) {
                                   ))
                                 )}
                               </div>
-                              
+
                               <div className="p-2 border-t border-gray-700">
                                 <div className="flex gap-2">
                                   <input
@@ -968,7 +964,7 @@ export default function CollaborativeIDE({ userName }: any) {
                                     placeholder="Type a message..."
                                     className="flex-1 bg-gray-700 text-white px-3 py-2 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   />
-                                  <button 
+                                  <button
                                     onClick={sendChatMessage}
                                     className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm transition"
                                   >
@@ -981,7 +977,7 @@ export default function CollaborativeIDE({ userName }: any) {
                         </Panel>
                       </>
                     )}
-                    
+
                     {/* Chat Toggle Button (only show when chat is hidden) */}
                     {!showChat && (
                       <div className="p-2 border-t border-gray-700">
@@ -1009,36 +1005,33 @@ export default function CollaborativeIDE({ userName }: any) {
                   <div className="bg-gray-800 border-b border-gray-700 flex">
                     <button
                       onClick={() => setActiveTab('editor')}
-                      className={`px-3 lg:px-4 py-2 text-sm font-medium border-r border-gray-700 transition ${
-                        activeTab === 'editor'
+                      className={`px-3 lg:px-4 py-2 text-sm font-medium border-r border-gray-700 transition ${activeTab === 'editor'
                           ? 'bg-gray-900 text-white border-b-2 border-blue-500'
                           : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                      }`}
+                        }`}
                     >
                       Editor
                     </button>
                     <button
                       onClick={() => setActiveTab('output')}
-                      className={`px-3 lg:px-4 py-2 text-sm font-medium border-r border-gray-700 transition ${
-                        activeTab === 'output'
+                      className={`px-3 lg:px-4 py-2 text-sm font-medium border-r border-gray-700 transition ${activeTab === 'output'
                           ? 'bg-gray-900 text-white border-b-2 border-blue-500'
                           : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                      }`}
+                        }`}
                     >
                       Output
                     </button>
                     <button
                       onClick={() => setActiveTab('genie')}
-                      className={`px-3 lg:px-4 py-2 text-sm font-medium border-r border-gray-700 transition ${
-                        activeTab === 'genie'
+                      className={`px-3 lg:px-4 py-2 text-sm font-medium border-r border-gray-700 transition ${activeTab === 'genie'
                           ? 'bg-gray-900 text-white border-b-2 border-blue-500'
                           : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                      }`}
+                        }`}
                     >
                       <span className="hidden sm:inline">AI Genie</span>
                       <span className="sm:hidden">AI</span>
                     </button>
-                    
+
                     {/* Tab Controls */}
                     {activeTab === 'editor' && (
                       <div className="flex items-center gap-1 lg:gap-2 ml-auto mr-2 lg:mr-4">
@@ -1081,11 +1074,11 @@ export default function CollaborativeIDE({ userName }: any) {
                               />
                             </div>
                           </Panel>
-                          
+
                           {showInput && (
                             <>
                               <PanelResizeHandle className="h-1 bg-gray-700 hover:bg-gray-600 transition-colors cursor-row-resize" />
-                              
+
                               <Panel defaultSize={25} minSize={10} maxSize={50}>
                                 <div className="h-full bg-gray-850 flex flex-col">
                                   <div className="p-2 border-b border-gray-700 bg-gray-800">
@@ -1109,7 +1102,7 @@ export default function CollaborativeIDE({ userName }: any) {
                               </Panel>
                             </>
                           )}
-                          
+
                           {/* Input Panel Toggle (only show when input is hidden) */}
                           {!showInput && (
                             <div className="border-t border-gray-700 bg-gray-800 p-2">
@@ -1139,7 +1132,7 @@ export default function CollaborativeIDE({ userName }: any) {
                         {/* Response Area */}
                         <div className="flex-1 p-4 overflow-hidden flex flex-col">
                           <h3 className="text-lg font-semibold mb-4 text-white">🧞‍♂️ AI Code Assistant</h3>
-                          
+
                           <div className="flex-1 bg-gray-800 rounded-lg border border-gray-700 overflow-hidden flex flex-col">
                             <div className="flex-1 p-4 overflow-y-auto scroll-container">
                               {genieResponse ? (
@@ -1185,14 +1178,14 @@ export default function CollaborativeIDE({ userName }: any) {
                                   </div>
                                 </div>
                               )}
-                              
+
                               {genieLoading && (
                                 <div className="flex items-center gap-2 text-blue-400">
                                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
                                   <span>Genie is thinking...</span>
                                 </div>
                               )}
-                              
+
                               {genieError && (
                                 <div className="bg-red-900/50 border border-red-700 rounded-lg p-3 text-red-300">
                                   {genieError}
@@ -1216,7 +1209,7 @@ export default function CollaborativeIDE({ userName }: any) {
                                 Include current code in context
                               </label>
                             </div>
-                            
+
                             <div className="flex gap-2">
                               <textarea
                                 value={genieQuery}
