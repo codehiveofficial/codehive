@@ -852,6 +852,24 @@ export default function CollaborativeIDE({ userName }: any) {
                     {isAudioEnabled ? <FaMicrophone size={12} /> : <FaMicrophoneSlash size={12} />}
                     <span className="hidden xl:inline">{isAudioEnabled ? 'Audio' : 'Audio'}</span>
                   </button>
+                  
+                  {/* Download Buttons */}
+                  <button
+                    onClick={() => downloadCodeAsFile(code, language.value)}
+                    className="border rounded-lg px-2.5 py-2 text-sm font-spacegroteskmedium transition-all flex items-center gap-1 bg-gradient-to-r from-purple-500 to-purple-400 hover:from-purple-600 hover:to-purple-500 text-white border-purple-400/30"
+                    title="Download as file"
+                  >
+                    <MdFileDownload size={12} />
+                    <span className="hidden xl:inline">File</span>
+                  </button>
+                  <button
+                    onClick={() => downloadCodeAsImage(code, language.value)}
+                    className="border rounded-lg px-2.5 py-2 text-sm font-spacegroteskmedium transition-all flex items-center gap-1 bg-gradient-to-r from-indigo-500 to-indigo-400 hover:from-indigo-600 hover:to-indigo-500 text-white border-indigo-400/30"
+                    title="Download as image"
+                  >
+                    <AiOutlineSnippets size={12} />
+                    <span className="hidden xl:inline">Snippet</span>
+                  </button>
                 </div>
               </div>
 
@@ -873,6 +891,23 @@ export default function CollaborativeIDE({ userName }: any) {
                 >
                   {isAudioEnabled ? <FaMicrophone className="text-xs" /> : <FaMicrophoneSlash className="text-xs" />}
                 </button>
+                
+                {/* Download Buttons */}
+                <button
+                  onClick={() => downloadCodeAsFile(code, language.value)}
+                  className="p-1.5 bg-purple-500 hover:bg-purple-600 text-white rounded transition"
+                  title="Download as file"
+                >
+                  <MdFileDownload className="text-xs" />
+                </button>
+                <button
+                  onClick={() => downloadCodeAsImage(code, language.value)}
+                  className="p-1.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded transition"
+                  title="Download as image"
+                >
+                  <AiOutlineSnippets className="text-xs" />
+                </button>
+                
                 <button
                   onClick={leaveRoom}
                   className="p-1.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded transition"
