@@ -882,7 +882,7 @@ export default function CollaborativeIDE({ userName }: any) {
                           <div className="p-3 border-b border-border">
                             <h3 className="text-sm font-spacegroteskmedium text-foreground">Participants ({Object.keys(peers).length + 1})</h3>
                           </div>
-                          <div className="flex-1 p-4 overflow-y-auto">
+                          <div className="flex-1 p-4 overflow-y-auto video-container-scroll">
                             <div className="space-y-3">
                               {/* Self video */}
                               <div className="relative">
@@ -956,7 +956,7 @@ export default function CollaborativeIDE({ userName }: any) {
                                   ✕
                                 </button>
                               </div>
-                              <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                              <div className="flex-1 overflow-y-auto p-3 space-y-2 chat-container-scroll">
                                 {chatMessages.length === 0 ? (
                                   <div className="text-center text-muted-foreground text-xs py-4">
                                     No messages yet. Start chatting!
@@ -1153,7 +1153,7 @@ export default function CollaborativeIDE({ userName }: any) {
                             ✕
                           </button>
                         </div>
-                        <div className="flex-1 overflow-y-auto p-4">
+                        <div className="flex-1 overflow-y-auto p-4 invisible-scrollbar">
                           {genieResponse ? (
                             <div className="prose prose-invert prose-sm max-w-none">
                               <ReactMarkdown
@@ -1253,7 +1253,7 @@ export default function CollaborativeIDE({ userName }: any) {
                 {mobileActiveTab === 'editor' && (
                   <div className="h-full flex flex-col">
                     {/* Mobile Editor Controls */}
-                    <div className="bg-muted border-b border-border p-2 flex items-center justify-between gap-2 overflow-x-auto">
+                    <div className="bg-muted border-b border-border p-2 flex items-center justify-between gap-2 overflow-x-auto mobile-horizontal-scroll">
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <button
                           className="px-3 py-1.5 bg-success text-success-foreground rounded hover:bg-success/90 disabled:opacity-50 font-spacegroteskmedium transition-colors text-sm"
@@ -1335,7 +1335,7 @@ export default function CollaborativeIDE({ userName }: any) {
 
                 {mobileActiveTab === 'genie' && (
                   <div className="h-full flex flex-col">
-                    <div className="flex-1 overflow-y-auto p-3">
+                    <div className="flex-1 overflow-y-auto p-3 invisible-scrollbar">
                       {genieResponse ? (
                         <div className="prose prose-invert prose-sm max-w-none">
                           <ReactMarkdown
@@ -1425,7 +1425,7 @@ export default function CollaborativeIDE({ userName }: any) {
                 )}
 
                 {mobileActiveTab === 'video' && (
-                  <div className="h-full p-3 overflow-y-auto">
+                  <div className="h-full p-3 overflow-y-auto invisible-scrollbar">
                     <div className="space-y-3">
                       {/* Self video - larger on video tab */}
                       <div className="relative">
@@ -1477,7 +1477,7 @@ export default function CollaborativeIDE({ userName }: any) {
 
                 {mobileActiveTab === 'chat' && (
                   <div className="h-full flex flex-col">
-                    <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                    <div className="flex-1 overflow-y-auto p-3 space-y-2 chat-container-scroll">
                       {chatMessages.length === 0 ? (
                         <div className="text-center text-muted-foreground text-sm py-8">
                           No messages yet. Start chatting!
