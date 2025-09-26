@@ -124,13 +124,33 @@ export default function CollaborativeIDE({ userName }: any) {
         console.warn("Video element not found, skipping setup");
         return;
       }
-      // Clear any existing stream
-      if (videoElement.srcObject) {
-        const oldStream = videoElement.srcObject as MediaStream;
-        oldStream.getTracks().forEach((track) => track.stop());
+
+      // Check if the video element already has the correct stream
+      if (videoElement.srcObject === stream) {
+        console.log("Video element already has the correct stream, skipping setup");
+        // Just ensure tracks are enabled correctly
+        stream.getVideoTracks().forEach((track) => {
+          track.enabled = isVideoEnabled;
+        });
+        stream.getAudioTracks().forEach((track) => {
+          track.enabled = isAudioEnabled;
+        });
+        return;
       }
-      videoElement.srcObject = null;
+
+      // Only clear and stop tracks if it's a different stream
+      if (videoElement.srcObject && videoElement.srcObject !== stream) {
+        const oldStream = videoElement.srcObject as MediaStream;
+        // Only stop tracks if they're from a completely different stream
+        if (oldStream.id !== stream.id) {
+          console.log("Stopping old stream tracks");
+          oldStream.getTracks().forEach((track) => track.stop());
+        }
+      }
+
+      // Set the new stream
       videoElement.srcObject = stream;
+      
       // Ensure video tracks are enabled
       stream.getVideoTracks().forEach((track) => {
         track.enabled = isVideoEnabled;
@@ -139,9 +159,15 @@ export default function CollaborativeIDE({ userName }: any) {
       stream.getAudioTracks().forEach((track) => {
         track.enabled = isAudioEnabled;
       });
+
+      // Wait a bit before playing to avoid race conditions
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
       await videoElement.play().catch((playError) => {
         console.error("Error playing video:", playError);
+        // Don't throw here, just log the error
       });
+      
       setStreamReady(true);
       console.log("Video stream setup successfully");
     } catch (err) {
@@ -180,11 +206,15 @@ export default function CollaborativeIDE({ userName }: any) {
       if (stream.getAudioTracks().length === 0) {
         throw new Error("No audio track available");
       }
+      
+      // Only stop existing stream if it's different
+      if (streamRef.current && streamRef.current.id !== stream.id) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+      
       streamRef.current = stream;
       setMyStream(stream);
-      // Try to setup video stream on both elements
-      await setupVideoStream(stream, userVideoRef.current);
-      await setupVideoStream(stream, mobileVideoRef.current);
+      // Setup video streams will be handled by the useEffect that monitors myStream changes
       setMediaError("");
     } catch (err) {
       console.error("Error in initializeMediaStream:", err);
@@ -222,13 +252,31 @@ export default function CollaborativeIDE({ userName }: any) {
   useEffect(() => {
     if (myStream) {
       // Setup both desktop and mobile video elements if they exist
-      if (userVideoRef.current) {
+      if (userVideoRef.current && userVideoRef.current.srcObject !== myStream) {
         console.log("Updating desktop video element with new stream");
         setupVideoStream(myStream, userVideoRef.current);
       }
-      if (mobileVideoRef.current) {
+      if (mobileVideoRef.current && mobileVideoRef.current.srcObject !== myStream) {
         console.log("Updating mobile video element with new stream");
         setupVideoStream(myStream, mobileVideoRef.current);
+      }
+      
+      // Update track states without re-setting the stream
+      if (userVideoRef.current && userVideoRef.current.srcObject === myStream) {
+        myStream.getVideoTracks().forEach((track) => {
+          track.enabled = isVideoEnabled;
+        });
+        myStream.getAudioTracks().forEach((track) => {
+          track.enabled = isAudioEnabled;
+        });
+      }
+      if (mobileVideoRef.current && mobileVideoRef.current.srcObject === myStream) {
+        myStream.getVideoTracks().forEach((track) => {
+          track.enabled = isVideoEnabled;
+        });
+        myStream.getAudioTracks().forEach((track) => {
+          track.enabled = isAudioEnabled;
+        });
       }
     }
   }, [myStream, isVideoEnabled, isAudioEnabled]);
@@ -660,25 +708,6 @@ export default function CollaborativeIDE({ userName }: any) {
       return changed ? next : prev;
     });
   }, [peers]);
-
-  // Setup video elements when they become available (responsive layout changes)
-  useEffect(() => {
-    if (myStream) {
-      const setupVideoElements = () => {
-        if (userVideoRef.current && userVideoRef.current.srcObject !== myStream) {
-          setupVideoStream(myStream, userVideoRef.current);
-        }
-        if (mobileVideoRef.current && mobileVideoRef.current.srcObject !== myStream) {
-          setupVideoStream(myStream, mobileVideoRef.current);
-        }
-      };
-
-      // Set up immediately and also on a short delay to handle responsive layout changes
-      setupVideoElements();
-      const timer = setTimeout(setupVideoElements, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [myStream, userVideoRef.current, mobileVideoRef.current]);
 
   return (
     <div className="min-h-screen bg-background">
