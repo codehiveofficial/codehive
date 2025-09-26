@@ -51,7 +51,7 @@ export default function CustomThemeDropdown({ handleThemeChange, theme }: Custom
 
             {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-[9999] max-h-60 overflow-y-auto">
                     <div className="py-1">
                         {themeOptions.map((option, index) => (
                             <button

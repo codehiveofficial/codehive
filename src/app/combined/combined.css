@@ -116,3 +116,23 @@
   height: 0;
   display: none; /* WebKit */
 }
+
+/* Mobile viewport height support */
+@supports (height: 100dvh) {
+  .mobile-full-height {
+    height: 100dvh;
+  }
+}
+
+@supports not (height: 100dvh) {
+  .mobile-full-height {
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+  }
+}
+
+/* Ensure mobile dropdowns appear above content */
+.mobile-dropdown-container {
+  position: relative;
+  z-index: 9999;
+}

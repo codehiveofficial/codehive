@@ -783,34 +783,35 @@ export default function CollaborativeIDE({ userName }: any) {
           </div>
         </div>
       ) : (
-        <div className="h-screen flex flex-col">
+        <div className="h-dvh flex flex-col">
           {/* Simplified Header */}
-          <div className="bg-muted border-b border-border px-3 py-2 sm:px-4 sm:py-3 flex-shrink-0">
+          <div className="bg-muted border-b border-border px-2 py-2 sm:px-4 sm:py-3 flex-shrink-0">
             <div className="flex items-center justify-between">
               {/* Room Info */}
-              <div className="flex items-center gap-2 text-foreground">
-                <span className="text-xs sm:text-sm font-spacegroteskmedium">Room:</span>
-                <span className="text-info font-spacegrotesksemibold bg-background px-2 py-1 rounded text-xs sm:text-sm border border-border">
-                  {roomId}
+              <div className="flex items-center gap-1.5 text-foreground min-w-0">
+                <span className="text-xs font-spacegroteskmedium whitespace-nowrap">Room:</span>
+                <span className="text-info font-spacegrotesksemibold bg-background px-2 py-1 rounded text-xs border border-border truncate">
+                  <span className="sm:hidden">{roomId.length > 4 ? `${roomId.substring(0, 4)}...` : roomId}</span>
+                  <span className="hidden sm:inline">{roomId}</span>
                 </span>
                 <button
                   onClick={() => copyToClipboard(roomId, setCopied)}
-                  className={`p-1.5 sm:p-2 rounded transition ${copied ? "bg-success text-success-foreground" : "bg-background hover:bg-accent border border-border"
+                  className={`p-1.5 rounded transition flex-shrink-0 ${copied ? "bg-success text-success-foreground" : "bg-background hover:bg-accent border border-border"
                     }`}
                   title={copied ? "Copied!" : "Copy Room ID"}
                 >
                   {copied ? (
-                    <FaCheck className="text-xs sm:text-sm" />
+                    <FaCheck className="text-xs" />
                   ) : (
-                    <FaClipboard className="text-xs sm:text-sm" />
+                    <FaClipboard className="text-xs" />
                   )}
                 </button>
               </div>
 
               {/* Desktop Center Controls - Run, Video, Audio */}
-              <div className="hidden md:flex items-center space-x-3">
+              <div className="hidden md:flex items-center space-x-2">
                 <button
-                  className="bg-gradient-to-r from-green-500 to-green-400 hover:from-green-600 hover:to-green-500 text-white border border-green-400/30 rounded-lg px-4 py-2 text-sm font-spacegroteskmedium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 disabled:from-green-500/50 disabled:to-green-400/50"
+                  className="bg-gradient-to-r from-green-500 to-green-400 hover:from-green-600 hover:to-green-500 text-white border border-green-400/30 rounded-lg px-3 py-2 text-sm font-spacegroteskmedium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 disabled:from-green-500/50 disabled:to-green-400/50"
                   disabled={!code || isLoading}
                   onClick={handleRunCode}
                   title={isLoading ? "Code is running..." : "Run your code"}
@@ -818,74 +819,77 @@ export default function CollaborativeIDE({ userName }: any) {
                   {isLoading ? (
                     <>
                       <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Running...
+                      <span className="hidden lg:inline">Running...</span>
                     </>
                   ) : (
                     <>
                       <span>▶</span>
-                      Run Code
+                      <span className="hidden lg:inline">Run</span>
                     </>
                   )}
                 </button>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1.5">
                   <button
                     onClick={toggleVideo}
-                    className={`border rounded-lg px-3 py-2 text-sm font-spacegroteskmedium transition-all flex items-center gap-1 ${isVideoEnabled
+                    className={`border rounded-lg px-2.5 py-2 text-sm font-spacegroteskmedium transition-all flex items-center gap-1 ${isVideoEnabled
                       ? 'bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white border-blue-400/30'
                       : 'bg-gradient-to-r from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 text-white border-red-400/30'
                       }`}
                     title={isVideoEnabled ? "Turn off camera" : "Turn on camera"}
                   >
                     {isVideoEnabled ? <FaVideo size={12} /> : <FaVideoSlash size={12} />}
-                    <span className="hidden lg:inline">{isVideoEnabled ? 'Video' : 'Video'}</span>
+                    <span className="hidden xl:inline">{isVideoEnabled ? 'Video' : 'Video'}</span>
                   </button>
                   <button
                     onClick={toggleAudio}
-                    className={`border rounded-lg px-3 py-2 text-sm font-spacegroteskmedium transition-all flex items-center gap-1 ${isAudioEnabled
+                    className={`border rounded-lg px-2.5 py-2 text-sm font-spacegroteskmedium transition-all flex items-center gap-1 ${isAudioEnabled
                       ? 'bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white border-blue-400/30'
                       : 'bg-gradient-to-r from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 text-white border-red-400/30'
                       }`}
                     title={isAudioEnabled ? "Turn off microphone" : "Turn on microphone"}
                   >
                     {isAudioEnabled ? <FaMicrophone size={12} /> : <FaMicrophoneSlash size={12} />}
-                    <span className="hidden lg:inline">{isAudioEnabled ? 'Audio' : 'Audio'}</span>
+                    <span className="hidden xl:inline">{isAudioEnabled ? 'Audio' : 'Audio'}</span>
                   </button>
                 </div>
               </div>
 
-              {/* Mobile Controls (unchanged) */}
-              <div className="md:hidden flex items-center gap-2">
+              {/* Mobile Controls */}
+              <div className="md:hidden flex items-center gap-1.5">
                 <button
                   onClick={toggleVideo}
-                  className={`p-1.5 sm:p-2 rounded transition ${isVideoEnabled ? "bg-info hover:bg-info/90 text-info-foreground" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                  className={`p-1.5 rounded transition ${isVideoEnabled ? "bg-info hover:bg-info/90 text-info-foreground" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                     }`}
+                  title={isVideoEnabled ? "Turn off camera" : "Turn on camera"}
                 >
-                  {isVideoEnabled ? <FaVideo className="text-xs sm:text-sm" /> : <FaVideoSlash className="text-xs sm:text-sm" />}
+                  {isVideoEnabled ? <FaVideo className="text-xs" /> : <FaVideoSlash className="text-xs" />}
                 </button>
                 <button
                   onClick={toggleAudio}
-                  className={`p-1.5 sm:p-2 rounded transition ${isAudioEnabled ? "bg-info hover:bg-info/90 text-info-foreground" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                  className={`p-1.5 rounded transition ${isAudioEnabled ? "bg-info hover:bg-info/90 text-info-foreground" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                     }`}
+                  title={isAudioEnabled ? "Turn off microphone" : "Turn on microphone"}
                 >
-                  {isAudioEnabled ? <FaMicrophone className="text-xs sm:text-sm" /> : <FaMicrophoneSlash className="text-xs sm:text-sm" />}
+                  {isAudioEnabled ? <FaMicrophone className="text-xs" /> : <FaMicrophoneSlash className="text-xs" />}
                 </button>
                 <button
                   onClick={leaveRoom}
-                  className="p-1.5 sm:p-2 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded transition"
+                  className="p-1.5 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded transition"
+                  title="Leave room"
                 >
-                  <IoMdExit className="text-xs sm:text-sm" />
+                  <IoMdExit className="text-xs" />
                 </button>
               </div>
 
               {/* Desktop Right Controls - Connected Users & Exit */}
-              <div className="hidden md:flex items-center space-x-3 text-sm">
-                <div className="bg-background/50 px-3 py-1 rounded-lg border border-border text-foreground">
+              <div className="hidden md:flex items-center space-x-2 text-sm">
+                <div className="bg-background/50 px-2.5 py-1.5 rounded-lg border border-border text-foreground text-xs">
                   Connected: {Object.keys(peers).length + 1}
                 </div>
                 <button
                   onClick={leaveRoom}
-                  className="bg-gradient-to-r from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 text-white border border-red-400/30 rounded-lg px-3 py-2 transition-all flex items-center gap-1"
+                  className="bg-gradient-to-r from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 text-white border border-red-400/30 rounded-lg px-2.5 py-2 transition-all flex items-center gap-1"
                   title="Leave room"
                 >
                   <IoMdExit size={12} />
@@ -1278,21 +1282,31 @@ export default function CollaborativeIDE({ userName }: any) {
             {/* Mobile Layout (below md) */}
             <div className="md:hidden flex flex-col h-full">
               {/* Mobile Tab Content */}
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 overflow-hidden min-h-0">
                 {mobileActiveTab === 'editor' && (
                   <div className="h-full flex flex-col">
                     {/* Mobile Editor Controls */}
-                    <div className="bg-muted border-b border-border p-2 flex items-center justify-between gap-2 overflow-x-auto mobile-horizontal-scroll">
+                    <div className="bg-muted border-b border-border p-2 flex items-center justify-between gap-2 overflow-x-auto mobile-horizontal-scroll relative z-20">
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <button
-                          className="px-3 py-1.5 bg-success text-success-foreground rounded hover:bg-success/90 disabled:opacity-50 font-spacegroteskmedium transition-colors text-sm"
+                          className="px-3 py-1.5 bg-success text-success-foreground rounded hover:bg-success/90 disabled:opacity-50 font-spacegroteskmedium transition-colors text-sm flex items-center gap-1"
                           disabled={!code || isLoading}
                           onClick={handleRunCode}
+                          title={isLoading ? "Code is running..." : "Run your code"}
                         >
-                          {isLoading ? "..." : "▶"}
+                          {isLoading ? (
+                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          ) : (
+                            <span>▶</span>
+                          )}
+                          <span className="hidden xs:inline">{isLoading ? "..." : "Run"}</span>
                         </button>
-                        <CustomLanguageDropdown onSelectChange={handleLanguageChange} />
-                        <CustomThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
+                        <div className="mobile-dropdown-container">
+                          <CustomLanguageDropdown onSelectChange={handleLanguageChange} />
+                        </div>
+                        <div className="mobile-dropdown-container">
+                          <CustomThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
+                        </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <input
@@ -1302,6 +1316,7 @@ export default function CollaborativeIDE({ userName }: any) {
                           className="w-12 px-1 py-1 rounded bg-input text-foreground border border-border text-sm focus:outline-none"
                           min="10"
                           max="40"
+                          title="Font Size"
                         />
                       </div>
                     </div>
@@ -1324,17 +1339,17 @@ export default function CollaborativeIDE({ userName }: any) {
                     </div>
 
                     {showInput && (
-                      <div className="h-28 border-t border-border bg-background">
+                      <div className="h-32 border-t border-border bg-background">
                         <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
-                          <span className="text-foreground text-xs font-spacegroteskmedium">Input</span>
+                          <span className="text-foreground text-sm font-spacegroteskmedium">Input</span>
                           <button
                             onClick={() => setShowInput(false)}
-                            className="text-muted-foreground hover:text-foreground text-xs"
+                            className="text-muted-foreground hover:text-foreground text-sm p-1 hover:bg-accent rounded"
                           >
                             ✕
                           </button>
                         </div>
-                        <div className="p-2">
+                        <div className="p-2 h-full">
                           <CustomInput
                             customInput={customInput}
                             setCustomInput={setCustomInput}
@@ -1344,12 +1359,12 @@ export default function CollaborativeIDE({ userName }: any) {
                     )}
 
                     {!showInput && (
-                      <div className="border-t border-border bg-muted/30 px-3 py-2">
+                      <div className="border-t border-border bg-muted/30 px-3 py-2 flex justify-center">
                         <button
                           onClick={() => setShowInput(true)}
-                          className="text-xs text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1 rounded transition-all font-spacegroteskmedium"
+                          className="text-sm text-info bg-background hover:bg-accent px-4 py-2 rounded transition-all font-spacegroteskmedium border border-border"
                         >
-                          + Input
+                          + Show Input Panel
                         </button>
                       </div>
                     )}

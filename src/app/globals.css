@@ -36,6 +36,7 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 body {
@@ -83,4 +84,22 @@ body {
 @font-face {
   font-family: "Space Grotesk Semibold";
   src: url("./fonts/SpaceGrotesk-SemiBold.ttf");
+}
+
+/* Mobile viewport height utilities */
+@layer utilities {
+  .h-dvh-safe {
+    height: 100vh;
+    height: 100dvh;
+  }
+  
+  .min-h-dvh-safe {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  
+  .max-h-dvh-safe {
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
 }
