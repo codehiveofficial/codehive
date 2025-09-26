@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { io, Socket } from "socket.io-client";
 import { Send, X, MessageCircle } from "lucide-react";
 
 interface ChatMessage {
@@ -8,15 +7,10 @@ interface ChatMessage {
   message: string;
 }
 
-interface ChatModalProps {
-  socket: Socket;
-  userName: string;
-}
-
-export default function ChatModal ({ socket, userName }:any) {
+export default function ChatModal({ socket, userName }: any) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [isOpen, setIsOpen] = useState(false); // Controls visibility of chat modal
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     socket.on("receive_message", (data: ChatMessage) => {
@@ -67,16 +61,14 @@ export default function ChatModal ({ socket, userName }:any) {
               {messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`flex flex-col ${
-                    message.userId === socket.id ? "items-end" : "items-start"
-                  }`}
+                  className={`flex flex-col ${message.userId === socket.id ? "items-end" : "items-start"
+                    }`}
                 >
                   <div
-                    className={`max-w-[80%] px-4 py-2 rounded-2xl shadow-md ${
-                      message.userId === socket.id
+                    className={`max-w-[80%] px-4 py-2 rounded-2xl shadow-md ${message.userId === socket.id
                         ? "bg-info text-info-foreground text-right rounded-br-none"
                         : "bg-background border border-border text-left rounded-bl-none"
-                    }`}
+                      }`}
                   >
                     <p className="text-xs font-spacegrotesksemibold text-muted-foreground mb-1">
                       {message.userName}
@@ -100,7 +92,7 @@ export default function ChatModal ({ socket, userName }:any) {
                     }
                   }}
                   className="flex-1 w-[100px] lg:w-[400px] lg:text-lg text-sm px-4 py-2 bg-background border border-border rounded-full focus:outline-none focus:ring-2 focus:ring-info transition-all duration-200 font-spacegroteskregular"
-                  placeholder="Type your message..."  
+                  placeholder="Type your message..."
                 />
                 <button
                   onClick={sendMessage}

@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Dark theme CSS variables */
 :root {
   --background: #000000;
   --foreground: #ffffff;
@@ -26,7 +25,6 @@
   --info-foreground: #ffffff;
 }
 
-/* Base styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -45,7 +43,6 @@ body {
   line-height: 1.6;
 }
 
-/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
 }

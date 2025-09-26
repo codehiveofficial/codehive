@@ -150,7 +150,7 @@ export default function CollaborativeIDE({ userName }: any) {
 
       // Set the new stream
       videoElement.srcObject = stream;
-      
+
       // Ensure video tracks are enabled
       stream.getVideoTracks().forEach((track) => {
         track.enabled = isVideoEnabled;
@@ -162,12 +162,12 @@ export default function CollaborativeIDE({ userName }: any) {
 
       // Wait a bit before playing to avoid race conditions
       await new Promise(resolve => setTimeout(resolve, 50));
-      
+
       await videoElement.play().catch((playError) => {
         console.error("Error playing video:", playError);
         // Don't throw here, just log the error
       });
-      
+
       setStreamReady(true);
       console.log("Video stream setup successfully");
     } catch (err) {
@@ -206,12 +206,12 @@ export default function CollaborativeIDE({ userName }: any) {
       if (stream.getAudioTracks().length === 0) {
         throw new Error("No audio track available");
       }
-      
+
       // Only stop existing stream if it's different
       if (streamRef.current && streamRef.current.id !== stream.id) {
         streamRef.current.getTracks().forEach((track) => track.stop());
       }
-      
+
       streamRef.current = stream;
       setMyStream(stream);
       // Setup video streams will be handled by the useEffect that monitors myStream changes
@@ -260,7 +260,7 @@ export default function CollaborativeIDE({ userName }: any) {
         console.log("Updating mobile video element with new stream");
         setupVideoStream(myStream, mobileVideoRef.current);
       }
-      
+
       // Update track states without re-setting the stream
       if (userVideoRef.current && userVideoRef.current.srcObject === myStream) {
         myStream.getVideoTracks().forEach((track) => {

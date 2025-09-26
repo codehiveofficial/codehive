@@ -53,8 +53,8 @@ export default function CustomLanguageDropdown({ onSelectChange }: CustomLanguag
                                 key={index}
                                 onClick={() => handleSelect(option)}
                                 className={`w-full px-3 py-2 text-left text-sm font-spacegroteskregular hover:bg-accent focus:bg-accent focus:outline-none transition-colors duration-150 ${selectedOption.value === option.value
-                                        ? "bg-primary text-primary-foreground"
-                                        : "text-foreground"
+                                    ? "bg-primary text-primary-foreground"
+                                    : "text-foreground"
                                     }`}
                             >
                                 {option.label}

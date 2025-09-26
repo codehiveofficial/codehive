@@ -1,4 +1,3 @@
-
 "use client";
 import { motion } from "framer-motion";
 import { FiBatteryCharging, FiWifi } from "react-icons/fi";
@@ -8,12 +7,12 @@ import { useState } from "react";
 export default function Phone({ filled, formdata }: any) {
   return (
     <section className="grid place-content-center min-h-screen">
-      <FloatingPhone filled={filled} formdata={formdata}/>
+      <FloatingPhone filled={filled} formdata={formdata} />
     </section>
   );
 }
 
-function FloatingPhone({ filled, formdata }: any)  {
+function FloatingPhone({ filled, formdata }: any) {
   return (
     <div
       style={{
@@ -39,7 +38,7 @@ function FloatingPhone({ filled, formdata }: any)  {
         className="relative h-96 w-56 rounded-[24px] border-2 border-b-4 border-r-4 border-white border-l-gray-200 border-t-gray-200 bg-gray-900 p-1 pl-[3px] pt-[3px]"
       >
         <HeaderBar />
-        <Screen filled={filled} formdata={formdata}/>
+        <Screen filled={filled} formdata={formdata} />
       </motion.div>
     </div>
   );
@@ -89,16 +88,16 @@ const Screen = ({ filled, formdata }: any) => {
 
   return (
     <div className="relative z-0 grid h-full w-full place-content-center overflow-hidden rounded-[20px] bg-gray-300">
-            <div className="relative flex justify-center items-center mb-4">
+      <div className="relative flex justify-center items-center mb-4">
         <svg
           width="60"
           height="60"
           viewBox="0 0 60 60"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          
+
         >
-          
+
         </svg>
         <img
           src="./logo.png"

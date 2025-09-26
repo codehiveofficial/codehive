@@ -69,9 +69,8 @@ const FeaturesSection = () => {
       {features.map((feature, index) => (
         <motion.div
           key={feature.title}
-          className={`flex flex-col md:flex-row items-center mb-16 rounded-2xl overflow-hidden shadow-lg border border-border ${
-            feature.color
-          } ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}
+          className={`flex flex-col md:flex-row items-center mb-16 rounded-2xl overflow-hidden shadow-lg border border-border ${feature.color
+            } ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}
           variants={containerVariants}
         >
           <motion.div

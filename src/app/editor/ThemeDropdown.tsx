@@ -18,7 +18,7 @@ const modifiedCustomStyles = {
   }),
 };
 
-export default function ThemeDropdown({ handleThemeChange, theme }: any){
+export default function ThemeDropdown({ handleThemeChange, theme }: any) {
   return (
     <div className="min-w-[140px]">
       <Select
@@ -38,4 +38,3 @@ export default function ThemeDropdown({ handleThemeChange, theme }: any){
     </div>
   );
 };
-

@@ -18,7 +18,7 @@ interface VideoCallProps {
   userName: string;
 }
 
-export default function VideoCall({ userName }:any){
+export default function VideoCall({ userName }: any) {
   const [roomId, setRoomId] = useState<string>("");
   const [peers, setPeers] = useState<{ [key: string]: PeerConnection }>({});
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -294,17 +294,15 @@ export default function VideoCall({ userName }:any){
           <div className="flex gap-4 justify-center mt-4">
             <button
               onClick={toggleVideo}
-              className={`px-6 py-2 rounded-full ${
-                isVideoEnabled ? "bg-blue-500" : "bg-red-500"
-              } text-white transition-colors duration-200`}
+              className={`px-6 py-2 rounded-full ${isVideoEnabled ? "bg-blue-500" : "bg-red-500"
+                } text-white transition-colors duration-200`}
             >
               {isVideoEnabled ? "Turn Off Video" : "Turn On Video"}
             </button>
             <button
               onClick={toggleAudio}
-              className={`px-6 py-2 rounded-full ${
-                isAudioEnabled ? "bg-blue-500" : "bg-red-500"
-              } text-white transition-colors duration-200`}
+              className={`px-6 py-2 rounded-full ${isAudioEnabled ? "bg-blue-500" : "bg-red-500"
+                } text-white transition-colors duration-200`}
             >
               {isAudioEnabled ? "Turn Off Audio" : "Turn On Audio"}
             </button>

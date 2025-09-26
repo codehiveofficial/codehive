@@ -57,7 +57,7 @@ const defineTheme = (theme: keyof typeof monacoThemes) => {
       loader.init(),
       import(`monaco-themes/themes/${monacoThemes[theme]}.json`),
     ]).then(([monaco, themeData]) => {
-      console.log("define theme:",theme,themeData)
+      console.log("define theme:", theme, themeData)
       monaco.editor.defineTheme(theme, themeData);
       res();
     });

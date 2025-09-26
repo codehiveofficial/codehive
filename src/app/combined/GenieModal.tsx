@@ -85,7 +85,7 @@ interface GenieModalProps {
   code?: string; // Optional code prop
 }
 
-export default function GenieModal({ onClose, code = "" }:any)  {
+export default function GenieModal({ onClose, code = "" }: any) {
   const [query, setQuery] = useState("");
   const [includeCode, setIncludeCode] = useState(false);
   const [response, setResponse] = useState("");

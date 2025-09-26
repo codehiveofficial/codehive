@@ -10,31 +10,31 @@ export default function About() {
           <div className="w-full flex-col justify-center lg:items-start items-center gap-10 inline-flex">
             <div className="w-full flex-col justify-center items-start gap-8 flex">
               <div className="flex-col justify-start lg:items-start items-center gap-4 flex">
-                
+
                 <div className="w-full flex-col justify-start lg:items-start items-center gap-3 flex">
                   <h2 className="font-spacegrotesksemibold text-foreground text-3xl md:text-4xl lg:text-5xl leading-normal lg:text-start text-center">
                     About Codehive
                   </h2>
                   <p className="text-muted-foreground text-base font-spacegroteskregular leading-relaxed lg:text-start text-center">
-                    At Codehive, our mission is to make coding a shared and 
-                    accessible experience for everyone. We envision a world where 
-                    developers, learners, and innovators connect seamlessly, breaking 
-                    barriers to creativity and productivity. 
+                    At Codehive, our mission is to make coding a shared and
+                    accessible experience for everyone. We envision a world where
+                    developers, learners, and innovators connect seamlessly, breaking
+                    barriers to creativity and productivity.
                   </p>
                 </div>
               </div>
               <div className="w-full flex-col justify-center items-start gap-6 flex">
                 <p className="text-muted-foreground text-base font-spacegroteskregular leading-relaxed lg:text-start text-center">
-                  As a team of passionate developers, we believe that innovation 
-                  thrives in collaboration. Our platform is designed to bring people 
-                  together, empowering them to code, communicate, and create in real-time. 
-                  Whether you're brainstorming with a team or learning with peers, 
+                  As a team of passionate developers, we believe that innovation
+                  thrives in collaboration. Our platform is designed to bring people
+                  together, empowering them to code, communicate, and create in real-time.
+                  Whether you're brainstorming with a team or learning with peers,
                   Codehive provides the tools to turn ideas into reality.
                 </p>
                 <p className="text-muted-foreground text-base font-spacegroteskregular leading-relaxed lg:text-start text-center">
-                  With every feature, we aim to bridge gaps in communication, enhance 
-                  productivity, and create a supportive environment for developers of all levels. 
-                  Codehive is not just about writing code—it's about writing stories 
+                  With every feature, we aim to bridge gaps in communication, enhance
+                  productivity, and create a supportive environment for developers of all levels.
+                  Codehive is not just about writing code—it's about writing stories
                   of growth, connection, and innovation.
                 </p>
               </div>
@@ -65,13 +65,13 @@ export default function About() {
           </div>
           {/* Image Section */}
           <div className="w-full lg:justify-start justify-center items-start flex">
-           
-              <Image
-                className="sm:mt-5 sm:ml-5 w-full h-full rounded-3xl object-cover"
-                src={aboutImg}
-                alt="About Us illustration"
-              />
-            </div>
+
+            <Image
+              className="sm:mt-5 sm:ml-5 w-full h-full rounded-3xl object-cover"
+              src={aboutImg}
+              alt="About Us illustration"
+            />
+          </div>
         </div>
       </div>
     </section>
