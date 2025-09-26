@@ -11,8 +11,6 @@ import { Socket, io } from "socket.io-client";
 import "@/app/combined/combined.css";
 import Peer from "simple-peer";
 import axios from "axios";
-import ChatModal from "./ChatModal";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -20,17 +18,12 @@ import {
   downloadCodeAsFile,
   downloadCodeAsImage,
 } from "@/helpers/downloadCode";
-import { FaVideo, FaVideoSlash } from "react-icons/fa6";
-import { FaMicrophone } from "react-icons/fa";
+import { FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash, FaClipboard, FaCheck } from "react-icons/fa";
 import { IoMdExit } from "react-icons/io";
 import { MdFileDownload } from "react-icons/md";
 import { AiOutlineSnippets } from "react-icons/ai";
-import { FaMicrophoneSlash } from "react-icons/fa";
-import { AiOutlineAudioMuted } from "react-icons/ai";
-import { FaClipboard, FaCheck } from "react-icons/fa";
 import { RiRobot2Line } from "react-icons/ri";
-import { FaLink } from "react-icons/fa6";
-import GenieModal from "./GenieModal";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 interface Theme {
   value: string;
@@ -99,14 +92,16 @@ export default function CollaborativeIDE({ userName }: any) {
   const [streamReady, setStreamReady] = useState(false);
   const socketRef = useRef<Socket>();
   const userVideoRef = useRef<HTMLVideoElement>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement>(null);
   const peersRef = useRef<{ [key: string]: PeerConnection }>({});
   const streamRef = useRef<MediaStream>();
-  const [meetlinkcopied, setMeetLinkCopied] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [isGenieModalOpen, setIsGenieModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'editor' | 'output' | 'genie'>('editor');
+  const [mobileActiveTab, setMobileActiveTab] = useState<'editor' | 'output' | 'genie' | 'video' | 'chat'>('editor');
+  const [inputOutputTab, setInputOutputTab] = useState<'input' | 'output'>('input');
   const [showInput, setShowInput] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [showAI, setShowAI] = useState(true);
   const [chatMessages, setChatMessages] = useState<Array<{ userId: string, userName: string, message: string }>>([]);
   const [newChatMessage, setNewChatMessage] = useState("");
   // Store actual remote media streams keyed by peer id (only present when stream received)
@@ -126,7 +121,8 @@ export default function CollaborativeIDE({ userName }: any) {
   ) => {
     try {
       if (!videoElement) {
-        throw new Error("Video element not found");
+        console.warn("Video element not found, skipping setup");
+        return;
       }
       // Clear any existing stream
       if (videoElement.srcObject) {
@@ -145,7 +141,6 @@ export default function CollaborativeIDE({ userName }: any) {
       });
       await videoElement.play().catch((playError) => {
         console.error("Error playing video:", playError);
-        throw new Error("Failed to play video stream");
       });
       setStreamReady(true);
       console.log("Video stream setup successfully");
@@ -187,7 +182,9 @@ export default function CollaborativeIDE({ userName }: any) {
       }
       streamRef.current = stream;
       setMyStream(stream);
+      // Try to setup video stream on both elements
       await setupVideoStream(stream, userVideoRef.current);
+      await setupVideoStream(stream, mobileVideoRef.current);
       setMediaError("");
     } catch (err) {
       console.error("Error in initializeMediaStream:", err);
@@ -223,11 +220,18 @@ export default function CollaborativeIDE({ userName }: any) {
 
   // Monitor video element and stream changes
   useEffect(() => {
-    if (myStream && userVideoRef.current) {
-      console.log("Updating video element with new stream");
-      setupVideoStream(myStream, userVideoRef.current);
+    if (myStream) {
+      // Setup both desktop and mobile video elements if they exist
+      if (userVideoRef.current) {
+        console.log("Updating desktop video element with new stream");
+        setupVideoStream(myStream, userVideoRef.current);
+      }
+      if (mobileVideoRef.current) {
+        console.log("Updating mobile video element with new stream");
+        setupVideoStream(myStream, mobileVideoRef.current);
+      }
     }
-  }, [myStream]);
+  }, [myStream, isVideoEnabled, isAudioEnabled]);
 
   // Auto-scroll chat to bottom when new messages arrive
   useEffect(() => {
@@ -558,25 +562,6 @@ export default function CollaborativeIDE({ userName }: any) {
       });
   };
 
-  const copyMeetLink = (
-    text: string,
-    setMeetLinkCopied: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    navigator.clipboard
-      .writeText(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/combined/` + text)
-      .then(() => {
-        setMeetLinkCopied(true);
-        setTimeout(() => setMeetLinkCopied(false), 2500);
-      })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
-      });
-  };
-
-  const toggleGenieModal = () => {
-    setIsGenieModalOpen(!isGenieModalOpen);
-  };
-
   // Enhanced execute code to switch to output tab
   const handleRunCode = async () => {
     setActiveTab('output');
@@ -676,6 +661,25 @@ export default function CollaborativeIDE({ userName }: any) {
     });
   }, [peers]);
 
+  // Setup video elements when they become available (responsive layout changes)
+  useEffect(() => {
+    if (myStream) {
+      const setupVideoElements = () => {
+        if (userVideoRef.current && userVideoRef.current.srcObject !== myStream) {
+          setupVideoStream(myStream, userVideoRef.current);
+        }
+        if (mobileVideoRef.current && mobileVideoRef.current.srcObject !== myStream) {
+          setupVideoStream(myStream, mobileVideoRef.current);
+        }
+      };
+
+      // Set up immediately and also on a short delay to handle responsive layout changes
+      setupVideoElements();
+      const timer = setTimeout(setupVideoElements, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [myStream, userVideoRef.current, mobileVideoRef.current]);
+
   return (
     <div className="min-h-screen bg-background">
       {isInitializing ? (
@@ -751,212 +755,227 @@ export default function CollaborativeIDE({ userName }: any) {
         </div>
       ) : (
         <div className="h-screen flex flex-col">
-          {/* New Header Design */}
-          <div className="bg-muted border-b border-border px-4 py-3">
+          {/* Simplified Header */}
+          <div className="bg-muted border-b border-border px-3 py-2 sm:px-4 sm:py-3 flex-shrink-0">
             <div className="flex items-center justify-between">
-              {/* Left - Room Info and Controls */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 text-foreground">
-                  <span className="text-sm font-spacegroteskmedium">Room:</span>
-                  <span className="text-info font-spacegrotesksemibold bg-background px-2 py-1 rounded text-sm border border-border">
-                    {roomId}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
+              {/* Room Info */}
+              <div className="flex items-center gap-2 text-foreground">
+                <span className="text-xs sm:text-sm font-spacegroteskmedium">Room:</span>
+                <span className="text-info font-spacegrotesksemibold bg-background px-2 py-1 rounded text-xs sm:text-sm border border-border">
+                  {roomId}
+                </span>
+                <button
+                  onClick={() => copyToClipboard(roomId, setCopied)}
+                  className={`p-1.5 sm:p-2 rounded transition ${copied ? "bg-success text-success-foreground" : "bg-background hover:bg-accent border border-border"
+                    }`}
+                  title={copied ? "Copied!" : "Copy Room ID"}
+                >
+                  {copied ? (
+                    <FaCheck className="text-xs sm:text-sm" />
+                  ) : (
+                    <FaClipboard className="text-xs sm:text-sm" />
+                  )}
+                </button>
+              </div>
+
+              {/* Desktop Center Controls - Run, Video, Audio */}
+              <div className="hidden md:flex items-center space-x-3">
+                <button
+                  className="bg-gradient-to-r from-green-500 to-green-400 hover:from-green-600 hover:to-green-500 text-white border border-green-400/30 rounded-lg px-4 py-2 text-sm font-spacegroteskmedium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 disabled:from-green-500/50 disabled:to-green-400/50"
+                  disabled={!code || isLoading}
+                  onClick={handleRunCode}
+                  title={isLoading ? "Code is running..." : "Run your code"}
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Running...
+                    </>
+                  ) : (
+                    <>
+                      <span>▶</span>
+                      Run Code
+                    </>
+                  )}
+                </button>
+
+                <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => copyToClipboard(roomId, setCopied)}
-                    className={`p-2 rounded transition ${copied ? "bg-success text-success-foreground" : "bg-background hover:bg-accent border border-border"
+                    onClick={toggleVideo}
+                    className={`border rounded-lg px-3 py-2 text-sm font-spacegroteskmedium transition-all flex items-center gap-1 ${isVideoEnabled
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white border-blue-400/30'
+                      : 'bg-gradient-to-r from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 text-white border-red-400/30'
                       }`}
-                    title={copied ? "Copied!" : "Copy Room ID"}
+                    title={isVideoEnabled ? "Turn off camera" : "Turn on camera"}
                   >
-                    {copied ? (
-                      <FaCheck className="text-sm" />
-                    ) : (
-                      <FaClipboard className="text-sm" />
-                    )}
+                    {isVideoEnabled ? <FaVideo size={12} /> : <FaVideoSlash size={12} />}
+                    <span className="hidden lg:inline">{isVideoEnabled ? 'Video' : 'Video'}</span>
                   </button>
-                  {/* <button
-                    onClick={() => copyMeetLink(roomId, setMeetLinkCopied)}
-                    className={`p-2 rounded transition ${meetlinkcopied ? "bg-success text-success-foreground" : "bg-background hover:bg-accent border border-border"
+                  <button
+                    onClick={toggleAudio}
+                    className={`border rounded-lg px-3 py-2 text-sm font-spacegroteskmedium transition-all flex items-center gap-1 ${isAudioEnabled
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-600 hover:to-blue-500 text-white border-blue-400/30'
+                      : 'bg-gradient-to-r from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 text-white border-red-400/30'
                       }`}
-                    title={meetlinkcopied ? "Copied!" : "Copy Meet Link"}
+                    title={isAudioEnabled ? "Turn off microphone" : "Turn on microphone"}
                   >
-                    {meetlinkcopied ? (
-                      <FaCheck className="text-sm" />
-                    ) : (
-                      <FaLink className="text-sm" />
-                    )}
-                  </button> */}
+                    {isAudioEnabled ? <FaMicrophone size={12} /> : <FaMicrophoneSlash size={12} />}
+                    <span className="hidden lg:inline">{isAudioEnabled ? 'Audio' : 'Audio'}</span>
+                  </button>
                 </div>
               </div>
 
-              {/* Center - Run Code, Camera & Mic Controls */}
-              <div className="flex items-center gap-3">
-                <button
-                  className="px-4 py-2 bg-success text-success-foreground rounded-lg hover:bg-success/90 disabled:opacity-50 font-spacegroteskmedium transition-colors text-sm"
-                  disabled={!code || isLoading}
-                  onClick={handleRunCode}
-                >
-                  {isLoading ? "Running..." : "▶ Run Code"}
-                </button>
+              {/* Mobile Controls (unchanged) */}
+              <div className="md:hidden flex items-center gap-2">
                 <button
                   onClick={toggleVideo}
-                  className={`p-2 rounded transition ${isVideoEnabled ? "bg-info hover:bg-info/90 text-info-foreground" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                  className={`p-1.5 sm:p-2 rounded transition ${isVideoEnabled ? "bg-info hover:bg-info/90 text-info-foreground" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                     }`}
-                  title={isVideoEnabled ? "Turn Off Video" : "Turn On Video"}
                 >
-                  {isVideoEnabled ? <FaVideo className="text-sm" /> : <FaVideoSlash className="text-sm" />}
+                  {isVideoEnabled ? <FaVideo className="text-xs sm:text-sm" /> : <FaVideoSlash className="text-xs sm:text-sm" />}
                 </button>
                 <button
                   onClick={toggleAudio}
-                  className={`p-2 rounded transition ${isAudioEnabled ? "bg-info hover:bg-info/90 text-info-foreground" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                  className={`p-1.5 sm:p-2 rounded transition ${isAudioEnabled ? "bg-info hover:bg-info/90 text-info-foreground" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                     }`}
-                  title={isAudioEnabled ? "Turn Off Audio" : "Turn On Audio"}
                 >
-                  {isAudioEnabled ? <FaMicrophone className="text-sm" /> : <FaMicrophoneSlash className="text-sm" />}
-                </button>
-              </div>
-
-              {/* Right - Download & Leave Buttons */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={downloadCodeAsFile.bind(null, code, language.value)}
-                  className="p-2 bg-accent hover:bg-accent/80 text-foreground rounded transition border border-border"
-                  title="Download File"
-                >
-                  <MdFileDownload className="text-sm" />
-                </button>
-                <button
-                  onClick={downloadCodeAsImage.bind(null, code, "codehive_snippet.png")}
-                  className="p-2 bg-accent hover:bg-accent/80 text-foreground rounded transition border border-border"
-                  title="Download Snippet"
-                >
-                  <AiOutlineSnippets className="text-sm" />
+                  {isAudioEnabled ? <FaMicrophone className="text-xs sm:text-sm" /> : <FaMicrophoneSlash className="text-xs sm:text-sm" />}
                 </button>
                 <button
                   onClick={leaveRoom}
-                  className="p-2 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded transition"
-                  title="Leave Room"
+                  className="p-1.5 sm:p-2 bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded transition"
                 >
-                  <IoMdExit className="text-sm" />
+                  <IoMdExit className="text-xs sm:text-sm" />
+                </button>
+              </div>
+
+              {/* Desktop Right Controls - Connected Users & Exit */}
+              <div className="hidden md:flex items-center space-x-3 text-sm">
+                <div className="bg-background/50 px-3 py-1 rounded-lg border border-border text-foreground">
+                  Connected: {Object.keys(peers).length + 1}
+                </div>
+                <button
+                  onClick={leaveRoom}
+                  className="bg-gradient-to-r from-red-500 to-red-400 hover:from-red-600 hover:to-red-500 text-white border border-red-400/30 rounded-lg px-3 py-2 transition-all flex items-center gap-1"
+                  title="Leave room"
+                >
+                  <IoMdExit size={12} />
+                  <span className="hidden lg:inline">Exit</span>
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Main Content Area - Resizable Split Layout */}
-          <div className="flex-1 overflow-hidden">
-            <PanelGroup direction="horizontal">
-              {/* Left Panel - Videos & Chat */}
-              <Panel defaultSize={20} minSize={20} maxSize={45}>
-                <div className="h-full bg-background border-r border-border flex flex-col">
-                  <PanelGroup direction="vertical">
-                    {/* Videos Section */}
-                    <Panel defaultSize={70} minSize={40}>
-                      <div className="h-full p-2 lg:p-4 overflow-hidden">
-                        <div className="space-y-2 lg:space-y-3 h-full flex flex-col">
-                          {/* Self video */}
-                          <div className="relative flex-shrink-0">
-                            <div className="aspect-video bg-muted border border-border rounded-lg overflow-hidden">
-                              <video
-                                ref={userVideoRef}
-                                autoPlay
-                                muted
-                                playsInline
-                                className="w-full h-full object-cover"
-                              />
-                              <div className="absolute bottom-2 left-2 bg-black bg-opacity-60 px-2 py-1 rounded text-white text-xs">
-                                You
-                              </div>
-                            </div>
-                          </div>
+          {/* Main Content Area - Responsive Layout */}
+          <div className="flex-1 flex flex-col overflow-hidden">
 
-                          {/* Peer videos */}
-                          <div
-                            id="video-container"
-                            className="flex-1 space-y-2 overflow-y-auto scroll-container"
-                          >
-                            {Object.entries(peers)
-                              .filter(([peerId]) => !!remoteStreams[peerId])
-                              .map(([peerId, { userName: peerUserName }]) => (
-                                <div key={peerId} className="relative aspect-video bg-muted border border-border rounded-lg overflow-hidden">
+            {/* Desktop Layout with Resizable Panels (md and up) */}
+            <div className="hidden md:flex flex-1 overflow-hidden">
+              <PanelGroup direction="horizontal">
+                {/* Left Sidebar - Videos and Chat */}
+                <Panel defaultSize={25} minSize={15} maxSize={40}>
+                  <div className="h-full bg-background border-r border-border flex flex-col">
+                    <PanelGroup direction="vertical">
+                      {/* Videos Section */}
+                      <Panel defaultSize={showChat ? 60 : 100} minSize={30}>
+                        <div className="h-full flex flex-col">
+                          <div className="p-3 border-b border-border">
+                            <h3 className="text-sm font-spacegroteskmedium text-foreground">Participants ({Object.keys(peers).length + 1})</h3>
+                          </div>
+                          <div className="flex-1 p-4 overflow-y-auto">
+                            <div className="space-y-3">
+                              {/* Self video */}
+                              <div className="relative">
+                                <div className="aspect-video bg-muted border border-border rounded-lg overflow-hidden">
                                   <video
+                                    ref={userVideoRef}
                                     autoPlay
+                                    muted
                                     playsInline
-                                    ref={el => {
-                                      if (el && remoteStreams[peerId] && el.srcObject !== remoteStreams[peerId]) {
-                                        el.srcObject = remoteStreams[peerId];
-                                      }
-                                    }}
                                     className="w-full h-full object-cover"
                                   />
                                   <div className="absolute bottom-2 left-2 bg-background/80 px-2 py-1 rounded text-foreground text-xs font-spacegroteskregular">
-                                    {peerUserName}
+                                    You
                                   </div>
                                 </div>
-                              ))}
-                            {Object.keys(peers).length > 0 && Object.keys(remoteStreams).length === 0 && (
-                              <div className="text-muted-foreground text-xs flex items-center justify-center h-full">
-                                Waiting for participant video streams...
                               </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Panel>
 
-                    {/* Resize Handle for Videos/Chat */}
-                    {showChat && (
-                      <>
-                        <PanelResizeHandle className="h-1 bg-border hover:bg-info transition-colors cursor-row-resize" />
-
-                        {/* Chat Panel */}
-                        <Panel defaultSize={30} minSize={15} maxSize={60}>
-                          <div className="h-full bg-muted flex flex-col">
-                            <div className="p-2 border-b border-border">
-                              <div className="flex items-center justify-between">
-                                <h3 className="text-foreground text-sm font-spacegrotesksemibold">Chat</h3>
-                                <div className="flex items-center gap-2">
-                                  <div className="flex items-center gap-1">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span className="text-xs text-gray-400">Online</span>
+                              {/* Peer videos */}
+                              {Object.entries(peers)
+                                .filter(([peerId]) => !!remoteStreams[peerId])
+                                .map(([peerId, { userName: peerUserName }]) => (
+                                  <div key={peerId} className="relative">
+                                    <div className="aspect-video bg-muted border border-border rounded-lg overflow-hidden">
+                                      <video
+                                        autoPlay
+                                        playsInline
+                                        ref={el => {
+                                          if (el && remoteStreams[peerId] && el.srcObject !== remoteStreams[peerId]) {
+                                            el.srcObject = remoteStreams[peerId];
+                                          }
+                                        }}
+                                        className="w-full h-full object-cover"
+                                      />
+                                      <div className="absolute bottom-2 left-2 bg-background/80 px-2 py-1 rounded text-foreground text-xs font-spacegroteskregular">
+                                        {peerUserName}
+                                      </div>
+                                    </div>
                                   </div>
-                                  <button
-                                    onClick={() => setShowChat(false)}
-                                    className="text-gray-400 hover:text-white text-xs"
-                                  >
-                                    ✕
-                                  </button>
-                                </div>
-                              </div>
+                                ))}
                             </div>
+                          </div>
 
-                            <div className="flex-1 flex flex-col overflow-hidden">
-                              <div
-                                ref={chatMessagesRef}
-                                className="flex-1 overflow-y-auto p-2 space-y-2 scroll-container"
-                                id="chat-messages"
+                          {/* Chat toggle button when closed */}
+                          {!showChat && (
+                            <div className="p-3 border-t border-border">
+                              <button
+                                onClick={() => setShowChat(true)}
+                                className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white border border-cyan-400/30 rounded-lg text-sm transition-all font-spacegroteskmedium flex items-center justify-center gap-2"
+                                title="Open team chat"
                               >
+                                Open Team Chat
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </Panel>
+
+                      {/* Chat Section - Only show if showChat is true */}
+                      {showChat && (
+                        <>
+                          <PanelResizeHandle className="h-2 bg-border hover:bg-accent transition-colors" />
+                          <Panel defaultSize={40} minSize={25}>
+                            <div className="h-full flex flex-col">
+                              <div className="p-3 border-b border-border flex items-center justify-between">
+                                <h3 className="text-foreground text-sm font-spacegroteskmedium">Chat</h3>
+                                <button
+                                  onClick={() => setShowChat(false)}
+                                  className="text-muted-foreground hover:text-destructive transition-colors"
+                                  title="Close Chat"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                              <div className="flex-1 overflow-y-auto p-3 space-y-2">
                                 {chatMessages.length === 0 ? (
-                                  <div className="text-center text-gray-500 text-xs py-4">
+                                  <div className="text-center text-muted-foreground text-xs py-4">
                                     No messages yet. Start chatting!
                                   </div>
                                 ) : (
                                   chatMessages.map((message, index) => (
                                     <div key={index} className={`text-xs ${message.userId === socketRef.current?.id ? 'text-right' : 'text-left'}`}>
-                                      <div className={`inline-block max-w-[80%] px-2 py-1 rounded ${message.userId === socketRef.current?.id
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-gray-600 text-white'
+                                      <div className={`inline-block max-w-[80%] px-2 py-1 rounded font-spacegroteskregular ${message.userId === socketRef.current?.id
+                                        ? 'bg-info text-info-foreground'
+                                        : 'bg-muted text-foreground'
                                         }`}>
-                                        <div className="font-semibold text-xs opacity-75">{message.userName}</div>
+                                        <div className="font-spacegroteskmedium text-xs opacity-75">{message.userName}</div>
                                         <div>{message.message}</div>
                                       </div>
                                     </div>
                                   ))
                                 )}
                               </div>
-
-                              <div className="p-2 border-t border-border">
+                              <div className="p-3 border-t border-border">
                                 <div className="flex gap-2">
                                   <input
                                     type="text"
@@ -964,7 +983,7 @@ export default function CollaborativeIDE({ userName }: any) {
                                     onChange={(e) => setNewChatMessage(e.target.value)}
                                     onKeyPress={handleChatKeyPress}
                                     placeholder="Type a message..."
-                                    className="flex-1 bg-background text-foreground px-3 py-2 rounded text-sm focus:outline-none focus:ring-2 focus:ring-info border border-border font-spacegroteskregular"
+                                    className="flex-1 bg-input text-foreground px-3 py-2 rounded text-sm focus:outline-none focus:ring-2 focus:ring-info border border-border font-spacegroteskregular"
                                   />
                                   <button
                                     onClick={sendChatMessage}
@@ -975,320 +994,579 @@ export default function CollaborativeIDE({ userName }: any) {
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </Panel>
-                      </>
-                    )}
-
-                    {/* Chat Toggle Button (only show when chat is hidden) */}
-                    {!showChat && (
-                      <div className="p-2 border-t border-border">
-                        <button
-                          onClick={() => setShowChat(true)}
-                          className="w-full py-2 bg-accent hover:bg-accent/80 text-foreground rounded flex items-center justify-center gap-2 transition font-spacegroteskmedium border border-border"
-                        >
-                          <span className="hidden sm:inline">Show Chat</span>
-                          <span className="sm:hidden">Chat</span>
-                        </button>
-                      </div>
-                    )}
-                  </PanelGroup>
-                </div>
-              </Panel>
-
-              {/* Resize Handle */}
-              <PanelResizeHandle className="w-1 lg:w-2 bg-border hover:bg-info transition-colors cursor-col-resize" />
-
-              {/* Right Panel - Tabs System */}
-              <Panel minSize={55}>
-                <div className="h-full w-full flex flex-col">
-                  {/* Tab Header */}
-                  <div className="bg-muted border-b border-border flex">
-                    <button
-                      onClick={() => setActiveTab('editor')}
-                      className={`px-3 lg:px-4 py-2 text-sm font-spacegroteskmedium border-r border-border transition ${activeTab === 'editor'
-                        ? 'bg-background text-foreground border-b-2 border-info'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                        }`}
-                    >
-                      Editor
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('output')}
-                      className={`px-3 lg:px-4 py-2 text-sm font-spacegroteskmedium border-r border-border transition ${activeTab === 'output'
-                        ? 'bg-background text-foreground border-b-2 border-info'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                        }`}
-                    >
-                      Output
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('genie')}
-                      className={`px-3 lg:px-4 py-2 text-sm font-spacegroteskmedium border-r border-border transition ${activeTab === 'genie'
-                        ? 'bg-background text-foreground border-b-2 border-info'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                        }`}
-                    >
-                      <span className="hidden sm:inline">AI Genie</span>
-                      <span className="sm:hidden">AI</span>
-                    </button>
-
-                    {/* Tab Controls */}
-                    {activeTab === 'editor' && (
-                      <div className="flex items-center gap-1 lg:gap-2 ml-auto mr-2 lg:mr-4">
-                        <CustomLanguageDropdown onSelectChange={handleLanguageChange} />
-                        <CustomThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
-                        <input
-                          type="number"
-                          value={fontSize}
-                          onChange={(e) => setFontSize(Number(e.target.value))}
-                          className="w-12 lg:w-16 px-1 lg:px-2 py-1 rounded bg-input text-foreground border border-border text-sm focus:outline-none focus:ring-2 focus:ring-info font-spacegroteskregular"
-                          min="10"
-                          max="40"
-                          title="Font Size"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Tab Content */}
-                  <div className="flex-1 w-full overflow-hidden">
-                    {/* Editor Tab */}
-                    {activeTab === 'editor' && (
-                      <div className="h-full w-full flex flex-col">
-                        <PanelGroup direction="vertical">
-                          <Panel defaultSize={showInput ? 75 : 100} minSize={50}>
-                            <div className="h-full w-full overflow-hidden">
-                              <CodeEditor
-                                onCodeChange={onCodeChange}
-                                fontSize={fontSize}
-                                language={language.value}
-                                theme={theme.value}
-                                code={code}
-                                remoteCursorPosition={remoteCursorPosition}
-                                onCursorPositionChange={function (position: {
-                                  lineNumber: number;
-                                  column: number;
-                                }): void {
-                                  // Implementation for cursor position change
-                                }}
-                              />
-                            </div>
                           </Panel>
+                        </>
+                      )}
+                    </PanelGroup>
+                  </div>
+                </Panel>
 
-                          {showInput && (
-                            <>
-                              <PanelResizeHandle className="h-1 bg-border hover:bg-info transition-colors cursor-row-resize" />
+                <PanelResizeHandle className="w-2 bg-border hover:bg-accent transition-colors" />
 
-                              <Panel defaultSize={25} minSize={10} maxSize={50}>
-                                <div className="h-full bg-background flex flex-col">
-                                  <div className="px-3 py-2 border-b border-border bg-muted/30">
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-foreground text-xs font-spacegroteskmedium">
-                                        Program Input
-                                      </span>
-                                      <button
-                                        onClick={() => setShowInput(false)}
-                                        className="text-muted-foreground hover:text-foreground text-xs px-1.5 py-1 rounded hover:bg-accent transition-colors"
-                                      >
-                                        ✕
-                                      </button>
-                                    </div>
-                                  </div>
-                                  <div className="flex-1 p-2">
+                {/* Main Editor Area */}
+                <Panel defaultSize={showAI ? 50 : 75} minSize={30}>
+                  <div className="h-full flex flex-col">
+                    <PanelGroup direction="vertical">
+                      {/* Editor Panel */}
+                      <Panel defaultSize={showInput ? 60 : 100} minSize={40}>
+                        <div className="h-full flex flex-col">
+                          {/* Editor Header */}
+                          <div className="bg-muted border-b border-border p-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <CustomLanguageDropdown onSelectChange={handleLanguageChange} />
+                                <CustomThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
+                                <input
+                                  type="number"
+                                  value={fontSize}
+                                  onChange={(e) => setFontSize(Number(e.target.value))}
+                                  className="w-16 px-2 py-1 rounded bg-input text-foreground border border-border text-sm focus:outline-none focus:ring-2 focus:ring-info font-spacegroteskregular"
+                                  min="10"
+                                  max="40"
+                                  title="Font Size"
+                                />
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {!showAI && (
+                                  <button
+                                    onClick={() => setShowAI(true)}
+                                    className="px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white border border-sky-400/30 rounded-lg text-sm transition-all font-spacegroteskmedium flex items-center gap-2"
+                                    title="Open AI Assistant"
+                                  >
+                                    <span>✨</span>
+                                    AI Assistant
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Editor */}
+                          <div className="flex-1 relative">
+                            <CodeEditor
+                              onCodeChange={onCodeChange}
+                              fontSize={fontSize}
+                              language={language.value}
+                              theme={theme.value}
+                              code={code}
+                              remoteCursorPosition={remoteCursorPosition}
+                              onCursorPositionChange={function (position: {
+                                lineNumber: number;
+                                column: number;
+                              }): void {
+                                // Implementation for cursor position change
+                              }}
+                            />
+
+                            {/* Input/Output Pull Button - Bottom Left */}
+                            {!showInput && (
+                              <button
+                                onClick={() => setShowInput(true)}
+                                className="absolute bottom-4 left-4 bg-gradient-to-t from-muted to-accent hover:from-accent hover:to-muted text-foreground border border-border rounded-t-lg rounded-b-sm px-4 py-2 text-xs font-spacegroteskmedium transition-all hover:-translate-y-1 flex items-center gap-2 group"
+                                title="Pull up Input/Output Panel"
+                              >
+                                <div className="flex flex-col items-center">
+                                </div>
+                                <span>Input / Output</span>
+                                <svg className="w-3 h-3 text-info group-hover:text-info" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </Panel>
+
+                      {/* Input/Output Panel - Only show if showInput is true */}
+                      {showInput && (
+                        <>
+                          <PanelResizeHandle className="h-2 bg-border hover:bg-accent transition-colors" />
+                          <Panel defaultSize={40} minSize={15}>
+                            <div className="h-full border-t border-border bg-background flex flex-col">
+                              <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+                                <div className="flex gap-1">
+                                  <button
+                                    onClick={() => setInputOutputTab('input')}
+                                    className={`px-3 py-1 text-xs font-spacegroteskmedium rounded transition ${inputOutputTab === 'input'
+                                      ? 'bg-info text-info-foreground'
+                                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                                      }`}
+                                  >
+                                    Input
+                                  </button>
+                                  <button
+                                    onClick={() => setInputOutputTab('output')}
+                                    className={`px-3 py-1 text-xs font-spacegroteskmedium rounded transition ${inputOutputTab === 'output'
+                                      ? 'bg-info text-info-foreground'
+                                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                                      }`}
+                                  >
+                                    Output
+                                  </button>
+                                </div>
+                                <button
+                                  onClick={() => setShowInput(false)}
+                                  className="text-muted-foreground hover:text-destructive transition-colors"
+                                  title="Close Input/Output"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                              <div className="flex-1 overflow-hidden">
+                                {inputOutputTab === 'input' ? (
+                                  <div className="p-3 h-full">
                                     <CustomInput
                                       customInput={customInput}
                                       setCustomInput={setCustomInput}
                                     />
                                   </div>
-                                </div>
-                              </Panel>
-                            </>
-                          )}
-
-                          {/* Input Panel Toggle (only show when input is hidden) */}
-                          {!showInput && (
-                            <div className="border-t border-border bg-muted/30 px-3 py-2">
-                              <div className="flex justify-start">
-                                <button
-                                  onClick={() => setShowInput(true)}
-                                  className="text-xs text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-md transition-all duration-150 font-spacegroteskmedium shadow-sm hover:shadow-md"
-                                  title="Add custom input for your program"
-                                >
-                                  Add Input +
-                                </button>
+                                ) : (
+                                  <div className="p-4 h-full">
+                                    <OutputWindow outputDetails={outputDetails} />
+                                  </div>
+                                )}
                               </div>
                             </div>
-                          )}
-                        </PanelGroup>
-                      </div>
-                    )}
+                          </Panel>
+                        </>
+                      )}
+                    </PanelGroup>
+                  </div>
+                </Panel>
 
-                    {/* Output Tab */}
-                    {activeTab === 'output' && (
-                      <div className="h-full p-2 lg:p-4">
-                        <OutputWindow outputDetails={outputDetails} />
-                      </div>
-                    )}
-
-                    {/* AI Genie Tab */}
-                    {activeTab === 'genie' && (
-                      <div className="h-full flex flex-col bg-background">
-                        {/* Header */}
-                        <div className="flex items-center gap-2 px-4 py-3 bg-muted border-b border-border">
-                          <RiRobot2Line className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm font-spacegroteskmedium text-foreground">AI Assistant</span>
-                        </div>
-
-                        {/* Response Area */}
-                        <div className="flex-1 overflow-hidden">
-                          <div className="h-full overflow-y-auto">
-                            {genieResponse ? (
-                              <div className="p-4">
-                                <div className="prose prose-invert prose-sm max-w-none">
-                                  <ReactMarkdown
-                                    components={{
-                                      code: ({ inline, className, children, ...props }: any) => {
-                                        const match = /language-(\w+)/.exec(className || '');
-                                        return !inline && match ? (
-                                          <div className="my-4 rounded-lg overflow-hidden border border-border">
-                                            <div className="px-3 py-2 bg-muted border-b border-border">
-                                              <span className="text-xs font-spacegroteskregular text-muted-foreground">
-                                                {match[1].toUpperCase()}
-                                              </span>
-                                            </div>
-                                            <SyntaxHighlighter
-                                              style={materialDark}
-                                              language={match[1]}
-                                              PreTag="div"
-                                              className="!bg-background !m-0"
-                                              {...props}
-                                            >
-                                              {String(children).replace(/\n$/, '')}
-                                            </SyntaxHighlighter>
-                                          </div>
-                                        ) : (
-                                          <code className="bg-muted px-1.5 py-0.5 rounded text-foreground text-sm font-mono" {...props}>
-                                            {children}
-                                          </code>
-                                        );
-                                      },
-                                      h1: ({ children }) => (
-                                        <h1 className="text-lg font-spacegrotesksemibold mb-3 text-foreground border-b border-border pb-2">
-                                          {children}
-                                        </h1>
-                                      ),
-                                      h2: ({ children }) => (
-                                        <h2 className="text-base font-spacegroteskmedium mb-2 text-foreground">
-                                          {children}
-                                        </h2>
-                                      ),
-                                      h3: ({ children }) => (
-                                        <h3 className="text-sm font-spacegroteskmedium mb-2 text-foreground">
-                                          {children}
-                                        </h3>
-                                      ),
-                                      p: ({ children }) => (
-                                        <p className="mb-3 leading-relaxed text-foreground text-sm font-spacegroteskregular">
-                                          {children}
-                                        </p>
-                                      ),
-                                      ul: ({ children }) => (
-                                        <ul className="list-disc list-inside mb-3 space-y-1 text-sm">
-                                          {children}
-                                        </ul>
-                                      ),
-                                      ol: ({ children }) => (
-                                        <ol className="list-decimal list-inside mb-3 space-y-1 text-sm">
-                                          {children}
-                                        </ol>
-                                      ),
-                                      li: ({ children }) => (
-                                        <li className="text-foreground font-spacegroteskregular">
-                                          {children}
-                                        </li>
-                                      ),
-                                    }}
-                                  >
-                                    {genieResponse}
-                                  </ReactMarkdown>
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="h-full flex items-center justify-center">
-                                <div className="text-center">
-                                  <RiRobot2Line className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-                                  <p className="text-sm text-muted-foreground font-spacegroteskregular mb-1">
-                                    AI Assistant Ready
-                                  </p>
-                                  <p className="text-xs text-muted-foreground/60 font-spacegroteskregular">
-                                    Ask questions about code, debugging, or programming concepts
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-
-                            {genieLoading && (
-                              <div className="p-4 border-t border-border">
-                                <div className="flex items-center gap-2 text-muted-foreground">
-                                  <div className="animate-spin rounded-full h-3 w-3 border-b border-primary"></div>
-                                  <span className="text-xs font-spacegroteskregular">Processing your request...</span>
-                                </div>
-                              </div>
-                            )}
-
-                            {genieError && (
-                              <div className="p-4 border-t border-border">
-                                <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-                                  <p className="text-destructive text-sm font-spacegroteskregular">
-                                    {genieError}
-                                  </p>
-                                </div>
-                              </div>
-                            )}
+                {/* Right Sidebar - AI Assistant Only */}
+                {showAI && (
+                  <>
+                    <PanelResizeHandle className="w-2 bg-border hover:bg-accent transition-colors" />
+                    <Panel defaultSize={25} minSize={20}>
+                      <div className="h-full bg-background flex flex-col">
+                        <div className="p-3 border-b border-border flex items-center justify-between bg-muted">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">✨</span>
+                            <h3 className="text-foreground text-sm font-spacegroteskmedium">AI Assistant</h3>
                           </div>
+                          <button
+                            onClick={() => setShowAI(false)}
+                            className="text-muted-foreground hover:text-destructive transition-colors"
+                            title="Close AI Assistant"
+                          >
+                            ✕
+                          </button>
                         </div>
-
-                        {/* Input Area */}
-                        <div className="border-t border-border bg-muted/50 p-4">
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <label className="flex items-center gap-2 text-muted-foreground text-xs">
-                                <input
-                                  type="checkbox"
-                                  checked={includeCodeInGenie}
-                                  onChange={(e) => setIncludeCodeInGenie(e.target.checked)}
-                                  className="rounded border-border"
-                                />
-                                <span className="font-spacegroteskregular">Include current code in context</span>
-                              </label>
+                        <div className="flex-1 overflow-y-auto p-4">
+                          {genieResponse ? (
+                            <div className="prose prose-invert prose-sm max-w-none">
+                              <ReactMarkdown
+                                components={{
+                                  code: ({ inline, className, children, ...props }: any) => {
+                                    const match = /language-(\w+)/.exec(className || '');
+                                    return !inline && match ? (
+                                      <SyntaxHighlighter
+                                        style={materialDark}
+                                        language={match[1]}
+                                        PreTag="div"
+                                        className="rounded-lg"
+                                        {...props}
+                                      >
+                                        {String(children).replace(/\n$/, '')}
+                                      </SyntaxHighlighter>
+                                    ) : (
+                                      <code className="bg-muted px-1.5 py-0.5 rounded text-foreground" {...props}>
+                                        {children}
+                                      </code>
+                                    );
+                                  },
+                                  h1: ({ children }) => <h1 className="text-lg font-spacegrotesksemibold mb-3 text-foreground">{children}</h1>,
+                                  h2: ({ children }) => <h2 className="text-base font-spacegroteskmedium mb-2 text-foreground">{children}</h2>,
+                                  h3: ({ children }) => <h3 className="text-sm font-spacegroteskmedium mb-2 text-foreground">{children}</h3>,
+                                  p: ({ children }) => <p className="mb-3 leading-relaxed text-foreground font-spacegroteskregular">{children}</p>,
+                                  ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1">{children}</ul>,
+                                  ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1">{children}</ol>,
+                                  li: ({ children }) => <li className="text-foreground font-spacegroteskregular">{children}</li>,
+                                }}
+                              >
+                                {genieResponse}
+                              </ReactMarkdown>
                             </div>
-
+                          ) : (
+                            <div className="flex items-center justify-center h-full text-muted-foreground">
+                              <div className="text-center">
+                                <div className="text-4xl mb-4">✨</div>
+                                <p className="font-spacegroteskmedium">AI Assistant Ready</p>
+                                <p className="text-sm mt-2 font-spacegroteskregular">Ask questions about code, debugging, or programming concepts</p>
+                              </div>
+                            </div>
+                          )}
+                          {genieLoading && (
+                            <div className="flex items-center gap-2 text-info mt-4">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-info"></div>
+                              <span className="font-spacegroteskregular">Processing...</span>
+                            </div>
+                          )}
+                          {genieError && (
+                            <div className="bg-destructive/10 border border-destructive rounded-lg p-3 text-destructive mt-4">
+                              {genieError}
+                            </div>
+                          )}
+                        </div>
+                        <div className="border-t border-border bg-muted/50 p-3">
+                          <div className="space-y-3">
+                            <label className="flex items-center gap-2 text-muted-foreground text-xs">
+                              <input
+                                type="checkbox"
+                                checked={includeCodeInGenie}
+                                onChange={(e) => setIncludeCodeInGenie(e.target.checked)}
+                                className="rounded border-border"
+                              />
+                              Include current code in query
+                            </label>
                             <div className="flex gap-2">
-                              <textarea
+                              <input
+                                type="text"
                                 value={genieQuery}
                                 onChange={(e) => setGenieQuery(e.target.value)}
-                                onKeyPress={handleGenieKeyPress}
-                                placeholder="Ask about code, debugging, or programming concepts..."
-                                className="flex-1 bg-input text-foreground px-3 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background resize-none text-sm font-spacegroteskregular placeholder-muted-foreground"
-                                rows={2}
+                                placeholder="Ask AI assistant..."
+                                className="flex-1 bg-input text-foreground px-3 py-2 rounded text-sm focus:outline-none focus:ring-2 focus:ring-info border border-border font-spacegroteskregular"
+                                onKeyPress={(e) => e.key === 'Enter' && handleGenieSubmit()}
                               />
                               <button
                                 onClick={handleGenieSubmit}
-                                disabled={genieLoading || !genieQuery.trim()}
-                                className="px-4 py-2 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground rounded-lg transition font-spacegroteskmedium text-sm"
+                                disabled={genieLoading}
+                                className="px-3 py-2 bg-info hover:bg-info/90 text-info-foreground rounded text-sm transition font-spacegroteskmedium disabled:opacity-50"
                               >
-                                {genieLoading ? "..." : "Ask"}
+                                {genieLoading ? '...' : 'Ask'}
                               </button>
                             </div>
                           </div>
                         </div>
                       </div>
+                    </Panel>
+                  </>
+                )}
+              </PanelGroup>
+            </div>
+
+            {/* Mobile Layout (below md) */}
+            <div className="md:hidden flex flex-col h-full">
+              {/* Mobile Tab Content */}
+              <div className="flex-1 overflow-hidden">
+                {mobileActiveTab === 'editor' && (
+                  <div className="h-full flex flex-col">
+                    {/* Mobile Editor Controls */}
+                    <div className="bg-muted border-b border-border p-2 flex items-center justify-between gap-2 overflow-x-auto">
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          className="px-3 py-1.5 bg-success text-success-foreground rounded hover:bg-success/90 disabled:opacity-50 font-spacegroteskmedium transition-colors text-sm"
+                          disabled={!code || isLoading}
+                          onClick={handleRunCode}
+                        >
+                          {isLoading ? "..." : "▶"}
+                        </button>
+                        <CustomLanguageDropdown onSelectChange={handleLanguageChange} />
+                        <CustomThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          value={fontSize}
+                          onChange={(e) => setFontSize(Number(e.target.value))}
+                          className="w-12 px-1 py-1 rounded bg-input text-foreground border border-border text-sm focus:outline-none"
+                          min="10"
+                          max="40"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex-1">
+                      <CodeEditor
+                        onCodeChange={onCodeChange}
+                        fontSize={fontSize}
+                        language={language.value}
+                        theme={theme.value}
+                        code={code}
+                        remoteCursorPosition={remoteCursorPosition}
+                        onCursorPositionChange={function (position: {
+                          lineNumber: number;
+                          column: number;
+                        }): void {
+                          // Implementation for cursor position change
+                        }}
+                      />
+                    </div>
+
+                    {showInput && (
+                      <div className="h-28 border-t border-border bg-background">
+                        <div className="px-3 py-2 border-b border-border bg-muted/30 flex items-center justify-between">
+                          <span className="text-foreground text-xs font-spacegroteskmedium">Input</span>
+                          <button
+                            onClick={() => setShowInput(false)}
+                            className="text-muted-foreground hover:text-foreground text-xs"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <div className="p-2">
+                          <CustomInput
+                            customInput={customInput}
+                            setCustomInput={setCustomInput}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {!showInput && (
+                      <div className="border-t border-border bg-muted/30 px-3 py-2">
+                        <button
+                          onClick={() => setShowInput(true)}
+                          className="text-xs text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1 rounded transition-all font-spacegroteskmedium"
+                        >
+                          + Input
+                        </button>
+                      </div>
                     )}
                   </div>
-                </div>
-              </Panel>
-            </PanelGroup>
+                )}
+
+                {mobileActiveTab === 'output' && (
+                  <div className="h-full p-3">
+                    <OutputWindow outputDetails={outputDetails} />
+                  </div>
+                )}
+
+                {mobileActiveTab === 'genie' && (
+                  <div className="h-full flex flex-col">
+                    <div className="flex-1 overflow-y-auto p-3">
+                      {genieResponse ? (
+                        <div className="prose prose-invert prose-sm max-w-none">
+                          <ReactMarkdown
+                            components={{
+                              code: ({ inline, className, children, ...props }: any) => {
+                                const match = /language-(\w+)/.exec(className || '');
+                                return !inline && match ? (
+                                  <SyntaxHighlighter
+                                    style={materialDark}
+                                    language={match[1]}
+                                    PreTag="div"
+                                    className="rounded-lg text-sm"
+                                    {...props}
+                                  >
+                                    {String(children).replace(/\n$/, '')}
+                                  </SyntaxHighlighter>
+                                ) : (
+                                  <code className="bg-muted px-1 py-0.5 rounded text-foreground text-sm" {...props}>
+                                    {children}
+                                  </code>
+                                );
+                              },
+                              h1: ({ children }) => <h1 className="text-base font-spacegrotesksemibold mb-3 text-foreground">{children}</h1>,
+                              h2: ({ children }) => <h2 className="text-sm font-spacegroteskmedium mb-2 text-foreground">{children}</h2>,
+                              h3: ({ children }) => <h3 className="text-sm font-spacegroteskmedium mb-2 text-foreground">{children}</h3>,
+                              p: ({ children }) => <p className="mb-3 leading-relaxed text-foreground text-sm font-spacegroteskregular">{children}</p>,
+                              ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1 text-sm">{children}</ul>,
+                              ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1 text-sm">{children}</ol>,
+                              li: ({ children }) => <li className="text-foreground font-spacegroteskregular">{children}</li>,
+                            }}
+                          >
+                            {genieResponse}
+                          </ReactMarkdown>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center h-full text-muted-foreground">
+                          <div className="text-center">
+                            <div className="text-3xl mb-3">🤖</div>
+                            <p className="font-spacegroteskmedium text-sm">AI Assistant</p>
+                            <p className="text-xs mt-2 font-spacegroteskregular">Ask coding questions</p>
+                          </div>
+                        </div>
+                      )}
+                      {genieLoading && (
+                        <div className="flex items-center gap-2 text-info">
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-info"></div>
+                          <span className="font-spacegroteskregular text-sm">Processing...</span>
+                        </div>
+                      )}
+                      {genieError && (
+                        <div className="bg-destructive/10 border border-destructive rounded-lg p-3 text-destructive text-sm">
+                          {genieError}
+                        </div>
+                      )}
+                    </div>
+                    <div className="border-t border-border bg-muted/50 p-3">
+                      <div className="space-y-2">
+                        <label className="flex items-center gap-2 text-muted-foreground text-xs">
+                          <input
+                            type="checkbox"
+                            checked={includeCodeInGenie}
+                            onChange={(e) => setIncludeCodeInGenie(e.target.checked)}
+                            className="rounded border-border"
+                          />
+                          <span className="font-spacegroteskregular">Include code</span>
+                        </label>
+                        <div className="flex gap-2">
+                          <textarea
+                            value={genieQuery}
+                            onChange={(e) => setGenieQuery(e.target.value)}
+                            onKeyPress={handleGenieKeyPress}
+                            placeholder="Ask about code..."
+                            className="flex-1 bg-input text-foreground px-2 py-2 rounded border border-border focus:outline-none focus:ring-2 focus:ring-info resize-none text-sm font-spacegroteskregular"
+                            rows={2}
+                          />
+                          <button
+                            onClick={handleGenieSubmit}
+                            disabled={genieLoading || !genieQuery.trim()}
+                            className="px-3 py-2 bg-info hover:bg-info/90 disabled:opacity-50 text-info-foreground rounded transition font-spacegroteskmedium text-sm"
+                          >
+                            {genieLoading ? "..." : "Ask"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {mobileActiveTab === 'video' && (
+                  <div className="h-full p-3 overflow-y-auto">
+                    <div className="space-y-3">
+                      {/* Self video - larger on video tab */}
+                      <div className="relative">
+                        <div className="aspect-video bg-muted border border-border rounded-lg overflow-hidden">
+                          <video
+                            ref={mobileVideoRef}
+                            autoPlay
+                            muted
+                            playsInline
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute bottom-2 left-2 bg-background/80 px-2 py-1 rounded text-foreground text-sm font-spacegroteskregular">
+                            You
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Peer videos - larger on video tab */}
+                      {Object.entries(peers)
+                        .filter(([peerId]) => !!remoteStreams[peerId])
+                        .map(([peerId, { userName: peerUserName }]) => (
+                          <div key={peerId} className="relative">
+                            <div className="aspect-video bg-muted border border-border rounded-lg overflow-hidden">
+                              <video
+                                autoPlay
+                                playsInline
+                                ref={el => {
+                                  if (el && remoteStreams[peerId] && el.srcObject !== remoteStreams[peerId]) {
+                                    el.srcObject = remoteStreams[peerId];
+                                  }
+                                }}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute bottom-2 left-2 bg-background/80 px-2 py-1 rounded text-foreground text-sm font-spacegroteskregular">
+                                {peerUserName}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+
+                      {Object.keys(peers).length > 0 && Object.keys(remoteStreams).length === 0 && (
+                        <div className="text-muted-foreground text-sm text-center py-8">
+                          Waiting for participant video streams...
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {mobileActiveTab === 'chat' && (
+                  <div className="h-full flex flex-col">
+                    <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                      {chatMessages.length === 0 ? (
+                        <div className="text-center text-muted-foreground text-sm py-8">
+                          No messages yet. Start chatting!
+                        </div>
+                      ) : (
+                        chatMessages.map((message, index) => (
+                          <div key={index} className={`text-sm ${message.userId === socketRef.current?.id ? 'text-right' : 'text-left'}`}>
+                            <div className={`inline-block max-w-[80%] px-3 py-2 rounded-lg font-spacegroteskregular ${message.userId === socketRef.current?.id
+                              ? 'bg-info text-info-foreground'
+                              : 'bg-muted text-foreground'
+                              }`}>
+                              <div className="font-spacegroteskmedium text-xs opacity-75 mb-1">{message.userName}</div>
+                              <div>{message.message}</div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    <div className="border-t border-border p-3">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newChatMessage}
+                          onChange={(e) => setNewChatMessage(e.target.value)}
+                          onKeyPress={handleChatKeyPress}
+                          placeholder="Type a message..."
+                          className="flex-1 bg-input text-foreground px-3 py-2 rounded border border-border focus:outline-none focus:ring-2 focus:ring-info font-spacegroteskregular text-sm"
+                        />
+                        <button
+                          onClick={sendChatMessage}
+                          className="px-4 py-2 bg-info hover:bg-info/90 text-info-foreground rounded transition font-spacegroteskmedium text-sm"
+                        >
+                          Send
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Bottom Tab Bar */}
+              <div className="bg-muted border-t border-border flex">
+                <button
+                  onClick={() => setMobileActiveTab('editor')}
+                  className={`flex-1 py-3 text-xs font-spacegroteskmedium transition ${mobileActiveTab === 'editor'
+                    ? 'text-info bg-background'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                >
+                  Editor
+                </button>
+                <button
+                  onClick={() => setMobileActiveTab('output')}
+                  className={`flex-1 py-3 text-xs font-spacegroteskmedium transition border-l border-border ${mobileActiveTab === 'output'
+                    ? 'text-info bg-background'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                >
+                  Output
+                </button>
+                <button
+                  onClick={() => setMobileActiveTab('genie')}
+                  className={`flex-1 py-3 text-xs font-spacegroteskmedium transition border-l border-border ${mobileActiveTab === 'genie'
+                    ? 'text-info bg-background'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                >
+                  AI
+                </button>
+                <button
+                  onClick={() => setMobileActiveTab('video')}
+                  className={`flex-1 py-3 text-xs font-spacegroteskmedium transition border-l border-border ${mobileActiveTab === 'video'
+                    ? 'text-info bg-background'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                >
+                  Video
+                </button>
+                <button
+                  onClick={() => setMobileActiveTab('chat')}
+                  className={`flex-1 py-3 text-xs font-spacegroteskmedium transition border-l border-border ${mobileActiveTab === 'chat'
+                    ? 'text-info bg-background'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                >
+                  Chat
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
