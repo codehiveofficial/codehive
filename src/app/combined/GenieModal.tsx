@@ -45,14 +45,14 @@ const CodeBlock = ({
       {/* Floating Controls */}
       <div className="absolute top-2 right-2 flex space-x-2 z-10">
         {/* Language Tag */}
-        <div className="bg-gray-800 text-gray-200 text-xs font-bold px-2 py-1 rounded-md">
+        <div className="bg-muted text-foreground text-xs font-spacegroteskmedium px-2 py-1 rounded-md border border-border">
           {language.toUpperCase()}
         </div>
 
         {/* Copy Button */}
         <button
           onClick={copyToClipboard}
-          className="p-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-600 transition-all"
+          className="p-2 text-foreground bg-accent rounded-md hover:bg-accent/80 transition-all border border-border"
           aria-label="Copy code"
         >
           {isCopied ? (
@@ -85,7 +85,7 @@ interface GenieModalProps {
   code?: string; // Optional code prop
 }
 
-export default function GenieModal({ onClose, code = "" }:any)  {
+export default function GenieModal({ onClose, code = "" }: any) {
   const [query, setQuery] = useState("");
   const [includeCode, setIncludeCode] = useState(false);
   const [response, setResponse] = useState("");
@@ -168,16 +168,16 @@ export default function GenieModal({ onClose, code = "" }:any)  {
     <div className="fixed inset-0 flex items-center justify-center z-50">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/80 transition-opacity duration-300"
+        className="absolute inset-0 bg-background/80 transition-opacity duration-300"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-3xl sm:max-w-4xl md:max-w-5xl mx-4 h-[90vh] md:h-[85vh] bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
+      <div className="relative w-full max-w-3xl sm:max-w-4xl md:max-w-5xl mx-4 h-[90vh] md:h-[85vh] bg-background rounded-2xl shadow-2xl overflow-hidden border border-border">
         {/* Header */}
-        <div className="absolute top-0 left-0 right-0 px-4 sm:px-6 py-4 bg-gray-800 border-b border-gray-700">
+        <div className="absolute top-0 left-0 right-0 px-4 sm:px-6 py-4 bg-muted border-b border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-blue-400" />
-              <h2 className="text-lg sm:text-2xl md:text-3xl font-bold text-gray-100">
+              <Sparkles className="w-6 h-6 text-info" />
+              <h2 className="text-lg sm:text-2xl md:text-3xl font-spacegrotesksemibold text-foreground">
                 CodeHive Genie
               </h2>
             </div>
@@ -194,7 +194,7 @@ export default function GenieModal({ onClose, code = "" }:any)  {
         <div className="h-full pt-20 pb-24 px-4 sm:px-6 overflow-y-auto">
           <div
             ref={responseRef}
-            className="min-h-[200px] max-h-[50vh] mb-6 p-6 bg-gray-800 rounded-xl border border-gray-700 shadow-sm overflow-y-auto text-gray-300"
+            className="min-h-[200px] max-h-[50vh] mb-6 p-6 bg-muted rounded-xl border border-border shadow-sm overflow-y-auto text-foreground"
           >
             {response ? (
               <ReactMarkdown
@@ -209,14 +209,14 @@ export default function GenieModal({ onClose, code = "" }:any)  {
                 {response}
               </ReactMarkdown>
             ) : (
-              <span className="text-gray-400 font-sans">
+              <span className="text-muted-foreground font-spacegroteskregular">
                 Ask me anything about coding. I'm here to help! ✨
               </span>
             )}
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-900 border border-red-700 rounded-xl text-red-300">
+            <div className="mb-6 p-4 bg-destructive border border-destructive rounded-xl text-destructive-foreground">
               <p className="text-center">{error}</p>
             </div>
           )}
@@ -224,19 +224,19 @@ export default function GenieModal({ onClose, code = "" }:any)  {
 
         {/* Input Area */}
         {/* Input Area */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gray-800 border-t border-gray-700">
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-muted border-t border-border">
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Textarea */}
             <textarea
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ask me anything about coding..."
-              className="flex-1 p-4 h-24 sm:h-16 bg-gray-700 border border-gray-600 rounded-xl text-gray-100 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="flex-1 p-4 h-24 sm:h-16 bg-input border border-border rounded-xl text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary"
             />
 
             {/* Options and Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-2">
-              <label className="flex items-center gap-2 text-gray-300 sm:ml-2">
+              <label className="flex items-center gap-2 text-foreground sm:ml-2">
                 <input
                   type="checkbox"
                   checked={includeCode}
@@ -250,7 +250,7 @@ export default function GenieModal({ onClose, code = "" }:any)  {
               {loading && (
                 <button
                   onClick={handleStopGeneration}
-                  className="py-2 px-4 sm:px-6 bg-red-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                  className="py-2 px-4 sm:px-6 bg-destructive text-destructive-foreground font-spacegrotesksemibold rounded-xl hover:bg-destructive/80 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border border-destructive"
                 >
                   <PauseCircle className="w-6 h-6" />
                 </button>
@@ -260,7 +260,7 @@ export default function GenieModal({ onClose, code = "" }:any)  {
               <button
                 onClick={handleQuerySubmit}
                 disabled={loading || !query.trim()}
-                className="py-3 px-6 sm:px-8 w-full sm:w-auto bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                className="py-3 px-6 sm:px-8 w-full sm:w-auto bg-primary text-primary-foreground font-spacegrotesksemibold rounded-xl hover:bg-primary/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border border-primary"
               >
                 {loading ? (
                   <>

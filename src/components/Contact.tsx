@@ -68,17 +68,17 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="pt-16 pb-20">
+    <section id="contact" className="pt-16 pb-20 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-x-24">
           <div className="flex items-center lg:mb-0 mb-10">
             <div className="w-full">
-              <h2 className="font-spacegrotesksemibold text-white text-3xl md:text-4xl lg:text-5xl leading-normal lg:text-start text-center mb-9">
+              <h2 className="font-spacegrotesksemibold text-foreground text-3xl md:text-4xl lg:text-5xl leading-normal lg:text-start text-center mb-9">
                 Contact Us
               </h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="relative">
-                  <label htmlFor="name" className="block font-spacegrotesksemibold text-gray-100 mb-2">
+                  <label htmlFor="name" className="block font-spacegrotesksemibold text-foreground mb-2">
                     Your Name
                   </label>
                   <input
@@ -87,12 +87,12 @@ export default function Contact() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className={`w-full h-14 pl-4 pr-10 text-gray-900 border-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-indigo-500 font-spacegroteskregular`}
+                    className={`w-full h-14 pl-4 pr-10 text-foreground bg-muted border-2 border-border rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-info focus:border-info font-spacegroteskregular`}
                     placeholder="Your Name"
                   />
                 </div>
                 <div className="relative">
-                  <label htmlFor="email" className="block font-spacegrotesksemibold text-gray-100 mb-2">
+                  <label htmlFor="email" className="block font-spacegrotesksemibold text-foreground mb-2">
                     Email Address
                   </label>
                   <input
@@ -101,12 +101,12 @@ export default function Contact() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`w-full h-14 pl-4 pr-10 text-gray-900 border-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-indigo-500 font-spacegroteskregular`}
+                    className={`w-full h-14 pl-4 pr-10 text-foreground bg-muted border-2 border-border rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-info focus:border-info font-spacegroteskregular`}
                     placeholder="Email Address"
                   />
                 </div>
                 <div className="relative">
-                  <label htmlFor="text" className="block font-spacegrotesksemibold text-gray-100 mb-2">
+                  <label htmlFor="text" className="block font-spacegrotesksemibold text-foreground mb-2">
                     Your Message
                   </label>
                   <textarea
@@ -114,13 +114,13 @@ export default function Contact() {
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}
-                    className={`w-full h-24 pl-4 pr-4 pt-4 text-gray-900 resize-none border-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:border-indigo-500 font-spacegroteskregular`}
+                    className={`w-full h-24 pl-4 pr-4 pt-4 text-foreground bg-muted resize-none border-2 border-border rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-info focus:border-info font-spacegroteskregular`}
                     placeholder="Your Message"
                   ></textarea>
                 </div>
                 <button
                   type="submit"
-                  className="w-full h-14 text-white font-spacegrotesksemibold rounded-lg transition-all duration-300 bg-gradient-to-r from-blue-600 to-violet-600"
+                  className="w-full h-14 text-info-foreground font-spacegrotesksemibold rounded-lg transition-all duration-300 bg-gradient-to-r from-info to-violet-600 hover:from-violet-600 hover:to-info"
                 >
                   {isSubmitting ? "Sending..." : "Send Message"}
                 </button>

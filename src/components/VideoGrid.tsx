@@ -33,7 +33,7 @@ const VideoGrid = () => {
           You
         </div>
       </div>
-      
+
       {Object.entries(streams).map(([peerId, stream]) => (
         <div key={peerId} className="relative aspect-video">
           <video

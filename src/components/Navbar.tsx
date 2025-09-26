@@ -22,25 +22,25 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-opacity-50 backdrop-blur-md fixed w-full z-20 top-0 start-0 rounded-lg shadow-lg">
+    <nav className="bg-background/90 backdrop-blur-md fixed w-full z-20 top-0 start-0 border-b border-border shadow-lg">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image src={logo} className="h-10 w-10" alt="Codehive Logo" />
-          <span className="self-center text-white lg:text-2xl md:text-2xl lg:block md:block text-2xl hidden font-semibold whitespace-nowrap">
+          <span className="self-center text-foreground lg:text-2xl md:text-2xl lg:block md:block text-2xl hidden font-spacegrotesksemibold whitespace-nowrap">
             Codehive
           </span>
         </a>
         <div className="flex gap-1 md:gap-2 md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
           <button
             type="button"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center"
+            className="text-info-foreground bg-info hover:bg-info/90 focus:ring-4 focus:outline-none focus:ring-info/30 font-spacegroteskmedium rounded-lg text-sm px-4 py-2 text-center transition-colors"
           >
             <a href="/combined">Get started</a>
           </button>
           <button
             onClick={toggleMenu}
             type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-muted-foreground rounded-lg lg:hidden hover:bg-muted focus:outline-none focus:ring-2 focus:ring-border transition-colors"
             aria-controls="navbar-sticky"
             aria-expanded={isMenuOpen}
           >
@@ -77,11 +77,11 @@ const Navbar = () => {
           `}
           id="navbar-sticky"
         >
-          <ul className="bg-black lg:bg-transparent w-full flex flex-col p-4 lg:p-0 mt-4 font-medium border border-white rounded-lg lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0">
+          <ul className="bg-background lg:bg-transparent w-full flex flex-col p-4 lg:p-0 mt-4 font-spacegroteskmedium border border-border rounded-lg lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0">
             <li>
               <button
                 onClick={() => scrollToSection("home")}
-                className="block py-2 px-3 text-white hover:text-blue-700 rounded lg:bg-transparent lg:p-0"
+                className="block py-2 px-3 text-foreground hover:text-info rounded lg:bg-transparent lg:p-0 transition-colors"
                 aria-current="page"
               >
                 Home
@@ -90,7 +90,7 @@ const Navbar = () => {
             <li>
               <button
                 onClick={() => scrollToSection("features")}
-                className="block py-2 text-white px-3 rounded hover:text-blue-700 lg:hover:bg-transparent lg:p-0"
+                className="block py-2 text-foreground px-3 rounded hover:text-info lg:hover:bg-transparent lg:p-0 transition-colors"
               >
                 Features
               </button>
@@ -98,7 +98,7 @@ const Navbar = () => {
             <li>
               <button
                 onClick={() => scrollToSection("about")}
-                className="block py-2 text-white px-3 rounded hover:text-blue-700 lg:hover:bg-transparent lg:p-0"
+                className="block py-2 text-foreground px-3 rounded hover:text-info lg:hover:bg-transparent lg:p-0 transition-colors"
               >
                 About Us
               </button>
@@ -106,7 +106,7 @@ const Navbar = () => {
             <li>
               <button
                 onClick={() => scrollToSection("developers")}
-                className="block py-2 text-white px-3 rounded hover:text-blue-700 lg:hover:bg-transparent lg:p-0"
+                className="block py-2 text-foreground px-3 rounded hover:text-info lg:hover:bg-transparent lg:p-0 transition-colors"
               >
                 Developers
               </button>
@@ -114,7 +114,7 @@ const Navbar = () => {
             <li>
               <button
                 onClick={() => scrollToSection("contact")}
-                className="block py-2 text-white px-3 rounded hover:text-blue-700 lg:hover:bg-transparent lg:p-0"
+                className="block py-2 text-foreground px-3 rounded hover:text-info lg:hover:bg-transparent lg:p-0 transition-colors"
               >
                 Contact Us
               </button>

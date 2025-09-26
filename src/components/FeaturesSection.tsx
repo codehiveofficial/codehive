@@ -13,7 +13,7 @@ const FeaturesSection = () => {
       description:
         "Codehive offers a real-time collaborative coding playground, enabling seamless teamwork. With support for 5+ programming languages and 20+ color themes, it's designed to cater to diverse developer preferences.",
       image: Feature1,
-      color: "bg-black",
+      color: "bg-muted",
     },
     {
       icon: "💡",
@@ -21,7 +21,7 @@ const FeaturesSection = () => {
       description:
         "Stay connected with inbuilt video calling and chat features, making collaboration smooth and efficient. Download your code as styled snippets or files, simplifying project sharing and documentation.",
       image: Feature2,
-      color: "bg-black",
+      color: "bg-muted",
     },
     {
       icon: "🌟",
@@ -29,7 +29,7 @@ const FeaturesSection = () => {
       description:
         "Genie, our fine-tuned AI chatbot, provides smart code suggestions and instant corrections, empowering developers to write cleaner, more efficient code.",
       image: Feature3,
-      color: "bg-black",
+      color: "bg-muted",
     },
   ];
 
@@ -60,7 +60,7 @@ const FeaturesSection = () => {
 
   return (
     <motion.div
-      className="container lg:w-[80vw] mx-auto px-4 lg:py-8 md:py-8 py-4 font-spacegroteskmedium"
+      className="container lg:w-[80vw] mx-auto px-4 lg:py-8 md:py-8 py-4 font-spacegroteskmedium bg-background"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
@@ -69,9 +69,8 @@ const FeaturesSection = () => {
       {features.map((feature, index) => (
         <motion.div
           key={feature.title}
-          className={`flex flex-col md:flex-row items-center mb-16 rounded-2xl overflow-hidden shadow-md ${
-            feature.color
-          } ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}
+          className={`flex flex-col md:flex-row items-center mb-16 rounded-2xl overflow-hidden shadow-lg border border-border ${feature.color
+            } ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}
           variants={containerVariants}
         >
           <motion.div
@@ -81,10 +80,10 @@ const FeaturesSection = () => {
             <div className="text-5xl mb-4 lg:text-start md:text-start text-center">
               {feature.icon}
             </div>
-            <h2 className="lg:text-3xl font-spacegroteskregular bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-violet-600 text-xl lg:text-start md:text-start text-center font-bold mb-4">
+            <h2 className="lg:text-3xl font-spacegroteskregular bg-clip-text text-transparent bg-gradient-to-r from-info to-violet-600 text-xl lg:text-start md:text-start text-center font-bold mb-4">
               {feature.title}
             </h2>
-            <p className="text-white font-spacegrotesklight lg:text-lg text-md lg:text-start md:text-start text-center leading-relaxed">
+            <p className="text-muted-foreground font-spacegrotesklight lg:text-lg text-md lg:text-start md:text-start text-center leading-relaxed">
               {feature.description}
             </p>
           </motion.div>

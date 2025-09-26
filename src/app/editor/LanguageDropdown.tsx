@@ -17,13 +17,17 @@ const modifiedCustomStyles = {
 
 export default function LanguageDropdown({ onSelectChange }: any) {
   return (
-    <Select
-      className="lg:w-[200px]"
-      placeholder="Select language"
-      options={languageOptions}
-      defaultValue={languageOptions[0]}
-      styles={modifiedCustomStyles}
-      onChange={(selectedOption: any) => onSelectChange(selectedOption)}
-    />
+    <div className="min-w-[140px]">
+      <Select
+        className="text-sm"
+        placeholder="Select language"
+        options={languageOptions}
+        defaultValue={languageOptions[0]}
+        styles={modifiedCustomStyles}
+        onChange={(selectedOption: any) => onSelectChange(selectedOption)}
+        isSearchable={false}
+        menuPosition="fixed"
+      />
+    </div>
   );
 };
