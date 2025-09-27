@@ -9,24 +9,26 @@ import Navbar from "@/components/Navbar";
 
 export default function Home() {
   return (
-    <main className="bg-background">
+    <div className="h-screen overflow-hidden bg-background">
       <Navbar />
-      <Hero />
-      <div id="features" className="flex flex-col gap-4 items-center justify-center mt-10 md:mt-32 lg:mt-40">
-        <p className="font-spacegrotesksemibold text-center text-foreground text-3xl md:text-4xl lg:text-5xl">
-          Features of Codehive
-        </p>
-        <FeaturesSection />
-      </div>
-      <About />
-      <div id="developers" className="flex flex-col mt-10 md:mt-15 lg:mt-10 items-center justify-center">
-        <p className="font-spacegrotesksemibold text-center text-foreground text-3xl mb-10 md:text-4xl lg:text-5xl">
-          Meet the Developers of Codehive
-        </p>
-        <Aboutus />
-      </div>
-      <Contact />
-      <Footer />
-    </main>
+      <main className="h-full overflow-y-auto pt-16 bg-background">
+        <Hero />
+        <div id="features" className="flex flex-col gap-4 items-center justify-center mt-10 md:mt-32 lg:mt-40">
+          <p className="font-spacegrotesksemibold text-center text-foreground text-3xl md:text-4xl lg:text-5xl">
+            Features of Codehive
+          </p>
+          <FeaturesSection />
+        </div>
+        <About />
+        <div id="developers" className="flex flex-col mt-10 md:mt-15 lg:mt-10 items-center justify-center">
+          <p className="font-spacegrotesksemibold text-center text-foreground text-3xl mb-10 md:text-4xl lg:text-5xl">
+            Meet the Developers of Codehive
+          </p>
+          <Aboutus />
+        </div>
+        <Contact />
+        <Footer />
+      </main>
+    </div>
   );
 }

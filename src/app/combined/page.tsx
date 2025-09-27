@@ -610,9 +610,14 @@ export default function CollaborativeIDE({ userName }: any) {
       });
   };
 
-  // Enhanced execute code to switch to output tab
   const handleRunCode = async () => {
     setActiveTab('output');
+    
+    setMobileActiveTab('output');
+    
+    setShowInput(true);
+    setInputOutputTab('output');
+    
     await executeCode();
   };
 
@@ -710,15 +715,15 @@ export default function CollaborativeIDE({ userName }: any) {
   }, [peers]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen overflow-hidden bg-background">
       {isInitializing ? (
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center h-screen">
           <div className="text-foreground font-spacegroteskregular">
             Initializing camera and microphone...
           </div>
         </div>
       ) : !isJoined ? (
-        <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-4">
+        <div className="flex flex-col items-center justify-center h-screen gap-4 p-4 overflow-y-auto">
           {mediaError && (
             <div className="bg-destructive text-destructive-foreground p-4 rounded-lg mb-4">
               {mediaError}

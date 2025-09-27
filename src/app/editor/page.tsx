@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CodeEditor from "./CodeEditor";
 import { languageOptions } from "@/constants/languageOptions";
 import { defineTheme } from "@/lib/defineTheme";
@@ -43,6 +43,7 @@ export default function Landing(props: any) {
   const [fontSize, setFontSize] = useState<number>(16);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [remoteCursorPosition, setRemoteCursorPosition] = useState<{ lineNumber: number; column: number } | null>(null);
+  const outputWindowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     defineTheme("brilliance-black").then(() => {
@@ -129,16 +130,36 @@ export default function Landing(props: any) {
       };
 
       setOutputDetails(outputData);
+      
+      setTimeout(() => {
+        if (outputWindowRef.current) {
+          outputWindowRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'nearest' 
+          });
+        }
+      }, 100);
+      
     } catch (error) {
       console.error("Error executing code:", error);
       setOutputDetails({ stdout: "", stderr: "Execution failed", status: "Failed" });
+      
+      setTimeout(() => {
+        if (outputWindowRef.current) {
+          outputWindowRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'nearest' 
+          });
+        }
+      }, 100);
+      
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="h-screen overflow-hidden bg-background">
       <div className="flex justify-center p-4 space-x-4">
         <input
           type="text"
@@ -188,8 +209,8 @@ export default function Landing(props: any) {
         </div>
       </div>
 
-      <div className="flex bg-background flex-col md:flex-row w-full justify-start px-4 mt-4">
-        <div className="md:flex flex-col w-full md:w-3/4 md:h-full h-96 justify-start items-end">
+      <div className="flex bg-background flex-col md:flex-row w-full justify-start px-4 mt-4 h-full overflow-hidden">
+        <div className="md:flex flex-col w-full md:w-3/4 h-full justify-start items-end">
           <CodeEditor
             onCodeChange={onCodeChange}
             onCursorPositionChange={onCursorPositionChange}
@@ -200,7 +221,7 @@ export default function Landing(props: any) {
             remoteCursorPosition={remoteCursorPosition}
           />
         </div>
-        <div className="w-full md:w-4/12 p-4 ml-auto">
+        <div className="w-full md:w-4/12 p-4 ml-auto h-full overflow-y-auto" ref={outputWindowRef}>
           <div className="flex w-full justify-between">
             <button
               className={`mb-4 bg-info text-info-foreground border-2 border-info z-10 rounded-md px-4 py-2 hover:bg-info/90 transition duration-200 ease-in-out transform hover:scale-105 shadow-md font-spacegroteskmedium`}
