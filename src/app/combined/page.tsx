@@ -12,6 +12,7 @@ import "@/app/combined/combined.css";
 import Peer from "simple-peer";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
+import TypewriterResponse from "./TypewriterResponse";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import {
@@ -1227,41 +1228,61 @@ export default function CollaborativeIDE({ userName }: any) {
                           </button>
                         </div>
                         <div className="flex-1 overflow-y-auto p-4 invisible-scrollbar">
-                          {genieResponse ? (
-                            <div className="prose prose-invert prose-sm max-w-none">
-                              <ReactMarkdown
-                                components={{
-                                  code: ({ inline, className, children, ...props }: any) => {
-                                    const match = /language-(\w+)/.exec(className || '');
-                                    return !inline && match ? (
-                                      <SyntaxHighlighter
-                                        style={materialDark}
-                                        language={match[1]}
-                                        PreTag="div"
-                                        className="rounded-lg"
-                                        {...props}
-                                      >
-                                        {String(children).replace(/\n$/, '')}
-                                      </SyntaxHighlighter>
-                                    ) : (
-                                      <code className="bg-muted px-1.5 py-0.5 rounded text-foreground" {...props}>
-                                        {children}
-                                      </code>
-                                    );
-                                  },
-                                  h1: ({ children }) => <h1 className="text-lg font-spacegrotesksemibold mb-3 text-foreground">{children}</h1>,
-                                  h2: ({ children }) => <h2 className="text-base font-spacegroteskmedium mb-2 text-foreground">{children}</h2>,
-                                  h3: ({ children }) => <h3 className="text-sm font-spacegroteskmedium mb-2 text-foreground">{children}</h3>,
-                                  p: ({ children }) => <p className="mb-3 leading-relaxed text-foreground font-spacegroteskregular">{children}</p>,
-                                  ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1">{children}</ul>,
-                                  ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1">{children}</ol>,
-                                  li: ({ children }) => <li className="text-foreground font-spacegroteskregular">{children}</li>,
-                                }}
-                              >
-                                {genieResponse}
-                              </ReactMarkdown>
-                            </div>
-                          ) : (
+                                          {genieResponse ? (
+                                            <TypewriterResponse
+                                              response={genieResponse}
+                                              markdownComponents={{
+                                                code: ({ inline, className, children, ...props }: any) => {
+                                                  const match = /language-(\w+)/.exec(className || '');
+                                                  return !inline && match ? (
+                                                    <div className="relative">
+                                                      <SyntaxHighlighter
+                                                        style={materialDark}
+                                                        language={match[1]}
+                                                        PreTag="div"
+                                                        className="rounded-lg"
+                                                        {...props}
+                                                      >
+                                                        {String(children).replace(/\n$/, '')}
+                                                      </SyntaxHighlighter>
+                                                      {(() => {
+                                                        const [copied, setCopied] = React.useState(false);
+                                                        const handleCopy = () => {
+                                                          navigator.clipboard.writeText(String(children));
+                                                          setCopied(true);
+                                                          setTimeout(() => setCopied(false), 1200);
+                                                        };
+                                                        return (
+                                                          <button
+                                                            className={`absolute top-2 right-2 px-2 py-1 bg-info text-info-foreground rounded text-xs font-spacegroteskmedium hover:bg-info/90 transition flex items-center gap-1 ${copied ? 'opacity-80' : ''}`}
+                                                            onClick={handleCopy}
+                                                            title={copied ? 'Copied!' : 'Copy code'}
+                                                          >
+                                                            {copied ? (
+                                                              <FaCheck className="text-xs transition-opacity duration-500" />
+                                                            ) : (
+                                                              'Copy'
+                                                            )}
+                                                          </button>
+                                                        );
+                                                      })()}
+                                                    </div>
+                                                  ) : (
+                                                    <code className="bg-muted px-1.5 py-0.5 rounded text-foreground" {...props}>
+                                                      {children}
+                                                    </code>
+                                                  );
+                                                },
+                                                h1: ({ children }) => <h1 className="text-lg font-spacegrotesksemibold mb-3 text-foreground">{children}</h1>,
+                                                h2: ({ children }) => <h2 className="text-base font-spacegroteskmedium mb-2 text-foreground">{children}</h2>,
+                                                h3: ({ children }) => <h3 className="text-sm font-spacegroteskmedium mb-2 text-foreground">{children}</h3>,
+                                                p: ({ children }) => <p className="mb-3 leading-relaxed text-foreground font-spacegroteskregular">{children}</p>,
+                                                ul: ({ children }) => <ul className="list-disc list-inside mb-3 space-y-1">{children}</ul>,
+                                                ol: ({ children }) => <ol className="list-decimal list-inside mb-3 space-y-1">{children}</ol>,
+                                                li: ({ children }) => <li className="text-foreground font-spacegroteskregular">{children}</li>,
+                                              }}
+                                            />
+                                          ) : (
                             <div className="flex items-center justify-center h-full text-muted-foreground">
                               <div className="text-center">
                                 <div className="text-4xl mb-4">✨</div>
