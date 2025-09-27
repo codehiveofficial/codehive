@@ -17,7 +17,7 @@ const TypewriterResponse: React.FC<TypewriterResponseProps> = ({ response, markd
       setDisplayed((prev) => response.slice(0, i));
       i++;
       if (i > response.length) clearInterval(interval);
-    }, 1.5);
+    }, 0.2);
     return () => clearInterval(interval);
   }, [response]);
 
