@@ -38,8 +38,11 @@ Codehive is a web-based platform designed to provide a **collaborative coding en
 ### 🌟 Overall Platform
 ![Overall Platform](https://github.com/user-attachments/assets/c741c786-b858-45f8-94be-d5c0e1b46c33)
 
-### 🌟 Generate Beautiful Code Snippets
-![Code Snippets](https://github.com/codehiveofficial/codehive/blob/main/public/codehive_snippet%20(4).png)  
+### 🌟 Audio/Video/Text Communication
+![Audio/Video/Text Communication](https://github.com/user-attachments/assets/8a7c8f80-7a4b-4b26-a528-3874f28b06b6)
+
+### 🌟 Integrated AI Assistant
+![Integrated AI Assistant](https://github.com/user-attachments/assets/9f19b19a-af74-47db-ad6b-f74c638a69f1)
 
 
 ## 🛠️ **Tech Stack**  
